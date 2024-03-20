@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container my-4">
+        <h3 class="text-center text-2xl text-info mb-4">Dishwasher and Tap Details</h3>
+        <form method="POST" action="">
+            {% csrf_token %}
+            <div class='border rounded bg-light p-3'>
+                <div class="row mb-3">
+                    <!-- Dishwasher Quantity -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.dishwasher_quantity.id_for_label }}">Dishwasher Quantity:</label>
+                            {{ form.dishwasher_quantity }}
+                            {% if form.dishwasher_quantity.errors %}
+                                <span class="text-danger">{{ form.dishwasher_quantity.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Tap Quantity -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.tap_quantity.id_for_label }}">Tap Quantity:</label>
+                            {{ form.tap_quantity }}
+                            {% if form.tap_quantity.errors %}
+                                <span class="text-danger">{{ form.tap_quantity.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <!-- Dishwasher Average Consumption -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.dishwasher_average_consumption.id_for_label }}">Dishwasher Average Consumption:</label>
+                            {{ form.dishwasher_average_consumption }}
+                            {% if form.dishwasher_average_consumption.errors %}
+                                <span class="text-danger">{{ form.dishwasher_average_consumption.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Dishwasher Times Used Per Day -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.dishwasher_times_used_per_day.id_for_label }}">Dishwasher Times Used Per Day:</label>
+                            {{ form.dishwasher_times_used_per_day }}
+                            {% if form.dishwasher_times_used_per_day.errors %}
+                                <span class="text-danger">{{ form.dishwasher_times_used_per_day.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <!-- Tap Number -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="{{ form.tap_number.id_for_label }}">Tap Number:</label>
+                            {{ form.tap_number }}
+                            {% if form.tap_number.errors %}
+                                <span class="text-danger">{{ form.tap_number.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Tap Flowrate -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="{{ form.tap_flowrate.id_for_label }}">Tap Flowrate:</label>
+                            {{ form.tap_flowrate }}
+                            {% if form.tap_flowrate.errors %}
+                                <span class="text-danger">{{ form.tap_flowrate.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4"> 
+                        <div class="form-group mb-3">
+                            <label for="{{ form.tap_run_time.id_for_label }}">Tap Run Time:</label>
+                            {{ form.tap_run_time }}
+                            {% if form.tap_run_time.errors %}
+                                <span class="text-danger">{{ form.tap_run_time.errors.as_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tap Run Time -->
+            </div>
+            <div class="text-center mt-5">
+                {% comment %} <a href='{% url "previous_view" %}' class="btn btn-primary px-5">Previous</a> {% endcomment %}
+                <button type="submit" class="btn btn-primary px-5">Next</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

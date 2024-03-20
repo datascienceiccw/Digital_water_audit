@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h3 class="text-center text-3xl font-semibold text-blue-600 mb-8">Water Quality Profile</h3>
+    
+    <form method="POST" action='' >
+        {% if details %}
+        <div class="text-center my-2 p-3" style="position: relative;">
+            <a href='{% url "delete_water_quality_profile" %}' class="btn btn-danger mb-4 mr-2" style="position: absolute; top: 0; right:0;">Reset</a>
+        </div>
+        {% endif %}
+        {% csrf_token %}
+        {% if details %}
+        <fieldset disabled="disabled" class="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-gray-200  form-container grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        {% else %}
+        <fieldset class="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-gray-200  form-container grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+        {% endif %}
+            <div class="mb-6">
+                <label for="{{ form.pH.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    pH level of water:
+                </label>
+                {{ form.pH }}
+                {% if form.pH.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.pH.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.chlorides.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Chlorides:
+                </label>
+                {{ form.chlorides }}
+                {% if form.chlorides.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.chlorides.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.alkalinity.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Alkalinity:
+                </label>
+                {{ form.alkalinity }}
+                {% if form.alkalinity.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.alkalinity.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.hardness.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Hardness:
+                </label>
+                {{ form.hardness }}
+                {% if form.hardness.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.hardness.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.turbidity.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Turbidity:
+                </label>
+                {{ form.turbidity }}
+                {% if form.turbidity.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.turbidity.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.res_chlorine.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Residual Chlorine:
+                </label>
+                {{ form.res_chlorine }}
+                {% if form.res_chlorine.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.res_chlorine.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.iron.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Iron:
+                </label>
+                {{ form.iron }}
+                {% if form.iron.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.iron.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.nitrate.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Nitrate:
+                </label>
+                {{ form.nitrate }}
+                {% if form.nitrate.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.nitrate.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.bod.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    B.O.D:
+                </label>
+                {{ form.bod }}
+                {% if form.bod.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.bod.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.cod.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    C.O.D:
+                </label>
+                {{ form.cod }}
+                {% if form.cod.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.cod.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.tss.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    TSS:
+                </label>
+                {{ form.tss }}
+                {% if form.tss.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.tss.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            
+        </fieldset>                  
+        {% if water_treatment_details.treatment_method == 'STP' %}                  
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "wastewater_treatment_STP" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+        </div>
+        {% elif water_treatment_details.treatment_method == 'ETP' %}               
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "wastewater_treatment_ETP" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+        </div>
+        {% else %}                  
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "wastewater_treatment_Others" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+        </div>
+        {% endif %}
+        {% if details %}
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "recycled_water" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+        </div>
+        {% else %}
+        <div class="text-center mt-5" style="position: relative;">
+            <button type="submit" class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</button>
+        </div>
+        {% endif %}    
+    </form>
+</div>
+
+
+{% endblock %}

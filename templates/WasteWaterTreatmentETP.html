@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h3 class="text-center text-3xl font-semibold text-blue-600 mb-8">Waste Water Treatment Using ETP</h3>
+    
+    <form method="POST" action='' >
+        {% if details %}
+        <div class="text-center my-2 p-3" style="position: relative;">
+            <a href='{% url "delete_wastewater_treatment_ETP" %}' class="btn btn-danger mb-4 mr-2" style="position: absolute; top: 0; right:0;">Reset</a>
+        </div>
+        {% endif %}
+        {% csrf_token %}
+        {% if details %}
+        <fieldset disabled="disabled" class="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-gray-200  form-container grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        {% else %}
+        <fieldset class="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-gray-200  form-container grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+        {% endif %}
+            <div class="mb-6">
+                <label for="{{ form.flow_process.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Flow Process:
+                </label>
+                {{ form.flow_process }}
+                {% if form.flow_process.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.flow_process.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.capacity.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Capacity:
+                </label>
+                {{ form.capacity }}
+                {% if form.capacity.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.capacity.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.input_flow_vol.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Volume of input water:
+                </label>
+                {{ form.input_flow_vol }}
+                {% if form.input_flow_vol.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.input_flow_vol.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.technology_type.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Technology Type:
+                </label>
+                {{ form.technology_type }}
+                {% if form.technology_type.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.technology_type.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            {% if details.other_sequence_flow %}
+            <div class="mb-6">
+                <label for="{{ form.other_sequence_flow.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Sequence Flow:
+                </label>
+                {{ form.other_sequence_flow }}
+                {% if form.other_sequence_flow.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.other_sequence_flow.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="mb-6">
+                <label for="{{ form.sequence_flow.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Sequence Flow:
+                </label>
+                {{ form.sequence_flow }}
+                {% if form.sequence_flow.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.sequence_flow.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            {% endif %}
+            <div class="mb-6 other-sequence-flow hidden">
+                <label for="{{ form.other_sequence_flow.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Specify other sequence:
+                </label>
+                {{ form.other_sequence_flow }}
+                {% if form.other_sequence_flow.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.other_sequence_flow.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.treated_water_output.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Treated water output:
+                </label>
+                {{ form.treated_water_output }}
+                {% if form.treated_water_output.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.treated_water_output.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.treated_water_usage.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Treated water usage:
+                </label>
+                {{ form.treated_water_usage }}
+                {% if form.treated_water_usage.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.treated_water_usage.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.reject_to.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Reject To:
+                </label>
+                {{ form.reject_to }}
+                {% if form.reject_to.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.reject_to.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.product_to.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Product To:
+                </label>
+                {{ form.product_to }}
+                {% if form.product_to.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.product_to.errors.as_text }}</p>
+                {% endif %}
+            </div>
+           
+        </fieldset>                     
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "wastewater_treatment" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+        </div>
+        {% if details %}
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "water_quality_profile" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+        </div>
+        {% else %}
+        <div class="text-center mt-5" style="position: relative;">
+            <button type="submit" class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</button>
+        </div>
+        {% endif %}    
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sequenceFlowField = document.querySelector('#{{ form.sequence_flow.id_for_label }}');
+        const otherSequenceFlowContainer = document.querySelector('.other-sequence-flow');
+    
+        sequenceFlowField.addEventListener('change', function() {
+            otherSequenceFlowContainer.classList.toggle('hidden', sequenceFlowField.value !== 'Others');
+        });
+
+    });
+</script>
+
+
+{% endblock %}

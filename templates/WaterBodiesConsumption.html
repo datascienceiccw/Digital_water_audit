@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h3 class="text-center text-3xl font-semibold text-blue-600 mb-8">Water Bodies Consumption</h3>
+    
+    <form method="POST" action="" >
+        {% if details %}
+        <div class="text-center my-2 p-3" style="position: relative;">
+            <a href='{% url "delete_waterbodies_consumption" %}' class="btn btn-danger mb-4 mr-2" style="position: absolute; top: 0; right:0;">Reset</a>
+        </div>
+    {% endif %}
+    {% csrf_token %}
+    {% if details %}
+        <fieldset disabled="disabled" class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-gray-200">
+    {% else %}
+        <fieldset class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-gray-200">
+    {% endif %}
+        <div class="mb-6">
+            <label for="{{ form.water_body_source.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                Water Source:
+            </label>
+            {{ form.water_body_source }}
+            {% if form.water_body_source.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.water_body_source.errors.as_text }}</p>
+            {% endif %}
+        </div>
+
+        <div class="mb-6 other-source hidden">
+            <label for="{{ form.other_source_name.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                Specify other source:
+            </label>
+            {{ form.other_source_name }}
+            {% if form.other_source_name.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.other_source_name.errors.as_text }}</p>
+            {% endif %}
+        </div>
+        <div class="mb-6">
+            <label for="{{ form.daily_makeup_water.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                Daily Makeup Water (kl):
+            </label>
+            {{ form.daily_makeup_water }}
+            {% if form.daily_makeup_water.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.daily_makeup_water.errors.as_text }}</p>
+            {% endif %}
+        </div>
+        <div class="mb-6">
+            <label for="{{ form.capacity.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                Capacity (kl):
+            </label>
+            {{ form.capacity }}
+            {% if form.capacity.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.capacity.errors.as_text }}</p>
+            {% endif %}
+        </div>
+        <div class="mb-6">
+            <label for="{{ form.reject_to_vol.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                Volume of water rejected (kl):
+            </label>
+            {{ form.reject_to_vol }}
+            {% if form.reject_to_vol.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.reject_to_vol.errors.as_text }}</p>
+            {% endif %}
+        </div>
+        <div class="mb-6">
+            <label for="{{ form.reject_to.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                Reject To:
+            </label>
+            {{ form.reject_to }}
+            {% if form.reject_to.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.reject_to.errors.as_text }}</p>
+            {% endif %}
+        </div>
+    </fieldset>
+    <div class="text-center mt-5" style="position: relative;">
+        <a href='{% url "swimmingpool_consumption" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+    </div>
+    {% if details %}
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "laundry_consumption" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+        </div>
+    {% else %}
+        <div class="text-center mt-5" style="position: relative;">
+            <button type="submit" class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</button>
+        </div>
+    {% endif %}
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sourceNameField = document.querySelector('#{{ form.water_body_source.id_for_label }}');
+    const otherSourceContainer = document.querySelector('.other-source');
+
+    sourceNameField.addEventListener('change', function() {
+        otherSourceContainer.classList.toggle('hidden', sourceNameField.value !== '9');
+    });
+
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Flowchart</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "dark",
+      securityLevel: 'loose',
+      flowchart: {
+        useMaxWidth: false,
+        htmlLabels: true,
+        curve: 'linear',
+        mermaid: {
+          theme: 'forest'
+        },
+      },
+    });
+  </script>
+  <style>
+    .mermaid {
+      margin: 10px;
+      max-width: 100%;
+      overflow-x: auto; /* Add horizontal scrollbar for overflow */
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="mermaid border border-dark rounded-left p-2 bg-secondary">
+      graph LR;
+      start[Start Forms];
+      step1(Step 1: Basic Details);
+      step2(Step 2: Source Water Profile);
+      step3(Step 3: Fresh Water Treatment Profile);
+      step4(Step 4: Fresh Water Treatment Profile Details);
+      step5(Step 5: Tanks Capacities);
+      End[End Forms];
+
+      start --> step1;
+      step1 --> step2;
+      step2 --> step3;
+      step3 --> step4;
+      step4 --> step5;
+      step5 --> End;
+
+      style start fill:# white,stroke:green,stroke-width:2px;
+      style End fill:# white,stroke:red,stroke-width:2px;
+
+      click start "/Users/viraj/ICCW/wat/index.html";
+      click step1 "Navigate to Step 1: Basic Details";
+      click step2 "Navigate to Step 2: Source Water Profile";
+      click step3 "Navigate to Step 3: Fresh Water Treatment Profile";
+      click step4 "Navigate to Step 4: Fresh Water Treatment Profile Details";
+      click step5 "Navigate to Step 5: Tanks Capacities";
+    </div>
+  </div>
+</body>
+</html>

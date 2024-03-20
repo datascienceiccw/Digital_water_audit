@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8" >
+    <h3 class="text-center text-3xl font-semibold text-blue-600 mb-8">Recycled Water</h3>
+    <p class="text-secondary">
+        <strong>How to fill this form?</strong>         
+    </p>
+    <p class="text-secondary mb-5">
+        On the left-hand side, update all the recycled water details.
+        Right hand side can be used to view the recycled water details.
+    </p> 
+    <div class="flex flex-wrap justify-between pt-5" style="position: relative;">
+        {% csrf_token %}
+        {% if details %}
+            <a href='{% url "delete_recycled_water_all" %}' class="btn btn-danger m-2" style="position: absolute; top: 0; right:0;">Delete All Kitchens</a>
+        {% endif %}
+            
+        <div class="w-full md:w-1/2 lg:w-1/2 pr-0 md:pr-4 mb-8">
+            <form id="input-form" method="POST" action="" class="form-container1 max-w-4xl bg-white p-8 rounded-lg shadow-xl border border-gray-200">
+                {% csrf_token %}
+                <div id="water-recycled-form" class='form-container'>
+                    <div class="mb-6">
+                        <label for="{{ form.usage.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                           Recycled Water Usage:
+                        </label>
+                        {{ form.usage }}
+                        {% if form.usage.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.usage.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.place.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Place:
+                        </label>
+                        {{ form.place }}
+                        {% if form.place.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.place.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.quantity.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Quantity of Recycled Water:
+                        </label>
+                        {{ form.quantity }}
+                        {% if form.quantity.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.quantity.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    
+                </div>   
+                </fieldset>
+                <button type="submit" class="btn btn-primary mb-4" id="add-recycled-water">Add More</button>
+         
+            </form>
+        </div>
+        <div class="w-full md:w-1/2 lg:w-1/2 pl-0 md:pl-4 mb-8">
+            <div id="details-display"
+                class="max-w-full md:max-w-4xl bg-white p-8 rounded-lg shadow-xl border border-gray-200">
+                <!-- Display details here -->
+
+                {% if all_details|length %}
+                        {% comment %} <p class="text-secondary mb-4">Click on the treatment method to edit it.</p> {% endcomment %}
+                        <div class='border rounded p-2 m-3' style="position: relative;"> 
+                        <h3 class="text-center text-3xl font-semibold mb-4 text-blue-400">Recycled Water Details</h3>
+                            {% for detail in all_details %}
+                            <a href='{% url "delete_recycled_water" detail.id  %}' class="btn btn-danger m-2" style="position: absolute; top: 0; right:0;">Remove</a>
+                            <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Usage:</h4>
+                                            <p id="usage" class="text-gray-800">{{ detail.usage }}</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Place:</h4>
+                                            <p id="place" class="text-gray-800">{{ detail.place }}</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Quantity:</h4>
+                                            <p id="quantity" class="text-gray-800">{{ detail.quantity }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% endfor %}
+                            </div>
+                    {% else %}
+                        <p class="text-secondary mb-4">No details are added yet.</p>
+                    {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5" style="position: relative;">
+        <a href='{% url "water_quality_profile" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+    </div>
+    {% if all_details|length %}
+    <div class="text-center mt-5" style="position: relative;">
+        <a href='{% url "flowchart" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+
+    </div>
+    {% endif %}
+</div>
+
+
+{% endblock %}

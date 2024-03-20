@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container my-4" style='position:relative'>
+        <h3 class="text-center text-2xl text-info mb-4">Rain Water Harvesting Details</h3>
+        {% if details %}
+            <a href="{% url 'delete_rainwater' %}" class="btn btn-danger mb-4 mr-2" style="position: absolute; right: 0; top:0;">Reset</a>
+        {% else %}
+            {% if not is_rainwater_present %}
+            <div id="warningAlert" class="alert alert-warning" role="alert">
+                <strong>Warning!</strong> You did not select rainwater in the preceding form. If this was an oversight, please return to the previous page to include it.
+                <div class="mt-2" style="position: relative;">
+                    <a href='{% url "source_water_profile" %}' class="btn btn-primary px-2" style="position: absolute; bottom: 0; right: 0;">Go back</a>
+                </div>
+            </div>
+            {% endif %}    
+        {% endif %}
+        
+        <form method="POST" action="">
+        {% csrf_token %}
+        {% if details %}
+        <fieldset disabled="disabled">
+        {% else %}
+        <fieldset>
+        {% endif %}
+        <div class='border rounded bg-light p-3'>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.amount_harvested_water_last_two_years.id_for_label }}">Harvested Water in Last 2 Years (kl):</label>
+                        {{ form.amount_harvested_water_last_two_years }}
+                        {% if form.amount_harvested_water_last_two_years.errors %}
+                            <span class="text-danger custom-error">{{ form.amount_harvested_water_last_two_years.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.amount_recharged_water_last_two_years.id_for_label }}">Recharged Water in Last 2 Years (kl):</label>
+                        {{ form.amount_recharged_water_last_two_years }}
+                        {% if form.amount_recharged_water_last_two_years.errors %}
+                            <span class="text-danger custom-error">{{ form.amount_recharged_water_last_two_years.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="{{ form.rooftop_area.id_for_label }}">Rooftop Area (sq. meters):</label>
+                        {{ form.rooftop_area }}
+                        {% if form.rooftop_area.errors %}
+                            <span class="text-danger custom-error">{{ form.rooftop_area.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="{{ form.paved_area.id_for_label }}">Paved Area (sq. meters):</label>
+                        {{ form.paved_area }}
+                        {% if form.paved_area.errors %}
+                            <span class="text-danger custom-error">{{ form.paved_area.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="{{ form.unpaved_area.id_for_label }}">Unpaved Area (sq. meters):</label>
+                        {{ form.unpaved_area }}
+                        {% if form.unpaved_area.errors %}
+                            <span class="text-danger custom-error">{{ form.unpaved_area.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="{{ form.average_rainfall.id_for_label }}">Average Rainfall (mm/year):</label>
+                        {{ form.average_rainfall }}
+                        {% if form.average_rainfall.errors %}
+                            <span class="text-danger custom-error">{{ form.average_rainfall.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>        
+        </fieldset>
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "source_water_flow" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+        </div>
+        {% if details %}
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "source_dash_view" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+        </div>
+        {% else %}
+       <div class="text-center mt-5" style="position: relative;">
+            <button type="submit" class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</button>
+        </div>
+        {% endif %}
+        </form>
+    </div>
+{% endblock %}
+
+

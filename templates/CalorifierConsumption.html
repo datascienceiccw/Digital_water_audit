@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8" >
+    <h3 class="text-center text-3xl font-semibold text-blue-600 mb-8">Calorifier Consumption Details</h3>
+    <p class="text-secondary">
+        <strong>How to fill this form?</strong>         
+    </p>
+    <p class="text-secondary mb-5">
+        On the left-hand side, update all the water consumption details in calorifiers.
+        Right hand side can be used to view the water consumption details of existing calorifiers.
+    </p> 
+    <div class="flex flex-wrap justify-between pt-5" style="position: relative;">
+        {% csrf_token %}
+        {% if details %}
+            <a href='{% url "delete_calorifier_consumption" %}' class="btn btn-danger m-2" style="position: absolute; top: 0; right:0;">Delete All Calorifiers</a>
+        {% endif %}
+            
+        <div class="w-full md:w-1/2 lg:w-1/2 pr-0 md:pr-4 mb-8">
+            <form id="input-form" method="POST" action="" class="form-container1 max-w-4xl bg-white p-8 rounded-lg shadow-xl border border-gray-200">
+                {% csrf_token %}
+                <div id="calorifier-form" class='form-container'>
+                    <div class="mb-6">
+                        <label for="{{ form.calorifier_source.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Water Source:
+                        </label>
+                        {{ form.calorifier_source }}
+                        {% if form.calorifier_source.errors %}
+                        <p class="text-red-600 text-xs italic mt-1">{{ form.calorifier_source.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6 other-source hidden">
+                        <label for="{{ form.other_source_name.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Specify other source:
+                        </label>
+                        {{ form.other_source_name }}
+                        {% if form.other_source_name.errors %}
+                        <p class="text-red-600 text-xs italic mt-1">{{ form.other_source_name.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.capacity.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Capacity (in litres):
+                        </label>
+                        {{ form.capacity }}
+                        {% if form.capacity.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.capacity.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.water_consumed.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Water Consumed (in litres):
+                        </label>
+                        {{ form.water_consumed }}
+                        {% if form.water_consumed.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.water_consumed.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>   
+                </fieldset>
+                <button type="submit" class="btn btn-primary mb-4" id="add-restaurant">Add Calorifier</button>
+         
+            </form>
+        </div>
+        <div class="w-full md:w-1/2 lg:w-1/2 pl-0 md:pl-4 mb-8">
+            <div id="details-display"
+                class="max-w-full md:max-w-4xl bg-white p-8 rounded-lg shadow-xl border border-gray-200">
+                <!-- Display details here -->
+                {% if all_details|length %}
+                        {% comment %} <p class="text-secondary mb-4">Click on the treatment method to edit it.</p> {% endcomment %}
+                        <h3 class="text-center text-3xl font-semibold mb-4 text-blue-400">Calorifiers</h3>
+                            {% for detail in all_details %}
+                            <div class='border rounded p-2 m-3' style="position: relative;"> 
+                                <a href='{% url "delete_calorifier" detail.id  %}' class="btn btn-danger m-2" style="position: absolute; top: 0; right:0;">Remove</a>
+                        
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        {% if detail.other_source_name %}
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Water Source:</h4>
+                                            <p id="calorifier-source" class="text-gray-800">{{ detail.other_source_name }}</p>
+                                        </div>
+                                        {% else %}
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Water Source:</h4>
+                                            <p id="calorifier-source" class="text-gray-800">{{ detail.get_calorifier_source_display }}</p>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Capacity:</h4>
+                                            <p id="capacity" class="text-gray-800">{{ detail.capacity }}</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Water Consumed (in litres):</h4>
+                                            <p id="water-consumed" class="text-gray-800">{{ detail.water_consumed }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            {% endfor %}
+                    {% else %}
+                        <p class="text-secondary mb-4">No details are added yet.</p>
+                    {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5" style="position: relative;">
+        <a href='{% url "boiler_consumption" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+    </div>
+    {% if all_details|length %}
+    <div class="text-center mt-5" style="position: relative;">
+        <a href='{% url "coolingtower_consumption" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+    </div>
+    {% else %}
+    <div class="text-center mt-5" style="position: relative;">
+        <a href='' class="btn btn-primary px-5 disabled" style="position: absolute; bottom: 0; right: 0;">Next</a>
+    </div>
+    {% endif %}
+</div>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sourceNameField = document.querySelector('#{{ form.calorifier_source.id_for_label }}');
+        const otherSourceContainer = document.querySelector('.other-source');
+        const form = document.querySelector('.form-container1');
+    
+        sourceNameField.addEventListener('change', function() {
+            otherSourceContainer.classList.toggle('hidden', sourceNameField.value !== '9');
+        });
+
+    });
+</script>
+    
+{% endblock %}

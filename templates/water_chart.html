@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<body>
+    <!-- Main Content -->
+    <div class="container-fluid my-4">
+      <div class="row ">
+          <div class="col-8 mb-4 insights-panel">
+              <div id="source-water-graph"></div>    
+          </div>
+          <div class="col-4">
+            <div class="insights-panel">
+                <h3 class="insights-title">Water Consumption Insights</h3>
+                
+                <div class="insight" id="borewell">
+                    <span class="insight-title">Borewell:</span>
+                    <span class="insight-value">{{ borewell_volume }} KL</span>
+                </div>
+                <div class="insight" id="tanker">
+                    <span class="insight-title">Tanker:</span>
+                    <span class="insight-value">{{ tanker_volume }} KL</span>
+                </div>
+                <div class="insight" id="metro">
+                    <span class="insight-title">Metro:</span>
+                    <span class="insight-value">{{ metro_volume }} KL</span>
+                </div>
+                <div class="insight" id="rain">
+                    <span class="insight-title">Rain:</span>
+                    <span class="insight-value">{{ rain_volume }} KL</span>
+                </div>
+                <div class="insight" id="others">
+                    <span class="insight-title">Others:</span>
+                    <span class="insight-value">{{ others_volume }} KL</span>
+                </div>
+                <div class="insight" id="total-consumption">
+                  <span class="insight-title">Total Consumption:</span>
+                  <span class="insight-value">{{ total_input_water }} KL</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-8 mb-4 insights-panel">
+            <div id="fresh-water-graph"></div>  
+        </div>
+      </div>
+      <div class="text-center mt-5" style="position: relative;">
+        <a href="{% url 'rainwater_details' %}" class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+      </div>
+      <div class="text-center mt-5" style="position: relative;">
+        <a href="{% url 'flowchart' %}" class="btn btn-primary" style="position: absolute; bottom: 0; right: 0;">Generate Flowchart</a>
+      </div>
+    </div>
+    
+    <!-- Include Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script type="text/javascript">
+      var graphs = {{ graph_json|safe }};
+      var fresh_water_graphs = {{ fresh_water_details_input_reject_product_bar | safe}}
+      Plotly.newPlot('source-water-graph', graphs.data, graphs.layout);
+      Plotly.newPlot('fresh-water-graph', fresh_water_graphs.data, fresh_water_graphs.layout);
+    </script>
+</body>
+{% endblock %}

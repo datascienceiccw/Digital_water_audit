@@ -1,0 +1,81 @@
+{% load i18n %} {% load allauth %} {% comment %} {% block head_title %}
+  {% trans 'Sign In' %}
+{% endblock %} {% endcomment %}
+{% block content %}
+  <div class="container">
+    <div class="auth-box">
+      {% if process == 'connect' %}
+        <h2>{% blocktrans with provider.name as provider %}Connect {{ provider }}{% endblocktrans %}</h2>
+        <p>
+          {% blocktrans with provider.name as provider %}You are about to connect a new third-party account from {{ provider }}.{% endblocktrans %}
+        </p>
+      {% else %}
+        <h1>{% blocktrans with provider.name as provider %}Sign In Via {{ provider }}{% endblocktrans %}</h1>
+        <p>
+          {% blocktrans with provider.name as provider %}You are about to sign in using a third-party account from {{ provider }}.{% endblocktrans %}
+        </p>
+      {% endif %}
+
+      <form method="post" no_visible_fields="True">
+        {% csrf_token %}
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">{% trans 'Continue' %}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Helvetica', sans-serif;
+    }
+    
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    
+    .auth-header {
+      text-align: center;
+      margin-bottom: 20px;
+      margin-bottom: 5rem;
+    }
+    
+    .logo {
+      max-width: 200px;
+      margin-bottom: 10px;
+    }
+    
+    .auth-box {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    
+    h1,
+    h2 {
+      color: #007bff;
+    }
+    
+    .form-actions {
+      margin-top: 20px;
+    }
+    
+    .btn-primary {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 15px 22px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+  </style>
+{% endblock %}

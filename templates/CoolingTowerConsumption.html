@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h3 class="text-center text-3xl font-semibold text-blue-600 mb-8">Cooling Tower Consumption</h3>
+    
+    <form method="POST" action='' >
+        {% if details %}
+        <div class="text-center my-2 p-3" style="position: relative;">
+            <a href='{% url "delete_coolingtower_consumption" %}' class="btn btn-danger mb-4 mr-2" style="position: absolute; top: 0; right:0;">Reset</a>
+        </div>
+        {% endif %}
+        {% csrf_token %}
+        {% if details %}
+        <fieldset disabled="disabled" class="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-gray-200  form-container grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        {% else %}
+        <fieldset class="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-gray-200  form-container grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        {% endif %}
+            <div class="mb-6">
+                <label for="{{ form.coolingtower_type.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Cooling Tower Type:
+                </label>
+                {{ form.coolingtower_type }}
+                {% if form.coolingtower_type.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.coolingtower_type.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.freshwater_consumed.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Fresh Water Consumed (kl):
+                </label>
+                {{ form.freshwater_consumed }}
+                {% if form.freshwater_consumed.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.freshwater_consumed.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.treated_wastewater_consumed.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Treated Waste Water Consumed (kl):
+                </label>
+                {{ form.treated_wastewater_consumed }}
+                {% if form.treated_wastewater_consumed.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.treated_wastewater_consumed.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.blowdown_vol.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Volume of water blown down (kl):
+                </label>
+                {{ form.blowdown_vol }}
+                {% if form.blowdown_vol.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.blowdown_vol.errors.as_text }}</p>
+                {% endif %}
+            </div>
+        </fieldset>                     
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "calorifier_consumption" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+        </div>
+        {% if details %}
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "add_coolingtower" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+        </div>
+        {% else %}
+        <div class="text-center mt-5" style="position: relative;">
+            <button type="submit" class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</button>
+        </div>
+        {% endif %}    
+    </form>
+</div>
+
+
+{% endblock %}

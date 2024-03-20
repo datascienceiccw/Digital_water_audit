@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto bg-gray-100 p-3">
+    <div class="bg-white p-6 border rounded-lg shadow-lg">
+        <h3 class="text-center text-3xl text-blue-500 mb-4">Sources and Destinations</h3>
+        <p class="text-gray-600">
+            <strong>How to fill this form?</strong>
+        </p>
+        <p class="text-gray-600 mb-5">
+          For each selected freshwater treatment method and tank, mention the source and destination of water.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
+            <div class="card bg-white p-4 rounded-lg shadow">
+                <div class="card-body">
+                    <form method="POST" action="" class="relative">
+                        {% csrf_token %}
+                        <h3 class="text-blue-400 text-2xl text-center font-semibold mb-4">Add Sources and Destinations</h3>
+                        {% for destination in destinations %}
+                            <div class="mb-4 p-2">
+                                <h2 class="text-md text-red-900 mb-2 font-semibold">{{ destination }}</h2>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.source.id_for_label }}">{{ form.source.label }}</label>
+                                        {{ form.source }}
+                                        {% if form.source.errors %}
+                                            <span class="text-red-500 text-xs italic">{{ form.source.errors.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.destination.id_for_label }}">{{ form.destination.label }}</label>
+                                        {{ form.destination }}
+                                        {% if form.destination.errors %}
+                                            <span class="text-red-500 text-xs italic">{{ form.destination.errors.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-between mt-5">
+        <a href="{% url 'fresh_water_treatment_profile_details' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Previous</a>
+        <a href="{% url 'rainwater_details' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded">Next</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,226 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container my-4" style='position:relative'>
+        <h3 class="text-center text-2xl text-info mb-4">Basic Details Form</h3>
+        {% if details %}
+            <a href="{% url 'delete_basic_details' %}" class="btn btn-danger mb-4 mr-2" style="position: absolute; right: 0; top:0;">Reset</a>
+        {% endif %}
+
+        <form method="POST" action="">
+        {% csrf_token %}
+        {% if details %}
+            <fieldset disabled="disabled">
+        {% else %}
+            <fieldset>
+        {% endif %}
+            <div class='border rounded bg-light p-3'>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="{{ form.first_name.id_for_label }}">First Name:</label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <span class="text-danger custom-error">{{ form.first_name.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="{{ form.last_name.id_for_label }}">Last Name:</label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <span class="text-danger custom-error">{{ form.last_name.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            {{ form.designation.label_tag }}
+                            {{ form.designation }}
+                            {% if form.designation.errors %}
+                                <span class="text-danger custom-error">{{ form.designation.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="{{ form.contact_number.id_for_label }}">Contact Number:</label>
+                            {{ form.contact_number }}
+                            {% if form.contact_number.errors %}
+                                <span class="text-danger custom-error">{{ form.contact_number.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="{{ form.email_address.id_for_label }}">Email:</label>
+                            {{ form.email_address }}
+                            {% if form.email_address.errors %}
+                                <span class="text-danger custom-error">{{ form.email_address.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="{{ form.organization_name.id_for_label }}">Organisation Name:</label>
+                            {{ form.organization_name }}
+                            {% if form.organization_name.errors %}
+                                <span class="text-danger custom-error">{{ form.organization_name.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="{{ form.organization_web_address.id_for_label }}">Organisation Web Address:</label>
+                            {{ form.organization_web_address }}
+                            {% if form.organization_web_address.errors %}
+                                <span class="text-danger custom-error">{{ form.organization_web_address.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            {{ form.address.label_tag }}
+                            {{ form.address }}
+                            {% if form.address.errors %}
+                                <span class="text-danger custom-error">{{ form.address.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            {{ form.pin_code.label_tag }}
+                            {{ form.pin_code }}
+                            {% if form.pin_code.errors %}
+                                <span class="text-danger custom-error">{{ form.pin_code.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class='border rounded bg-light p-3 my-3'>
+                <h4 class="text-center text-2xl text-info mb-4">Organization Information</h4>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="{{ form.organization_type.id_for_label }}">Organisation Type:</label>
+                            {{ form.organization_type }}
+                            {% if form.organization_type.errors %}
+                                <span class="text-danger custom-error">{{ form.organization_type.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="{{ form.num_permanent_employees.id_for_label }}">Number of Permanent Employees:</label>
+                            {{ form.num_permanent_employees }}
+                            {% if form.num_permanent_employees.errors %}
+                                <span class="text-danger custom-error">{{ form.num_permanent_employees.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="{{ form.num_temporary_employees.id_for_label }}">Number of Temporary Employees:</label>
+                            {{ form.num_temporary_employees }}
+                            {% if form.num_temporary_employees.errors %}
+                                <span class="text-danger custom-error">{{ form.num_temporary_employees.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="row mb-3">
+                    
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="{{ form.num_rooms.id_for_label }}">Total Number of Rooms:</label>
+                            {{ form.num_rooms }}
+                            {% if form.num_rooms.errors %}
+                                <span class="text-danger custom-error">{{ form.num_rooms.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="{{ form.total_area.id_for_label }}">Total Area Occupied (sq.meters):</label>
+                            {{ form.total_area }}
+                            {% if form.total_area.errors %}
+                                <span class="text-danger custom-error">{{ form.total_area.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="{{ form.total_build_up_area.id_for_label }}">Total Built up Area (sq.meters):</label>
+                            {{ form.total_built_up_area }}
+                            {% if form.total_built_up_area.errors %}
+                                <span class="text-danger custom-error">{{ form.total_built_up_area.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="{{ form.total_green_area.id_for_label }}">Total Green Area (sq.meters):</label>
+                            {{ form.total_green_area }}
+                            {% if form.total_green_area.errors %}
+                                <span class="text-danger custom-error">{{ form.total_green_area.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="{{ form.total_air_conditioned_space_area.id_for_label }}">Total Air Conditioned Space Area (sq.meters):</label>
+                            {{ form.total_air_conditioned_space_area }}
+                            {% if form.total_air_conditioned_space_area.errors %}
+                                <span class="text-danger custom-error">{{ form.total_air_conditioned_space_area.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="{{ form.average_occupancy.id_for_label }}">Average Occupancy:</label>
+                            {{ form.average_occupancy }}
+                            {{ form.average_occupancy.help_text }}
+                            {% if form.average_occupancy.errors %}
+                                <span class="text-danger custom-error">{{ form.average_occupancy.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="{{ form.average_room_occupancy.id_for_label }}">Average number of people in a room:</label>
+                            {{ form.average_room_occupancy }}
+                            {{ form.average_room_occupancy.help_text }}
+                            {% if form.average_room_occupancy.errors %}
+                                <span class="text-danger custom-error">{{ form.average_room_occupancy.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "user_home" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+        </div>
+        {% if details %}
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "source_water_profile" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+        </div>
+        {% else %}
+       <div class="text-center mt-5" style="position: relative;">
+            <button type="submit" class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</button>
+        </div>
+        {% endif %}
+        </form>
+    </div>
+{% endblock %}

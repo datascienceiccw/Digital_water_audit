@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h3 class="text-center text-3xl font-semibold text-blue-600 mb-8">Waste Water Treatment Details</h3>
+    <form method="POST">
+        {% csrf_token %}
+        {% if details %}
+        <div class="text-center my-2 p-3" style="position: relative;">
+            <a href='{% url "delete_wastewater_treatment" %}' class="btn btn-danger mb-4 mr-2" style="position: absolute; top: 0; right:0;">Reset</a>
+        </div>
+        {% endif %}
+        <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-gray-200 form-container mt-6">
+            <div class="flex items-center justify-center">
+                <div class="p-8 max-w-md w-full"> 
+                    <h2 class="text-center text-xl font-semibold mb-4">Select Waste Water Treatment Method</h2>           
+                    <div class="mb-6">
+                        <label for="{{ form.treatment_method.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2 text-center">
+                            Select:
+                        </label>
+                        {{ form.treatment_method }}
+                        {% if form.treatment_method.errors %}
+                        <p class="text-red-600 text-xs italic mt-1">{{ form.treatment_method.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>  
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "other_consumption" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+        </div>
+        {% if details and details.treatment_method == 'STP' %}
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "wastewater_treatment_STP" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+        </div>
+        {% elif details and details.treatment_method == 'ETP' %}
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "wastewater_treatment_ETP" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+        </div>
+        {% elif details and details.treatment_method == 'Others' %}
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "wastewater_treatment_Others" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+        </div>
+        {% else %}
+        <div class="text-center mt-5" style="position: relative;">
+            <button type="submit" class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</button>
+        </div>
+        {% endif %}    
+    </form>
+</div>    
+{% endblock %}

@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h3 class="text-center text-3xl font-semibold text-blue-600 mb-8">Consumption from Irrigation</h3>
+    
+    <form method="POST" action='' >
+        {% if details %}
+        <div class="text-center my-2 p-3" style="position: relative;">
+            <a href='{% url "delete_irrigation_consumption" %}' class="btn btn-danger mb-4 mr-2" style="position: absolute; top: 0; right:0;">Reset</a>
+        </div>
+        {% endif %}
+        {% csrf_token %}
+        {% if details %}
+        <fieldset disabled="disabled" class="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-gray-200  form-container grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        {% else %}
+        <fieldset class="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-gray-200  form-container grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        {% endif %}
+            <div class="mb-6">
+                <label for="{{ form.daily_water_consumption.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Daily Water Consumption:
+                </label>
+                {{ form.daily_water_consumption }}
+                {% if form.daily_water_consumption.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.daily_water_consumption.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            {% if details.other_source_name %}
+            <div class="mb-6">
+                <label for="{{ form.other_source_name.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Water Source:
+                </label>
+                {{ form.other_source_name }}
+                {% if form.other_source_name.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.other_source_name.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="mb-6">
+                <label for="{{ form.irrigation_source.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Water Source:
+                </label>
+                {{ form.irrigation_source }}
+                {% if form.irrigation_source.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.irrigation_source.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            {% endif %}
+            <div class="mb-6 other-source hidden">
+                <label for="{{ form.other_source_name.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Specify other source:
+                </label>
+                {{ form.other_source_name }}
+                {% if form.other_source_name.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.other_source_name.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.amount_consumed.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Quantity of Water Consumed (in litres):
+                </label>
+                {{ form.amount_consumed }}
+                {% if form.amount_consumed.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.amount_consumed.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.lawn_area.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Lawn Area:
+                </label>
+                {{ form.lawn_area }}
+                {% if form.lawn_area.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.lawn_area.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            {% if details.other_irrigation_frequency %}
+            <div class="mb-6">
+                <label for="{{ form.other_irrigation_frequency.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Frequency of Irrigation:
+                </label>
+                {{ form.other_irrigation_frequency }}
+                {% if form.other_irrigation_frequency.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.other_irrigation_frequency.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="mb-6">
+                <label for="{{ form.irrigation_frequency.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Frequency of Irrigation:
+                </label>
+                {{ form.irrigation_frequency }}
+                {% if form.irrigation_frequency.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.irrigation_frequency.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            {% endif %}
+            <div class="mb-6 other-irrigation-frequency hidden">
+                <label for="{{ form.other_irrigation_frequency.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Specify other frequency:
+                </label>
+                {{ form.other_irrigation_frequency }}
+                {% if form.other_irrigation_frequency.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.other_irrigation_frequency.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            {% if details.other_irrigation_technique %}
+            <div class="mb-6">
+                <label for="{{ form.other_irrigation_technique.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Irrigation Technique:
+                </label>
+                {{ form.other_irrigation_technique }}
+                {% if form.other_irrigation_technique.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.other_irrigation_technique.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="mb-6">
+                <label for="{{ form.irrigation_technique.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Irrigation Technique:
+                </label>
+                {{ form.irrigation_technique }}
+                {% if form.irrigation_technique.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.irrigation_technique.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            {% endif %}
+            <div class="mb-6 other-irrigation-technique hidden">
+                <label for="{{ form.other_irrigation_technique.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Specify other technique:
+                </label>
+                {{ form.other_irrigation_technique }}
+                {% if form.other_irrigation_technique.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.other_irrigation_technique.errors.as_text }}</p>
+                {% endif %}
+            </div>
+        </fieldset>                     
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "coolingtower_consumption" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+        </div>
+        {% if details %}
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "other_consumption" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+        </div>
+        {% else %}
+        <div class="text-center mt-5" style="position: relative;">
+            <button type="submit" class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</button>
+        </div>
+        {% endif %}    
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sourceNameField = document.querySelector('#{{ form.irrigation_source.id_for_label }}');
+        console.log(sourceNameField.value)
+        const otherSourceContainer = document.querySelector('.other-source');
+    
+        sourceNameField.addEventListener('change', function() {
+            otherSourceContainer.classList.toggle('hidden', sourceNameField.value !== '9');
+        });
+
+        const irrigationFrequencyField = document.querySelector('#{{ form.irrigation_frequency.id_for_label }}');
+        const otherFrequencyContainer = document.querySelector('.other-irrigation-frequency');
+    
+        irrigationFrequencyField.addEventListener('change', function() {
+            otherFrequencyContainer.classList.toggle('hidden', irrigationFrequencyField.value !== 'Others');
+        });
+
+        const irrigationTechniqueField = document.querySelector('#{{ form.irrigation_technique.id_for_label }}');
+        const otherTechniqueContainer = document.querySelector('.other-irrigation-technique');
+    
+        irrigationTechniqueField.addEventListener('change', function() {
+            otherTechniqueContainer.classList.toggle('hidden', irrigationTechniqueField.value !== 'Others');
+        });
+
+    });
+</script>
+
+
+{% endblock %}

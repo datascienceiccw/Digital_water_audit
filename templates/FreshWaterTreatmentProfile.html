@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% comment %} <div class="container mt-5">
+    <form method="POST" action="">
+        {% csrf_token %}
+        <h3 class="text-center text-info mb-4">Water Treatment Profile</h2>
+        <p class="text-secondary">
+            <strong>How to fill this form?</strong>         
+        </p>
+
+        <p class="text-secondary mb-5">
+            On the left-hand side, check a box if you use that treatment method and on the right-hand side enter the sequence number in which you use this method.
+            For example, if you first use psf/mgf, then irf, and then uf, then check these boxes and enter the numbers 1, 2, and 3 for psf/mgf, irf, and uf respectively.
+        </p>    
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="form-group">
+                    {{ form.psf_mgf.label_tag }}
+                    {{ form.psf_mgf }}
+                    {% if form.psf_mgf.errors %}
+                        <span class="text-danger custom-error">{{ form.psf_mgf.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form.psf_mgf_sequence_number.label_tag }}
+                    {{ form.psf_mgf_sequence_number }}
+                    {% if form.psf_mgf_sequence_number.errors %}
+                        <span class="text-danger custom-error">{{ form.psf_mgf_sequence_number.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="form-group">
+                    {{ form.irf.label_tag }}
+                    {{ form.irf }}
+                    {% if form.irf.errors %}
+                        <span class="text-danger custom-error">{{ form.irf.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form.irf_sequence_number.label_tag }}
+                    {{ form.irf_sequence_number }}
+                    {% if form.irf_sequence_number.errors %}
+                        <span class="text-danger custom-error">{{ form.irf_sequence_number.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="form-group">
+                    {{ form.acf.label_tag }}
+                    {{ form.acf }}
+                    {% if form.acf.errors %}
+                        <span class="text-danger custom-error">{{ form.acf.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form.acf_sequence_number.label_tag }}
+                    {{ form.acf_sequence_number }}
+                    {% if form.acf_sequence_number.errors %}
+                        <span class="text-danger custom-error">{{ form.acf_sequence_number.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="form-group">
+                    {{ form.softener.label_tag }}
+                    {{ form.softener }}
+                    {% if form.softener.errors %}
+                        <span class="text-danger custom-error">{{ form.softener.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form.softener_sequence_number.label_tag }}
+                    {{ form.softener_sequence_number }}
+                    {% if form.softener_sequence_number.errors %}
+                        <span class="text-danger custom-error">{{ form.softener_sequence_number.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="form-group">
+                    {{ form.uf.label_tag }}
+                    {{ form.uf }}
+                    {% if form.uf.errors %}
+                        <span class="text-danger custom-error">{{ form.uf.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form.uf_sequence_number.label_tag }}
+                    {{ form.uf_sequence_number }}
+                    {% if form.uf_sequence_number.errors %}
+                        <span class="text-danger custom-error">{{ form.uf_sequence_number.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="form-group">
+                    {{ form.ro_plant.label_tag }}
+                    {{ form.ro_plant }}
+                    {% if form.ro_plant.errors %}
+                        <span class="text-danger custom-error">{{ form.ro_plant.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form.ro_plant_sequence_number.label_tag }}
+                    {{ form.ro_plant_sequence_number }}
+                    {% if form.ro_plant_sequence_number.errors %}
+                        <span class="text-danger custom-error">{{ form.ro_plant_sequence_number.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="form-group">
+                    {{ form.others.label_tag }}
+                    {{ form.others }}
+                    {% if form.others.errors %}
+                        <span class="text-danger custom-error">{{ form.others.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form.others_sequence_number.label_tag }}
+                    {{ form.others_sequence_number }}
+                    {% if form.others_sequence_number.errors %}
+                        <span class="text-danger custom-error">{{ form.others_sequence_number.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-5" style="position: relative;">
+            <button type="submit" class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</button>
+        </div>
+    </form>
+</div> {% endcomment %}
+<div class="container-fluid bg-light p-3 my-3">
+<div class="container bg-light p-3 my-5 border rounded bg-gradient">
+    <h3 class="text-center text-2xl text-info mb-4">Fresh Water Treatment Methods</h2>
+        <p class="text-secondary">
+            <strong>How to fill this form?</strong>         
+        </p>
+        <p class="text-secondary mb-5">
+            On the left-hand side, update the different methods with their sequence numbers.
+            Right hand side can be used to view the existing treatment methods.
+        </p>    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" action="" style="position: relative;">
+                        {% csrf_token %}
+                        <h3 class="card-title mb-4">Add Treatment Methods</h3>
+                        <div class="mb-3">
+                            {{ form.name.label_tag }}
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <span class="text-danger custom-error">{{ form.name.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body ">
+                    <div style="position:relative">
+                    <h3 class="card-title mb-4">Existing Treatment Methods</h3>
+                    {% if all_treatment_methods|length %}
+                    <a href="{% url 'delete_fresh_water_treatment_profile' %}" class="btn btn-danger mb-4" style="position: absolute; right: 0; top:0;">Reset</a>
+                    {% endif %}
+                    </div>
+                    {% if all_treatment_methods|length %}
+                        {% comment %} <p class="text-secondary mb-4">Click on the treatment method to edit it.</p> {% endcomment %}
+                        <ul class="list-group">
+                            {% for treatment_method in all_treatment_methods %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>{{ treatment_method.name }}</span>
+                                    <span class="badge bg-primary">{{ treatment_method.sequence_number }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-secondary mb-4">No treatment methods added yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+</div>
+    <div class="text-center mt-5" style="position: relative;">
+        <a href="{% url 'tanks_capacities' %}" class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+    </div>
+    <div class="text-center mt-5" style="position: relative;">
+        <a href="{% url 'fresh_water_treatment_profile_details' %}" class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+    </div> 
+
+</div>
+{% endblock %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

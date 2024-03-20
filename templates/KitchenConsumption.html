@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8" >
+    <h3 class="text-center text-3xl font-semibold text-blue-600 mb-8">Kitchen Consumption Details</h3>
+    <p class="text-secondary">
+        <strong>How to fill this form?</strong>         
+    </p>
+    <p class="text-secondary mb-5">
+        On the left-hand side, update all the water consumption details in kitchens.
+        Right hand side can be used to view the water consumption details of existing kitchens.
+    </p> 
+    <div class="flex flex-wrap justify-between pt-5" style="position: relative;">
+        {% csrf_token %}
+        {% if all_details|length %}
+            <a href='{% url "delete_kitchen_consumption" %}' class="btn btn-danger m-2" style="position: absolute; top: 0; right:0;">Delete All Kitchens</a>
+        {% endif %}
+            
+        <div class="w-full md:w-1/2 lg:w-1/2 pr-0 md:pr-4 mb-8">
+            <form id="input-form" method="POST" action="" class="form-container1 max-w-4xl bg-white p-8 rounded-lg shadow-xl border border-gray-200">
+                {% csrf_token %}
+                <div id="kitchen-form" class='form-container'>
+                    <div class="mb-6">
+                        <label for="{{ form.kitchen_type.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Kitchen Type:
+                        </label>
+                        {{ form.kitchen_type }}
+                        {% if form.kitchen_type.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.kitchen_type.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.average_customers_per_day.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Average customers per day:
+                        </label>
+                        {{ form.average_customers_per_day }}
+                        {% if form.average_customers_per_day.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.average_customers_per_day.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.volume_consumed.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Total Water Consumed Per Day (kl):
+                        </label>
+                        {{ form.volume_consumed }}
+                        {% if form.volume_consumed.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.volume_consumed.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.cleaning.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Water Consumed in Cleaning Utensils Per Day (kl):
+                        </label>
+                        {{ form.cleaning }}
+                        {% if form.cleaning.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.volume_cleaning.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.reject_volume.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Reject Volume Per Day (kl):
+                        </label>
+                        {{ form.reject_volume }}
+                        {% if form.reject_volume.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.reject_volume.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.reject_to.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Reject To:
+                        </label>
+                        {{ form.reject_to }}
+                        {% if form.reject_to.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.reject_to.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.dishwasher_loads.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Total Dishwasher Cycles Per Day:
+                        </label>
+                        {{ form.dishwasher_loads }}
+                        {% if form.dishwasher_loads %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.dishwasher_loads.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.consumption_per_load.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Consumption Per Cycle (kl):
+                        </label>
+                        {{ form.consumption_per_load }}
+                        {% if form.consumption_per_load %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.consumption_per_load.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.handwash_tap_flowrate.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Flowrate of handwash taps (litres per minute @2 bar):
+                        </label>
+                        {{ form.handwash_tap_flowrate }}
+                        {% if form.handwash_tap_flowrate %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.handwash_tap_flowrate.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.handwash_tap_runtime.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Average Runtime of handwash taps (hours):
+                        </label>
+                        {{ form.handwash_tap_runtime }}
+                        {% if form.handwash_tap_runtime %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.handwash_tap_runtime.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.cleaning_tap_flowrate.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Flowrate of cleaning taps (litres per minute @2 bar):
+                        </label>
+                        {{ form.cleaning_tap_flowrate }}
+                        {% if form.cleaning_tap_flowrate %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.cleaning_tap_flowrate.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.cleaning_tap_runtime.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Average Runtime of cleaning taps (hours):
+                        </label>
+                        {{ form.cleaning_tap_runtime }}
+                        {% if form.cleaning_tap_runtime %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.cleaning_tap_runtime.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>   
+                </fieldset>
+                <button type="submit" class="btn btn-primary mb-4" id="add-restaurant">Add Kitchen</button>
+         
+            </form>
+        </div>
+        <div class="w-full md:w-1/2 lg:w-1/2 pl-0 md:pl-4 mb-8">
+            <div id="details-display"
+                class="max-w-full md:max-w-4xl bg-white p-8 rounded-lg shadow-xl border border-gray-200">
+                <!-- Display details here -->
+                {% if all_details|length %}
+                <h3 class="text-center text-3xl font-semibold mb-4 text-blue-400">Kitchens</h3>
+                {% for detail in all_details %}
+                            <div class='border rounded p-2 m-3' style="position: relative;"> 
+                                <a href='{% url "delete_kitchen" detail.id  %}' class="btn btn-danger m-2" style="position: absolute; top: 0; right:0;">Remove</a>
+                                <div class="grid grid-cols-2 gap-4 pt-10">
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Kitchen Type:</h4>
+                                            <p id="kitchen_type" class="text-gray-800">{{ detail.get_kitchen_type_display }}</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Average number of users per day:</h4>
+                                            <p id="kitchen_type" class="text-gray-800">{{ detail.average_customers_per_day }}</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Total Volume Consumed Per Day (kl):</h4>
+                                            <p id="volume-consumed" class="text-gray-800">{{ detail.volume_consumed }}</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Water Consumed in Cleaning Per Day (kl):</h4>
+                                            <p id="cleaning" class="text-gray-800">{{ detail.cleaning }} kl</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Reject Volume (kl):</h4>
+                                            <p id="cleaning" class="text-gray-800">{{ detail.reject_volume }} kl</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Reject To:</h4>
+                                            <p id="reject-to" class="text-gray-800">{{ detail.get_reject_to_display }}</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Number of Dishwasher Cycles Per Day:</h4>
+                                            <p id="cleaning" class="text-gray-800">{{ detail.dishwasher_loads }} kl</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Water Consumption Per Load (litres):</h4>
+                                            <p id="cleaning" class="text-gray-800">{{ detail.consumption_per_load }} kl</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Handwash Tap Flowrate (litres per min @ 2 bar):</h4>
+                                            <p id="cleaning" class="text-gray-800">{{ detail.handwash_tap_flowrate }} kl</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Handwash Tap Runtime (hours):</h4>
+                                            <p id="cleaning" class="text-gray-800">{{ detail.handwash_tap_runtime }} kl</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Cleaning Tap Flowrate (litres per min @ 2 bar):</h4>
+                                            <p id="cleaning" class="text-gray-800">{{ detail.cleaning_tap_flowrate }} kl</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Cleaning Tap Runtime (hours):</h4>
+                                            <p id="cleaning" class="text-gray-800">{{ detail.cleaning_tap_runtime }} kl</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                    {% else %}
+                        <p class="text-secondary mb-4">No details are added yet.</p>
+                    {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5" style="position: relative;">
+        <a href='{% url "drinking_water_source" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+    </div>
+    {% if all_details|length %}
+    <div class="text-center mt-5" style="position: relative;">
+        <a href='{% url "restaurant_consumption" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+    </div>
+    {% endif %}
+</div>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sourceNameField = document.querySelector('#{{ form.source_water.id_for_label }}');
+        const otherSourceContainer = document.querySelector('.other-source');
+        const form = document.querySelector('.form-container1');
+    
+        sourceNameField.addEventListener('change', function() {
+            otherSourceContainer.classList.toggle('hidden', sourceNameField.value !== '9');
+        });
+
+    });
+</script>
+    
+{% endblock %}

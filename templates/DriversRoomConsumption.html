@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h3 class="text-center text-3xl font-semibold text-blue-600 mb-8">Drivers Room Consumption Details</h3>
+    <p class="text-secondary">
+        <strong>How to fill this form?</strong>
+    </p>
+    <p class="text-secondary mb-5">
+        Fill all the employee room details in the form.
+        Scroll down to view the water consumption details of existing employee rooms.
+    </p>
+    <div class="flex flex-wrap justify-between pt-5" style="position: relative;">
+        {% csrf_token %}
+        {% if details %}
+            <a href='{% url "delete_driversroom_consumption" %}' class="btn btn-danger m-2" style="position: absolute; top: 0; right:0;">Delete All Drivers Rooms</a>
+        {% endif %}
+
+        <div class="w-full">
+            <form id="input-form" method="POST" action="" class="form-container1 max-w-full bg-white p-8 rounded-lg shadow-xl border border-gray-200">
+                {% csrf_token %}
+                <div id="employeeroom-form" class='form-container grid grid-cols-1 md:grid-cols-3 gap-4'>
+                    <div class="mb-6">
+                        <label for="{{ form.domestic_flushing_source.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Domestic Flushing Source:
+                        </label>
+                        {{ form.domestic_flushing_source }}
+                        {% if form.domestic_flushing_source.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.domestic_flushing_source.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.toilet_flushing_source.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Toilet Flushing Source:
+                        </label>
+                        {{ form.toilet_flushing_source }}
+                        {% if form.toilet_flushing_source.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.toilet_flushing_source.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.commode_types.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Types of Commodes:
+                        </label>
+                        {{ form.commode_types }}
+                        {% if form.commode_types.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.commode_types.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.water_consumption.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Specific Water Consumption Per Room (kl):
+                        </label>
+                        {{ form.water_consumption }}
+                        {% if form.water_consumption.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.water_consumption.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.washbasin_tap_flowrate.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Washbasin Tap Flowrate (litres per min @ 2 bar):
+                        </label>
+                        {{ form.washbasin_tap_flowrate }}
+                        {% if form.washbasin_tap_flowrate.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.washbasin_tap_flowrate.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.toilet_health_faucet_flowrate.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Toilet Health Faucet Flowrate (litres per min @ 2 bar):
+                        </label>
+                        {{ form.toilet_health_faucet_flowrate }}
+                        {% if form.toilet_health_faucet_flowrate.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.toilet_health_faucet_flowrate.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>  
+                <button type="submit" class="btn btn-primary mb-4" style="display: block; margin: 0 auto;">Add Drivers Room</button>
+            </form>
+        </div>
+        <div class="w-full mt-8">
+            <div id="details-display" class="max-w-full bg-white p-8 rounded-lg shadow-xl border border-gray-200">
+
+                <!-- Display details here -->
+                {% if all_details|length %}
+                        {% comment %} <p class="text-secondary mb-4">Click on the treatment method to edit it.</p> {% endcomment %}
+                        <h3 class="text-center text-3xl font-semibold mb-4 text-blue-400">Drivers Rooms</h3>
+                            {% for detail in all_details %}
+                            <div class='border rounded p-2 m-3' style="position: relative;"> 
+                                <a href='{% url "delete_driversroom" detail.id  %}' class="btn btn-danger m-2" style="position: absolute; top: 0; right:0;">Remove</a>
+                        
+                                <div class="grid grid-cols-2 gap-4 p-4">
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Domestic Flushing Source:</h4>
+                                            <p id="restroom-number" class="text-gray-800">{{ detail.get_domestic_flushing_source_display }}</p>
+                                        </div>
+                                    </div> 
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Toilet Flushing Source:</h4>
+                                            <p id="restroom-number" class="text-gray-800">{{ detail.get_toilet_flushing_source_display }}</p>
+                                        </div>
+                                    </div> 
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Specific Water Consumption Per Room (kl):</h4>
+                                            <p id="restroom-number" class="text-gray-800">{{ detail.water_consumption }}</p>
+                                        </div>
+                                    </div> 
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Commode Types:</h4>
+                                            <p id="restroom-number" class="text-gray-800">{{ detail.get_commode_type_display }}</p>
+                                        </div>
+                                    </div> 
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Washbasin Tap Flowrate (litres per min @ 2 bar):</h4>
+                                            <p id="restroom-number" class="text-gray-800">{{ detail.washbasin_tap_flowrate }}</p>
+                                        </div>
+                                    </div> 
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Toilet Health Faucet Flowrate (litres per min @ 2 bar):</h4>
+                                            <p id="restroom-number" class="text-gray-800">{{ detail.toilet_health_faucet_flowrate }}</p>
+                                        </div>
+                                    </div> 
+                                </div>
+                                
+                            </div>
+                            {% endfor %}
+                    {% else %}
+                        <p class="text-secondary mb-4">No details are added yet.</p>
+                    {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5" style="position: relative;">
+        <a href='{% url "employeeroom_consumption" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+    </div>
+    {% if all_details|length %}
+    <div class="text-center mt-5" style="position: relative;">
+        <a href='{% url "swimmingpool_consumption" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+    </div>
+    {% else %}
+    <div class="text-center mt-5" style="position: relative;">
+        <button class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;" disabled>Next</button>
+    </div>
+    {% endif %}
+</div>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sourceNameField = document.querySelector('#{{ form.employee_room_source.id_for_label }}');
+        const otherSourceContainer = document.querySelector('.other-source');
+        const form = document.querySelector('.form-container1');
+    
+        sourceNameField.addEventListener('change', function() {
+            otherSourceContainer.classList.toggle('hidden', sourceNameField.value !== '9');
+        });
+
+    });
+</script>
+
+{% endblock %}

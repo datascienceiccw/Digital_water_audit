@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load mermaid %}
+{% block content %}
+
+<div id="mermaid-loading" style="text-align:center; padding:20px;">
+  <div class="loader"></div>
+</div>
+
+
+<div class="container mt-4 mb-2">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="content-block mb-3 mermaid-responsive-container hidden" style="background-color: gray; border: 1px solid #ddd; padding: 20px">
+        <h2 class="text-center text-white mb-4" style="font-size: 24px; margin-bottom: 20px">Water Flow Flowchart</h2>
+        {% mermaid mermaid_code 'dark' %}
+      </div>
+    </div>
+  </div>
+  <div class="text-center mt-5" style="position: relative">
+    <a href="{% url 'source_water_pie_chart' %}" class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0">Back</a>
+    <a href="{% url 'drinking_water_source' %}" class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0">Next</a>
+  </div>
+</div>
+
+<style>
+.mermaid-responsive-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.mermaid svg {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+}
+
+.hidden {
+    display: none;
+}
+
+.loader {
+  border: 5px solid #f3f3f3; /* Light grey */
+  border-top: 5px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    mermaid.initialize({
+      theme: 'dark',
+      securityLevel: 'loose',
+      flowchart: {
+        curve: 'stepAfter',
+        htmlLabels: true,
+        useMaxWidth: false
+      },
+      themeVariables: {
+        lineColor: '#F8B229',
+        textColor: 'white',
+        fontSize: '2rem', 
+        noteTextColor: '#F8B229'
+      },
+      startOnLoad: true
+    });
+
+    mermaid.init(undefined, '.mermaid');
+
+    var loadingDiv = document.getElementById('mermaid-loading');
+    var mermaidContainer = document.querySelector('.mermaid-responsive-container');
+    
+    // Once Mermaid is initialized, hide the loading indicator and show the container
+    mermaidContainer.classList.remove('hidden');
+    if (loadingDiv) {
+      loadingDiv.style.display = 'none';
+    }
+  });
+</script>
+
+{% endblock %}

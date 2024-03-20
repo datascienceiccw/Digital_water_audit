@@ -1,0 +1,16 @@
+env
+wat/__pycache__
+waterflow/__pycache__
+wat/.env
+.DS_Store
+dummy_templates
+client_secret_989498398569-u8ubojkg4ejr8lha00uu5lfu267497k3.apps.googleusercontent.com.json
+*.sqlite3
+waterflow/migrations
+waterflow/migrations/__pycache__
+form_codes.py
+model_Codes.py
+model_Codes.py
+templates/chennai_rainfall_map.html
+templates/ground_water_map.html
+

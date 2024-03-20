@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid bg-light p-3 my-3">
+  <h3 class="text-center text-2xl text-info my-4">Fresh Water Treatment Details</h3>
+    <form method="POST" action="">
+        {% csrf_token %}
+        <div class="row">
+            {% for profile, data in forms.items %}
+                <div class="col-md-6">
+                    <div class="container bg-light p-4 my-3 border rounded bg-gradient" style='position:relative'>
+                        <button type="submit" name="reset" value="{{ profile.id }}" class="btn btn-danger m-2" style="position: absolute; right: 0; top:0;">Reset</button>
+                        <h4 class="text-center text-primary mb-4">{{ profile.name }}</h4>
+                        {% if data.details %}
+                            <fieldset disabled="disabled">
+                        {% endif %}
+                              {{ data.form.as_p }}
+                            </fieldset>
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary">Save Details for {{ profile.name }}</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- If you need to insert a break after every two profiles -->
+                {% if forloop.counter|divisibleby:2 and not forloop.last %}
+                    </div><div class="row">
+                {% endif %}
+            {% endfor %}
+        </div>
+    </form>
+
+  <div class="text-center mt-5" style="position: relative;">
+      <a href='{% url "fresh_water_treatment_profile" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+  </div>
+  <div class="text-center mt-5" style="position: relative;">
+      <a href='{% url "source_water_flow" %}' class="btn btn-primary px-5" 
+         style="position: absolute; bottom: 0; right: 0;">
+         Next
+      </a>
+</div>
+</div>
+{% endblock %}

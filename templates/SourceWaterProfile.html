@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid bg-light p-3 my-3">
+<div class="container bg-light p-3 my-5 border rounded bg-gradient">
+    <h3 class="text-center text-2xl text-info mb-4">Fresh Water Sources</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" action="" style="position: relative;">
+                        {% csrf_token %}
+                        <h3 class="card-title mb-4">Add Sources</h3>
+                        <div class="form-group mb-3">
+                            {{ form.source_name.label_tag }}
+                            {{ form.source_name }}
+                            {% if form.source_name.errors %}
+                                <div class="text-danger">{{ form.source_name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group mb-3">
+                            {{ form.source_daily_consumption.label_tag }}
+                            {{ form.source_daily_consumption }}
+                            {% if form.source_daily_consumption.errors %}
+                                <div class="text-danger">{{ form.source_daily_consumption.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group mb-3">
+                            {{ form.source_water_cost.label_tag }}
+                            {{ form.source_water_cost }}
+                            {% if form.source_water_cost.errors %}
+                                <div class="text-danger">{{ form.source_water_cost.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body ">
+                    <div style="position:relative">
+                    <h3 class="card-title mb-4">Existing Water Sources</h3>
+                    {% if all_sources|length %}
+                    <a href="{% url 'delete_source_water_profile' %}" class="btn btn-danger mb-4" style="position: absolute; right: 0; top:0;">Reset</a>
+                    {% endif %}
+                    </div>
+                    {% if all_sources|length %}
+                        {% comment %} <p class="text-secondary mb-4">Click on the treatment method to edit it.</p> {% endcomment %}
+                        <ul class="list-group">
+                            {% for source in all_sources %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>{{ source.get_source_name_display }}</span>
+                                    <span class="bg-secondary text-white p-2 border rounded">{{ source.source_daily_consumption }} kl &nbsp | &nbsp {{ source.source_water_cost }} ₹</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-secondary mb-4">No Sources added Yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+</div>
+    <div class="text-center mt-5" style="position: relative;">
+        <a href="{% url 'basic_details' %}" class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+    </div>
+    <div class="text-center mt-5" style="position: relative;">
+        <a href="{% url 'tanks_capacities' %}" class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+    </div> 
+
+</div>
+{% endblock %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

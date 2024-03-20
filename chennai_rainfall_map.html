@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>pydeck</title>
+        <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.13.0/mapbox-gl.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" />
+    <script src='https://cdn.jsdelivr.net/npm/@deck.gl/jupyter-widget@~8.8.*/dist/index.js'></script>
+    <style>
+    body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#deck-container {
+  width: 100vw;
+  height: 100vh;
+}
+
+#deck-container canvas {
+  z-index: 1;
+  background: none;
+}
+    </style>
+  </head>
+  <body>
+    <div id="deck-container">
+    </div>
+  </body>
+  <script>
+    const container = document.getElementById('deck-container');
+    const jsonInput = {
+  "initialViewState": {
+    "latitude": 13.0827,
+    "longitude": 80.2707,
+    "pitch": 50,
+    "zoom": 11
+  },
+  "layers": [
+    {
+      "@@type": "ColumnLayer",
+      "autoHighlight": true,
+      "data": [
+        {
+          "Average Rainfall": 15.38508423326132,
+          "Latitude": 13.0559779,
+          "Longitude": 80.2426006,
+          "Station": "Chennai nungambakkam"
+        },
+        {
+          "Average Rainfall": 17.27481296758109,
+          "Latitude": 12.9174426,
+          "Longitude": 80.2164901823085,
+          "Station": "Sholinganallur"
+        },
+        {
+          "Average Rainfall": 17.3165057915058,
+          "Latitude": 13.1117345,
+          "Longitude": 80.2980722,
+          "Station": "Chennai port trust"
+        },
+        {
+          "Average Rainfall": 18.16466334164591,
+          "Latitude": 13.02296775,
+          "Longitude": 80.2523105997666,
+          "Station": "MYLAPORE-TRIPLICANE TALUK"
+        },
+        {
+          "Average Rainfall": 20.774436256448077,
+          "Latitude": 13.040288,
+          "Longitude": 80.2791141,
+          "Station": "DGP Office"
+        },
+        {
+          "Average Rainfall": 18.373587628866048,
+          "Latitude": 13.0083174,
+          "Longitude": 80.2334438,
+          "Station": "Anna university"
+        },
+        {
+          "Average Rainfall": 16.059163027656464,
+          "Latitude": 13.096423,
+          "Longitude": 80.3036230417537,
+          "Station": "Chennai AP"
+        },
+        {
+          "Average Rainfall": 21.79101307189542,
+          "Latitude": 13.01407,
+          "Longitude": 80.2091208,
+          "Station": "Ambathur"
+        },
+        {
+          "Average Rainfall": 18.576248131539632,
+          "Latitude": 13.07296725,
+          "Longitude": 80.2330386466292,
+          "Station": "Pachaiyappa college"
+        },
+        {
+          "Average Rainfall": 16.440346715328477,
+          "Latitude": 13.07955365,
+          "Longitude": 80.2659031251154,
+          "Station": "Govt. arts college"
+        },
+        {
+          "Average Rainfall": 19.02789115646258,
+          "Latitude": 13.1068229999999,
+          "Longitude": 80.2452704725628,
+          "Station": "Purasawalkam - Perambur"
+        },
+        {
+          "Average Rainfall": 19.10158102766798,
+          "Latitude": 13.0364268,
+          "Longitude": 80.2017334,
+          "Station": "Gov hr sec school MGR Nagar"
+        },
+        {
+          "Average Rainfall": 20.854299754299742,
+          "Latitude": 13.1277669,
+          "Longitude": 80.2895845,
+          "Station": "CD Hospital Tondiarpet"
+        },
+        {
+          "Average Rainfall": 20.380090497737566,
+          "Latitude": 13.0959177,
+          "Longitude": 80.2922667837571,
+          "Station": "Chennai collectorate building"
+        },
+        {
+          "Average Rainfall": 23.444755244755232,
+          "Latitude": 13.1121242,
+          "Longitude": 80.245022,
+          "Station": "Perambur Corporation park"
+        },
+        {
+          "Average Rainfall": 18.518749999999997,
+          "Latitude": 13.00282155,
+          "Longitude": 80.1719186022288,
+          "Station": "Alandur"
+        },
+        {
+          "Average Rainfall": 17.729461538461543,
+          "Latitude": 13.1042898,
+          "Longitude": 80.293612527608,
+          "Station": "Zone 05 Royapuram"
+        },
+        {
+          "Average Rainfall": 17.140909090909084,
+          "Latitude": 13.10461355,
+          "Longitude": 80.2744512903839,
+          "Station": "Zone 05 GCC"
+        },
+        {
+          "Average Rainfall": 21.691176470588236,
+          "Latitude": 13.0443237,
+          "Longitude": 80.2498455,
+          "Station": "Zone 09 Teynampet"
+        },
+        {
+          "Average Rainfall": 18.64869230769232,
+          "Latitude": 13.1277669,
+          "Longitude": 80.2895845,
+          "Station": "Zone 04 Tondiarpet"
+        },
+        {
+          "Average Rainfall": 19.709420289855075,
+          "Latitude": 13.1241127,
+          "Longitude": 80.2046276,
+          "Station": "Zone 06 D65 Kolathur"
+        },
+        {
+          "Average Rainfall": 22.565413533834583,
+          "Latitude": 13.0872004,
+          "Longitude": 80.2164421,
+          "Station": "Zone 06 T.V.K Nagar"
+        },
+        {
+          "Average Rainfall": 19.53687943262411,
+          "Latitude": 13.0516624,
+          "Longitude": 80.2237773,
+          "Station": "Zone 08 Malar colony"
+        },
+        {
+          "Average Rainfall": 25.077343750000004,
+          "Latitude": 13.049207,
+          "Longitude": 80.2242829,
+          "Station": "Zone 10 Kodambakkam"
+        },
+        {
+          "Average Rainfall": 20.776978417266175,
+          "Latitude": 13.0872004,
+          "Longitude": 80.2164421,
+          "Station": "Zone 08 Anna Nagar"
+        },
+        {
+          "Average Rainfall": 15.365254237288136,
+          "Latitude": 13.14845275,
+          "Longitude": 80.2422386845387,
+          "Station": "Zone 03 Madhavaram"
+        },
+        {
+          "Average Rainfall": 23.89213675213676,
+          "Latitude": 12.9733122,
+          "Longitude": 80.1813184,
+          "Station": "Zone 09 Ice House"
+        },
+        {
+          "Average Rainfall": 21.781617647058816,
+          "Latitude": 13.00645,
+          "Longitude": 80.2577791,
+          "Station": "Zone 13 Adyar"
+        },
+        {
+          "Average Rainfall": 17.587969924812025,
+          "Latitude": 13.00645,
+          "Longitude": 80.2577791,
+          "Station": "Zone 13 U39 Adyar"
+        },
+        {
+          "Average Rainfall": 17.33101449275363,
+          "Latitude": 13.1416387,
+          "Longitude": 80.2486794,
+          "Station": "Zone 02 Manali"
+        },
+        {
+          "Average Rainfall": 17.277941176470577,
+          "Latitude": 12.9710239,
+          "Longitude": 80.2418051,
+          "Station": "Zone 14 U41 Perungudi"
+        },
+        {
+          "Average Rainfall": 13.247014925373136,
+          "Latitude": 13.1304004,
+          "Longitude": 80.2136291,
+          "Station": "Zone 03 Puzhal"
+        },
+        {
+          "Average Rainfall": 17.31968253968255,
+          "Latitude": 13.1416387,
+          "Longitude": 80.2486794,
+          "Station": "Zone 02 D15 Manali"
+        },
+        {
+          "Average Rainfall": 18.349999999999994,
+          "Latitude": 12.9838095,
+          "Longitude": 80.1688264,
+          "Station": "Zone 12 Meenambakkam"
+        },
+        {
+          "Average Rainfall": 20.21742424242424,
+          "Latitude": 12.9710239,
+          "Longitude": 80.2418051,
+          "Station": "Zone 14 Perungudi"
+        },
+        {
+          "Average Rainfall": 21.804385964912278,
+          "Latitude": 13.0615195,
+          "Longitude": 80.1606692,
+          "Station": "Zone 11 U32 Maduravoyal"
+        },
+        {
+          "Average Rainfall": 18.950000000000014,
+          "Latitude": 13.021339,
+          "Longitude": 80.1735506,
+          "Station": "Zone 11 Valasaravakkam"
+        },
+        {
+          "Average Rainfall": 19.725954198473282,
+          "Latitude": 13.0205798,
+          "Longitude": 80.1685163,
+          "Station": "Zone 12 D156 Mugalivakkam"
+        },
+        {
+          "Average Rainfall": 21.281889763779525,
+          "Latitude": 13.1193873,
+          "Longitude": 80.2765201,
+          "Station": "Zone 01 Kathivakkam"
+        },
+        {
+          "Average Rainfall": 16.461600000000004,
+          "Latitude": 12.8728311,
+          "Longitude": 80.2434271,
+          "Station": "Zone 15 Uthandi"
+        },
+        {
+          "Average Rainfall": 20.441911764705882,
+          "Latitude": 12.8935356,
+          "Longitude": 80.2320634,
+          "Station": "Zone 15 Sholinganallur"
+        },
+        {
+          "Average Rainfall": 17.64072580645161,
+          "Latitude": 13.0876951,
+          "Longitude": 80.1924691735029,
+          "Station": "Zone 07 Ambattur"
+        },
+        {
+          "Average Rainfall": 15.232578124999996,
+          "Latitude": 13.1604851,
+          "Longitude": 80.3024786,
+          "Station": "Zone 01 Thiruvottiyur"
+        },
+        {
+          "Average Rainfall": 18.169000000000004,
+          "Latitude": 13.0668847,
+          "Longitude": 80.2414517,
+          "Station": "Zone 13 Adyar Eco Park"
+        },
+        {
+          "Average Rainfall": 19.164705882352944,
+          "Latitude": 13.0876951,
+          "Longitude": 80.1924691735029,
+          "Station": "Ambattur"
+        },
+        {
+          "Average Rainfall": 10.345882352941175,
+          "Latitude": 13.1304004,
+          "Longitude": 80.2136291,
+          "Station": "Puzhal"
+        },
+        {
+          "Average Rainfall": 12.718461538461543,
+          "Latitude": 13.1042898,
+          "Longitude": 80.293612527608,
+          "Station": "Royapuram"
+        },
+        {
+          "Average Rainfall": 20.741772151898733,
+          "Latitude": 13.1103367,
+          "Longitude": 80.2633882,
+          "Station": "Thiru-Vi-Ka Nagar"
+        },
+        {
+          "Average Rainfall": 16.597849462365595,
+          "Latitude": 13.0872004,
+          "Longitude": 80.2164421,
+          "Station": "Anna Nagar"
+        },
+        {
+          "Average Rainfall": 10.862365591397854,
+          "Latitude": 13.1602152,
+          "Longitude": 80.3024483,
+          "Station": "Thiruvottiyur"
+        },
+        {
+          "Average Rainfall": 17.141935483870977,
+          "Latitude": 13.00645,
+          "Longitude": 80.2577791,
+          "Station": "Adyar"
+        },
+        {
+          "Average Rainfall": 16.204705882352943,
+          "Latitude": 12.9710239,
+          "Longitude": 80.2418051,
+          "Station": "Perungudi"
+        },
+        {
+          "Average Rainfall": 16.36396396396398,
+          "Latitude": 13.0443237,
+          "Longitude": 80.2498455,
+          "Station": "Teynampet"
+        },
+        {
+          "Average Rainfall": 15.070000000000007,
+          "Latitude": 13.0241328,
+          "Longitude": 80.1830844,
+          "Station": "Valasaravakkam"
+        },
+        {
+          "Average Rainfall": 20.035294117647062,
+          "Latitude": 13.049207,
+          "Longitude": 80.2242829,
+          "Station": "Kodambakkam"
+        },
+        {
+          "Average Rainfall": 6.189247311827958,
+          "Latitude": 13.1416387,
+          "Longitude": 80.2486794,
+          "Station": "Manali"
+        },
+        {
+          "Average Rainfall": 9.948484848484853,
+          "Latitude": 13.14845275,
+          "Longitude": 80.2422386845387,
+          "Station": "Madhavaram"
+        }
+      ],
+      "elevationScale": 10000,
+      "getElevation": "@@=Average RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage RainfallAverage Rainfall",
+      "getFillColor": [
+        255,
+        0,
+        0,
+        150
+      ],
+      "getPosition": "@@=[Longitude, Latitude]",
+      "id": "46e1b8fc-9c48-446e-ace1-085eb00f7339",
+      "pickable": true,
+      "radius": 200
+    }
+  ],
+  "mapProvider": "carto",
+  "mapStyle": "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
+  "views": [
+    {
+      "@@type": "MapView",
+      "controller": true
+    }
+  ]
+};
+    const tooltip = {'text': 'Place: {Station} \n Average Rainfall: {Average Rainfall} mm'};
+    const customLibraries = null;
+    const configuration = null;
+
+    const deckInstance = createDeck({
+                  container,
+      jsonInput,
+      tooltip,
+      customLibraries,
+      configuration
+    });
+
+  </script>
+</html>

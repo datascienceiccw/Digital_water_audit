@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h3 class="text-center text-3xl font-semibold text-blue-600 mb-8">Drinking Water Source</h3>
+    
+    <form method="POST" action="">
+        {% if details %}
+        <div class="text-center my-2 p-3" style="position: relative;">
+            <a href='{% url "delete_drinking_water" %}' class="btn btn-danger mb-4 mr-2" style="position: absolute; top: 0; right:0;">Reset</a>
+        </div>
+    {% endif %}
+    {% csrf_token %}
+    {% if details %}
+        <fieldset disabled="disabled" class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-gray-200">
+    {% else %}
+        <fieldset class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-gray-200">
+    {% endif %}
+        <div class="mb-6">
+            <label for="{{ form.source_name.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                Drinking Water System:
+            </label>
+            {{ form.source_name }}
+            {% if form.source_name.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.source_name.errors.as_text }}</p>
+            {% endif %}
+        </div>
+        <div class="mb-6">
+            <label for="{{ form.used_by.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                Used By:
+            </label>
+            {{ form.used_by }}
+            {% if form.used_by.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.used_by.errors.as_text }}</p>
+            {% endif %}
+        </div>
+
+        <div class="mb-6 other-source hidden">
+            <label for="{{ form.other_source_name.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                Specify other source:
+            </label>
+            {{ form.other_source_name }}
+            {% if form.other_source_name.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.other_source_name.errors.as_text }}</p>
+            {% endif %}
+        </div>
+
+        <div class="mb-6">
+            <label for="{{ form.source.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                Water Source:
+            </label>
+            {{ form.source }}
+            {% if form.source.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.source.errors.as_text }}</p>
+            {% endif %}
+        </div>
+
+        <div class="mb-6">
+            <label for="{{ form.consumption.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                Drinking Water Consumption (kl):
+            </label>
+            {{ form.consumption }}
+            {% if form.consumption.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.consumption.errors.as_text }}</p>
+            {% endif %}
+        </div>
+
+        <div class="mb-6">
+            <label for="{{ form.cost.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                Cost of Water (₹):
+            </label>
+            {{ form.cost }}
+            {% if form.cost.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.cost.errors.as_text }}</p>
+            {% endif %}
+        </div>
+
+    </fieldset>
+    <div class="text-center mt-5" style="position: relative;">
+        <a href='{% url "source_dash_view" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+    </div>
+    {% if details %}
+    <div class="text-center mt-5" style="position: relative;">
+        <a href='{% url "kitchen_consumption" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+    </div>
+    {% else %}
+   <div class="text-center mt-5" style="position: relative;">
+        <button type="submit" class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</button>
+    </div>
+    {% endif %}    
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sourceNameField = document.querySelector('#{{ form.source_name.id_for_label }}');
+    const otherSourceContainer = document.querySelector('.other-source');
+
+    sourceNameField.addEventListener('change', function() {
+        otherSourceContainer.classList.toggle('hidden', sourceNameField.value !== '4');
+    });
+
+});
+</script>
+
+{% endblock %}

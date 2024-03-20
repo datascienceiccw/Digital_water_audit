@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h3 class="text-center text-3xl font-semibold text-blue-600 mb-8">Waste Water Treatment Using STP</h3>
+    
+    <form method="POST" action='' >
+        {% if details %}
+        <div class="text-center my-2 p-3" style="position: relative;">
+            <a href='{% url "delete_wastewater_treatment_STP" %}' class="btn btn-danger mb-4 mr-2" style="position: absolute; top: 0; right:0;">Reset</a>
+        </div>
+        {% endif %}
+        {% csrf_token %}
+        {% if details %}
+        <fieldset disabled="disabled" class="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-gray-200  form-container grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        {% else %}
+        <fieldset class="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-gray-200  form-container grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+        {% endif %}
+            <div class="mb-6">
+                <label for="{{ form.technology_type.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Technology Type:
+                </label>
+                {{ form.technology_type }}
+                {% if form.technology_type.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.technology_type.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.other_technology_type_name.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Other Technology Type:
+                </label>
+                {{ form.other_technology_type_name }}
+                {% if form.other_technology_type_name.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.other_technology_type_name.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.capacity.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Capacity:
+                </label>
+                {{ form.capacity }}
+                {% if form.capacity.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.capacity.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.treatment_method.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Treatment Method:
+                </label>
+                {{ form.treatment_method }}
+                {% if form.treatment_method.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.treatment_method.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.input_volume.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Input Volume (kl):
+                </label>
+                {{ form.input_volume }}
+                {% if form.input_volume.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.input_volume.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ form.output_volume.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Output Volume (kl):
+                </label>
+                {{ form.output_volume }}
+                {% if form.output_volume.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ form.output_volume.errors.as_text }}</p>
+                {% endif %}
+            </div>
+           
+        </fieldset>                     
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "wastewater_treatment" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+        </div>
+        {% if details %}
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "water_quality_profile" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+        </div>
+        {% else %}
+        <div class="text-center mt-5" style="position: relative;">
+            <button type="submit" class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</button>
+        </div>
+        {% endif %}    
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sequenceFlowField = document.querySelector('#{{ form.sequence_flow.id_for_label }}');
+        const otherSequenceFlowContainer = document.querySelector('.other-sequence-flow');
+    
+        sequenceFlowField.addEventListener('change', function() {
+            otherSequenceFlowContainer.classList.toggle('hidden', sequenceFlowField.value !== 'Others');
+        });
+
+    });
+</script>
+
+
+{% endblock %}

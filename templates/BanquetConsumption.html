@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8" >
+    <h3 class="text-center text-3xl font-semibold text-blue-600 mb-8">Banquet Consumption Details</h3>
+    <p class="text-secondary">
+        <strong>How to fill this form?</strong>         
+    </p>
+    <p class="text-secondary mb-5">
+        On the left-hand side, update all the banquet consumption details in restaurants.
+        Right hand side can be used to view the water consumption details of existing banquets.
+    </p> 
+    <div class="flex flex-wrap justify-between pt-5" style="position: relative;">
+        {% csrf_token %}
+        {% if details %}
+            <a href='{% url "delete_banquet_consumption" %}' class="btn btn-danger m-2" style="position: absolute; top: 0; right:0;">Delete All Restaurants</a>
+        {% endif %}
+            
+        <div class="w-full md:w-1/2 lg:w-1/2 pr-0 md:pr-4 mb-8">
+            <form id="input-form" method="POST" action="" class="form-container1 max-w-4xl bg-white p-8 rounded-lg shadow-xl border border-gray-200">
+                {% csrf_token %}
+                <div id="banquet-form" class='form-container'>
+                    <div class="mb-6">
+                        <label for="{{ form.banquet_name.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Banquet Name:
+                        </label>
+                        {{ form.banquet_name }}
+                        {% if form.banquet_name.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.banquet_name.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.seating_cappacity.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Seating Capacity:
+                        </label>
+                        {{ form.seating_capacity }}
+                        {% if form.seating_capacity.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.seating_capacity.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.average_occupancy.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Average Occupancy per day:
+                        </label>
+                        {{ form.average_occupancy }}
+                        {% if form.average_occupancy.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.average_occupancy.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.drinking_water_consumed.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Drinking Water Sources:
+                        </label>
+                        {{ form.drinking_water_source }}
+                        {% if form.drinking_water_source.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.drinking_water_source.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.drinking_water_consumed.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Drinking Water Consumed (in litres):
+                        </label>
+                        {{ form.drinking_water_consumed }}
+                        {% if form.drinking_water_consumed.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.drinking_water_consumed.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        <label for="{{ form.tap_flowrate.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                            Tap Flowrate (litres per min @ 2 bar):
+                        </label>
+                        {{ form.tap_flowrate }}
+                        {% if form.tap_flowrate.errors %}
+                            <p class="text-red-600 text-xs italic mt-1">{{ form.tap_flowrate.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>   
+                </fieldset>
+                <button type="submit" class="btn btn-primary mb-4" id="add-restaurant">Add Banquet</button>
+         
+            </form>
+        </div>
+        <div class="w-full md:w-1/2 lg:w-1/2 pl-0 md:pl-4 mb-8">
+            <div id="details-display"
+                class="max-w-full md:max-w-4xl bg-white p-8 rounded-lg shadow-xl border border-gray-200">
+                <!-- Display details here -->
+                {% if all_details|length %}
+                        {% comment %} <p class="text-secondary mb-4">Click on the treatment method to edit it.</p> {% endcomment %}
+                        <h3 class="text-center text-3xl font-semibold mb-4 text-blue-400">Banquets</h3>
+                            {% for detail in all_details %}
+                            <div class='border rounded p-2 m-3' style="position: relative;"> 
+                                <h3 class="text-center text-2xl font-semibold mb-4 text-gray-600">{{ detail.restaurant_name }}</h3>
+                                
+                                <a href='{% url "delete_banquet" detail.id  %}' class="btn btn-danger m-2" style="position: absolute; top: 0; right:0;">Remove</a>
+                        
+                                <div class="grid grid-cols-2 gap-4 p-4">
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Seating Capacity:</h4>
+                                            <p id="seating-capacity" class="text-gray-800">{{ detail.seating_capacity }}</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Average Occupancy:</h4>
+                                            <p id="average-occupancy" class="text-gray-800">{{ detail.average_occupancy }}</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Drinking Water Consumed:</h4>
+                                            <p id="water-consumed" class="text-gray-800">{{ detail.drinking_water_consumed }} kl</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Banquet Water Source:</h4>
+                                            <p id="banquet-source" class="text-gray-800">{{ detail.get_banquet_source_display }}</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Tap Flowrate:</h4>
+                                            <p id="tap-flowrate" class="text-gray-800">{{ detail.tap_flowrate }} l/min @ 2 bar</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            {% endfor %}
+                    {% else %}
+                        <p class="text-secondary mb-4">No details are added yet.</p>
+                    {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5" style="position: relative;">
+        <a href='{% url "restaurant_consumption" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+    </div>
+    {% if all_details|length %}
+    <div class="text-center mt-5" style="position: relative;">
+        <a href='{% url "guestroom_consumption" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+    </div>
+    {% endif %}
+</div>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sourceNameField = document.querySelector('#{{ form.banquet_source.id_for_label }}');
+        const otherSourceContainer = document.querySelector('.other-source');
+        const form = document.querySelector('.form-container1');
+    
+        sourceNameField.addEventListener('change', function() {
+            otherSourceContainer.classList.toggle('hidden', sourceNameField.value !== '9');
+        });
+
+    });
+</script>
+    
+{% endblock %}

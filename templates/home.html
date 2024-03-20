@@ -1,0 +1,172 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Audit Tool</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .bg-main {
+            background: linear-gradient(135deg, #3494E6, #EC6EAD);
+        }
+
+        .text-main {
+            color: #2A2A2A;
+        }
+
+        .bg-secondary {
+            background: linear-gradient(135deg, #FDEB71, #F8D800);
+        }
+
+        .rounded-box {
+            border-radius: 15px;
+        }
+
+        .box-shadow {
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .hover-scale {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body class="font-sans bg-blue-300">
+
+    <div class="top-0 left-0 right-0 bg-blue-500 text-white py-2 px-4 z-10">
+        <div class="container mx-auto text-center animate-pulse">
+            <p class="font-semibold">🌍 Attention Water Industry Professionals!</p>
+        </div>
+    </div>
+
+    <!-- Main Image Section -->
+    <div class="relative h-screen bg-cover bg-center" style="background-image: url('{% static 'main_page_section.jpg' %}'); opacity: 100%;">
+        <div class="container my-48 z-10 text-center relative ">
+            <div class="max-w-md p-3 shadow-md text-blue-500">
+                <h1 class="text-4xl font-serif font-bold mb-4 text-blue-500 animate__animated animate__fadeIn animate__delay-1s" style="text-shadow: 4px 4px 8px #0328ff;">ICCW-IITM</h1>
+                <h3 class="text-3xl font-serif mb-4 text-blue-400 animate__animated animate__fadeIn animate__delay-1s" style="text-shadow: 4px 4px 8px #0328ff;">Digital Water Audit Solution</h3>
+                <!-- You can uncomment the following line if you want to add shadow to the paragraph text as well -->
+                <!-- <p class="text-lg mb-8 text-white animate__animated animate__fadeIn animate__delay-2s shadow-md">Looking for a comprehensive water audit tool for your Organization, Building, or Hospitality? ICCW-IITM is here to help you achieve optimal water management efficiency and sustainability.</p> -->
+            </div>
+        </div>
+        <div class="max-w mx-10 d-flex justify-content-start ">
+            <h1 class="text-2xl font-bold text-white animate__animated animate__fadeIn animate__delay-1s">Every Drop is Precious</h1>
+        </div>
+        <div class='mx-10'>
+            <a href='https://pixabay.com/' target="_blank" class="text-1xl font-bold text-gray-300 animate__animated animate__fadeIn animate__delay-1s">Image Source: Pixabay</a>
+
+        </div>
+    </div>
+    <div class="">
+        <div class="p-10 flex items-center bg-gradient-to-r from-yellow-900 via-yellow-400 to-yellow-700">
+                <!-- Text -->
+                <div class="">
+                    <p class="text-2xl mb-2 text-white text-center">Manual water audit involves systematically assessing water usage by collecting data from utility bills and meters, while also conducting visual inspections for leaks and inefficiencies in fixtures and equipment. By analyzing this information, people can identify areas for improvement and develop strategies to conserve water effectively, promoting sustainable water management practices.</p>
+                </div>
+        </div>
+    </div>    
+    <div class="relative h-screen bg-cover bg-center" style="background-image: url('{% static 'drop-2437729.jpg' %}'); opacity: 100%;">
+        <div class="absolute top-1/2 right-10 transform -translate-y-1/2 text-white text-right">
+
+            <div class="container my-48 z-10 relative">
+                <div class="max-w-md p-3 text-white text-right">
+                    <h3 class="text-3xl font-serif mb-4 text-white animate__animated animate__fadeIn animate__delay-1s">Saving water is essential for environmental, economic, and social reasons, and adopting a systematic approach to water conservation enhances efficiency, effectiveness, and sustainability in achieving water-saving goals.</h3>
+                    <!-- You can uncomment the following line if you want to add shadow to the paragraph text as well -->
+                    <!-- <p class="text-lg mb-8 text-white animate__animated animate__fadeIn animate__delay-2s shadow-md">Looking for a comprehensive water audit tool for your Organization, Building, or Hospitality? ICCW-IITM is here to help you achieve optimal water management efficiency and sustainability.</p> -->
+                </div>
+            </div>
+        </div>    
+        <div class='max-w mx-10 d-flex justify-content-end text-end absolute bottom-10 right-10'>
+            <a href='https://pixabay.com/' target="_blank" class="text-1xl font-bold text-gray-300 animate__animated animate__fadeIn animate__delay-1s">Image Source: Pixabay</a>
+
+        </div>
+    </div>
+
+    <div class='relative overflow-hidden'>
+        <video autoplay loop muted playsinline class="absolute top-0 left-0 w-full h-full object-cover z-0 opacity-40">
+            <source src="{% static 'moving_water.mp4' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <!-- Texts and Images Section -->
+        <div class="container mx-auto mt-8 grid gap-8 sm:grid-cols-1 lg:grid-cols-1 z-10">
+            <div class="p-10 flex items-cente rounded-box box-shadow bg-yellow-300 lg:mx-auto z-10">
+                    <!-- Text -->
+                    <div class="col-span-2">
+                        <p class="text-1xl font-bold mb-2 text-main text-black text-center">Looking for a comprehensive water audit tool for your Organization, Building, or Hospitality? <strong class='text-blue-400'> ICCW-IITM </strong> is here to help you achieve optimal water management efficiency and sustainability.</p>
+                    </div>
+            </div>
+
+            <div class="p-10 z-10 flex items-center bg-gray-100 rounded-box box-shadow hover-scale bg-gradient-to-r from-blue-600 via-blue-200 to-yellow-400 animate-gradient lg:w-2/3 lg:mx-auto">
+                <!-- Sub-Grid for Image and Text -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Image Header -->
+                    <!---->
+                    {% comment %} <div class="col-span-2 h-40 overflow-hidden">
+                        <img src="{% static 'home_page.png' %}" alt="Image" class="w-full h-auto rounded-lg animate-pulse">
+                    </div> {% endcomment %}
+    
+                    <!-- Text -->
+                    <div class="col-span-2">
+                        <h2 class="text-2xl font-bold mb-2 text-main">What is water audit:</h2>
+                        <p class="text-lg text-gray-700">Water audit is a systematic approach to understand the use, treatment, and management of water within a facility, identifying potential improvements and water conservation.</p>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="bg-blue-100 z-10 p-10 flex items-center rounded-box box-shadow hover-scale bg-gradient-to-r from-yellow-400 via-blue-200 to-blue-600 animate-gradient lg:w-2/3 lg:mx-auto mt-8">
+                <!-- Sub-Grid for Text and Image -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Image Header -->
+                    {% comment %} <div class="col-span-2 h-40 overflow-hidden">
+                        <img src="{% static 'image_2.png' %}" alt="Image" class="w-full h-auto rounded-lg ml-8 animate-pulse">
+                    </div> {% endcomment %}
+                    <!-- Text -->
+                    <div class="col-span-2">
+                        <h2 class="text-2xl font-bold mb-2 text-main ml-10">Benefits of the Water Audit Tool:</h2>
+                        <ul class="list-disc list-inside ml-10 text-gray-700">
+                            <li>Self-guided audit capability</li>
+                            <li>Cost-effective auditing solution</li>
+                            <li>Guaranteed data security</li>
+                            <li>Measurable improvements in water management</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class='max-w mx-10 d-flex justify-content-end text-end absolute bottom-2 right-10 z-10'>
+                <a href='https://pixabay.com/' target="_blank" class="text-1xl font-bold text-gray-300 animate__animated animate__fadeIn animate__delay-1s">Image Source: Pixabay</a>
+    
+            </div>
+        </div>
+    
+        {% load socialaccount %}
+        <div class="container w-75 text-center text-white my-10 p-4 rounded shadow flex justify-center items-center" style="top: 100%">      
+            <a href="{% provider_login_url 'google' %}?next=/user_home" class="px-4 py-2 border bg-blue-400 hover:bg-blue-600 flex gap-2 border-slate-200 rounded-lg text-slate-700 hover:border-slate-400 hover:text-slate-900 hover:shadow-l transform hover:scale-105 transition duration-150">
+                <img class="w-6 h-6" src="https://www.svgrepo.com/show/475656/google-color.svg" loading="lazy" alt="google logo">
+                <span>Login with Google</span>
+            </a>
+        </div>
+    </div>
+    
+    
+    
+</body>
+
+</html>
+
+{% endblock %}

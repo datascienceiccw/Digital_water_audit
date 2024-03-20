@@ -1,0 +1,133 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% load humanize %}
+
+{% block content %}
+  <div class="py-8 bg-gradient-to-r from-gray-300 to-gray-600 text-white">
+    <h2 class="text-center text-3xl font-bold mb-4">Welcome <span class="capitalize text-black">{{ user.first_name }}</span> <span class="capitalize text-black">{{ user.last_name }}</span> to the Digital Water Audit Tool!</h2>
+    <div class="text-center mt-4">
+      <a href="{% url 'basic_details' %}" class="inline-block bg-gradient-to-r from-green-400 to-blue-500 text-white font-bold py-2 px-6 rounded-lg shadow hover:shadow-lg transform hover:scale-105 transition duration-300">Click here to start the Audit</a>
+  </div>
+  
+  </div>
+  
+
+
+  <!-- Walkthrough Section -->
+  
+  <div class="container mx-auto py-12 px-4">
+    <div class="text-center mb-12">
+      <h4 class="text-3xl font-extrabold text-blue-600 leading-tight mb-4">
+          Water Management Walkthrough
+      </h4>
+      <div class="h-1 w-20 bg-gradient-to-r from-blue-400 to-blue-600 mx-auto"></div>
+      <div class="text-center mt-8">
+        <p class="text-gray-700 mt-4 font-medium italic">
+            🚀 Explore the application stages and effortlessly navigate each step to kickstart your audit journey!
+        </p>
+    </div>
+  </div>
+  
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+            <!-- Card 1 -->
+            <div class="rounded-lg shadow-lg p-6 text-center hover:shadow-2xl transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-gradient-to-r from-blue-200 to-blue-400">
+                <div class="text-blue-600 text-5xl mb-4">
+                    <i class="fas fa-water"></i>
+                </div>
+                <h5 class="text-xl font-semibold mb-3">Basic Details</h5>
+                <ul class="text-left list-disc pl-4">
+                  <li>Basic Details about the User</li>
+                  <li>Information about the Organization</li>
+                </ul>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="rounded-lg shadow-lg p-6 text-center hover:shadow-2xl transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-gradient-to-r from-green-200 to-green-400">
+                <div class="text-green-600 text-5xl mb-4">
+                    
+                    <i class="fas fa-faucet"></i>
+                </div>
+                <h5 class="text-xl font-semibold mb-3">Source Water Details</h5>
+                <p>Information about sources of Water</p>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="rounded-lg shadow-lg p-6 text-center hover:shadow-2xl transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-gradient-to-r from-blue-100 to-blue-300">
+              <div class="text-blue-600 text-5xl mb-4">
+                <i class="fa-solid fa-wrench"></i>
+              </div>
+              <h5 class="text-xl font-semibold mb-3 text-blue-800">Fresh Water Treatment</h5>
+              <ul class="text-left list-disc pl-4">
+                <li>Add the Sequence of Treatment Methods used</li>
+                <li>Enter specific details like input and output water for each method</li>
+              </ul>
+          </div>
+          <div class="rounded-lg shadow-lg p-6 text-center hover:shadow-2xl transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-gradient-to-r from-purple-200 to-purple-400">
+            <div class="text-purple-600 text-5xl mb-4">
+                <i class="fas fa-cloud-rain"></i>
+            </div>
+            <h5 class="text-xl font-semibold mb-3">Rain Water</h5>
+            <p>Techniques and methods used for rain water harvesting</p>
+          </div>
+          
+
+            <!-- Card 4 -->
+            <div class="rounded-lg shadow-lg p-6 text-center hover:shadow-2xl transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-gradient-to-r from-yellow-200 to-yellow-400">
+              <div class="text-yellow-600 text-5xl mb-4">
+                  {% comment %} <i class="fas fa-sun"></i> {% endcomment %}
+                  <i class="fas fa-leaf"></i>
+              </div>
+              <h5 class="text-xl font-semibold mb-3">Tanks and Capacities</h5>
+              <p>Details regarding the storage of water after treatment.</p>
+          </div>
+          
+          <!-- Card 5 -->
+          <div class="rounded-lg shadow-lg p-6 text-center hover:shadow-2xl transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-gradient-to-r from-gray-400 to-gray-500">
+            <div class="text-gray-600 text-5xl mb-4">
+                <i class="fas fa-tint"></i>
+            </div>
+            <h5 class="text-xl font-semibold mb-3">Distribution and Consumption</h5>
+            <ul class="text-left list-disc pl-4">
+              <li>Drinking Water</li>
+              <li>Kitchen and Laundry</li>
+              <li>Boiler, Calorifier, Cooling Tower</li>
+              <li>Restaurant and Other Facilities</li>
+            </ul>
+        </div>
+  
+          <!-- Card 6 -->
+          <div class="rounded-lg shadow-lg p-6 text-center hover:shadow-2xl transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-gradient-to-r from-pink-200 to-pink-400">
+            <div class="text-pink-600 text-5xl mb-4">
+                <i class="fas fa-leaf"></i>
+            </div>
+            <h5 class="text-xl font-semibold mb-3 text-white">Water Quality Profile</h5>
+              <p class="text-white">Details of Analysed Water</p>
+          </div>
+            
+            <div class="rounded-lg shadow-lg p-6 text-center hover:shadow-2xl transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 bg-gradient-to-r from-gray-200 to-gray-400">
+              <div class="text-gray-600 text-5xl mb-4">
+                  <i class="fas fa-tint-slash"></i>
+              </div>
+              <h5 class="text-xl font-semibold mb-3">Waste Water Treatement Details</h5>
+              <p>Specify different treatment methods used in the process including the volume of input, product and reject water</p>
+            </div>  
+
+          <div class="rounded-lg shadow-lg p-6 text-center hover:shadow-2xl transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110" style="background-image: linear-gradient(to right, #d8c0a7, #e6d5c5);">
+            <div class="text-white text-5xl mb-4">
+                <i class="fas fa-hand-holding-water"></i>
+            </div>
+            <h5 class="text-xl font-semibold mb-3 text-white">Recycled Water</h5>
+            <p class="text-white">Specify the place and usage of recycled water</p>
+          </div>
+          
+        </div>
+
+        <div class="text-center mt-4">
+
+          <a href="{% url 'basic_details' %}" class="inline-block bg-gradient-to-r w-50 from-green-400 to-blue-500 text-white font-bold py-2 px-6 rounded-lg shadow hover:shadow-lg transform hover:scale-105 transition duration-300 mt-4">Click here to start the Audit</a>
+      </div>
+      
+    </div>
+
+ 
+{% endblock %}

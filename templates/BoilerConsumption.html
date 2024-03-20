@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h3 class="text-center text-3xl font-semibold text-blue-600 mb-8">Boiler Consumption</h3>
+    
+    <form method="POST" action='' >
+        {% if details %}
+        <div class="text-center my-2 p-3" style="position: relative;">
+            <a href='{% url "delete_boiler_consumption" %}' class="btn btn-danger mb-4 mr-2" style="position: absolute; top: 0; right:0;">Reset</a>
+        </div>
+        {% endif %}
+        {% csrf_token %}
+        {% if details %}
+        <fieldset disabled="disabled" class="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-gray-200  form-container grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        {% else %}
+        <fieldset class="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-gray-200  form-container grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        {% endif %}
+            <div class="mb-6">
+                <label for="{{ consumption_form.boiler_source.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Water Source:
+                </label>
+                {{ consumption_form.boiler_source }}
+                {% if consumption_form.boiler_source.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ consumption_form.boiler_source.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6 other-source hidden">
+                <label for="{{ consumption_form.other_source_name.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Specify other source:
+                </label>
+                {{ consumption_form.other_source_name }}
+                {% if consumption_form.other_source_name.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ consumption_form.other_source_name.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ consumption_form.steam_recovery.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Has Steam Recovery:
+                </label>
+                {{ consumption_form.steam_recovery }}
+                {% if consumption_form.steam_recovery.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ consumption_form.steam_recovery.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6 recovery-rate hidden">
+                <label for="{{ consumption_form.recovery_rate.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Recovery Rate:
+                </label>
+                {{ consumption_form.recovery_rate }}
+                {% if consumption_form.recovery_rate.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ consumption_form.recovery_rate.errors.as_text }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-6">
+                <label for="{{ consumption_form.boiler_units.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                    Number of boiler units:
+                </label>
+                {{ consumption_form.boiler_units }}
+                {% if consumption_form.boiler_units.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ consumption_form.boiler_units.errors.as_text }}</p>
+                {% endif %}
+            </div>
+
+            <div class="mb-6">
+                <label for="{{ consumption_form.pre_treatment_boiler.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
+                   Pre-treatment of Input Boiler:
+                </label>
+                {{ consumption_form.pre_treatment_boiler }}
+                {% if consumption_form.pre_treatment_boiler.errors %}
+                <p class="text-red-600 text-xs italic mt-1">{{ consumption_form.pre_treatment_boiler.errors.as_text }}</p>
+                {% endif %}
+            </div>
+        </fieldset>                     
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "laundry_consumption" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+        </div>
+        {% if details and all_treatment_methods %}
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "boiler_treatment_method" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+        </div>
+        {% elif details and not all_treatment_methods %}
+        <div class="text-center mt-5" style="position: relative;">
+            <a href='{% url "add_boiler" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+        </div>
+        {% else %}
+        <div class="text-center mt-5" style="position: relative;">
+            <button type="submit" class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</button>
+        </div>
+        {% endif %}    
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sourceNameField = document.querySelector('#{{ consumption_form.boiler_source.id_for_label }}');
+    const otherSourceContainer = document.querySelector('.other-source');
+
+    sourceNameField.addEventListener('change', function() {
+        otherSourceContainer.classList.toggle('hidden', sourceNameField.value !== '9');
+    });
+
+    const recoveryRateField = document.querySelector('#{{ consumption_form.steam_recovery.id_for_label }}');
+    const recoveryRateContainer = document.querySelector('.recovery-rate');
+
+    recoveryRateField.addEventListener('change', function() {
+        recoveryRateContainer.classList.toggle('hidden', recoveryRateField.value !== '2');
+    });  
+});
+
+</script>
+
+{% endblock %}
