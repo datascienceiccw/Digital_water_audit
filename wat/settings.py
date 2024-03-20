@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
 
     # external apps
-    'django_mermaid.apps.MermaidConfig',
     'django_plotly_dash.apps.DjangoPlotlyDashConfig',
     'computedfields',
 ]
@@ -125,7 +124,8 @@ DATABASES = {
     }
 }
 
-DATABASES['default'] = dj_database_url.config()
+# DATABASES['default'] = dj_database_url.config()
+DATABASES['default'] = config('DATABASE_URL')
 
 
 # Password validation
