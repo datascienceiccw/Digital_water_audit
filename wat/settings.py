@@ -125,7 +125,6 @@ DATABASES = {
 }
 
 # DATABASES['default'] = dj_database_url.config()
-DATABASES['default'] = config('DATABASE_URL')
 
 
 # Password validation
