@@ -76,8 +76,11 @@
                         <a href="{% url 'logout' %}" class="text-white hover:text-blue-200">Logout</a>
                     </li>
                 {% else %}
-                    <li>
+                    {% comment %} <li>
                         <a href="{% provider_login_url 'google' %}?next=/user_home" class="text-white hover:text-blue-200">Login</a>
+                    </li> {% endcomment %}
+                    <li>
+                        <a href="{% url 'user_home' %}" class="text-white hover:text-blue-200">Login</a>
                     </li>
                 {% endif %}
 
