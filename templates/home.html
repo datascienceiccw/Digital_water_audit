@@ -156,7 +156,8 @@
     
         {% load socialaccount %}
         <div class="container w-75 text-center text-white my-10 p-4 rounded shadow flex justify-center items-center" style="top: 100%">      
-            <a href="{% provider_login_url 'google' %}?next=/user_home" class="px-4 py-2 border bg-blue-400 hover:bg-blue-600 flex gap-2 border-slate-200 rounded-lg text-slate-700 hover:border-slate-400 hover:text-slate-900 hover:shadow-l transform hover:scale-105 transition duration-150">
+            {% comment %} <a href="{% provider_login_url 'google' %}?next=/user_home" class="px-4 py-2 border bg-blue-400 hover:bg-blue-600 flex gap-2 border-slate-200 rounded-lg text-slate-700 hover:border-slate-400 hover:text-slate-900 hover:shadow-l transform hover:scale-105 transition duration-150"> {% endcomment %}
+            <a href="{% url 'user_home' %}" class="px-4 py-2 border bg-blue-400 hover:bg-blue-600 flex gap-2 border-slate-200 rounded-lg text-slate-700 hover:border-slate-400 hover:text-slate-900 hover:shadow-l transform hover:scale-105 transition duration-150">
                 <img class="w-6 h-6" src="https://www.svgrepo.com/show/475656/google-color.svg" loading="lazy" alt="google logo">
                 <span>Login with Google</span>
             </a>
