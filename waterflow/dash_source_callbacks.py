@@ -9,8 +9,14 @@ from .dash_source_useful_fn import (normalize_sizes, create_pie_chart_for_source
                               plot_ground_water_level, plot_ground_water_level_last_year, create_ground_water_map,
                               plot_monthly_rainfall_across_years, plot_total_annual_rainfall, create_rainfall_map,
                               create_treemap_for_tank)
-from decouple import config
-MAPBOX_ACCESS_TOKEN = config("MAPBOX_ACCESS_TOKEN")
+from os.path import join, dirname
+from dotenv import load_dotenv
+import os
+
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path)
+MAPBOX_ACCESS_TOKEN = os.environ.get('MAPBOX_ACCESS_TOKEN')
+
 
 def register_callbacks_for_source_water_distribution(app, user):
     @app.callback(

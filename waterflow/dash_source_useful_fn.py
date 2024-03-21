@@ -1,6 +1,4 @@
 # data_preprocessing.py
-from decouple import config
-MAPBOX_ACCESS_TOKEN = config("MAPBOX_ACCESS_TOKEN")
 from dash import html, dcc, Input, Output
 from dash.exceptions import PreventUpdate
 from plotly.subplots import make_subplots
