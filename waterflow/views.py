@@ -106,9 +106,9 @@ def user_home_view(request):
 @login_required
 def logout_view(request):
     logout(request)
-    if not request.session.get("message_seen", False):
-        messages.success(request, "")
-        request.session["message_seen"] = True
+    # if not request.session.get("message_seen", False):
+    #     messages.success(request, "")
+    #     request.session["message_seen"] = True
     return HttpResponseRedirect("/")
 
 

@@ -7,7 +7,7 @@ from django.contrib.auth.views import LoginView
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('login/', LoginView.as_view(template_name='socialaccount/login.html'), name='login'),
+    # path('login/', LoginView.as_view(template_name='socialaccount/login.html'), name='login'),
     path('logout/', logout_view, name='logout'),
 
     path('', home_view, name='home'),
@@ -21,7 +21,7 @@ urlpatterns = [
     path('flowchart/', flowchart_view, name='flowchart'),
 
     path('accounts/', include('allauth.urls')),
-    path('accounts/', include('allauth.socialaccount.urls')),
+    # path('accounts/', include('allauth.socialaccount.urls')),
     
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
      path('source-dash/', source_dash_view, name='source_dash_view'),
