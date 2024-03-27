@@ -2166,7 +2166,7 @@ class RecycledWaterProfileForm(forms.ModelForm):
     )
 
     place = forms.CharField(
-        widget=forms.NumberInput(
+        widget=forms.TextInput(
             attrs={"class": widget_classes, "placeholder": "Enter the place"}
         )
     )
