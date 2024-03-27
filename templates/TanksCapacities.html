@@ -159,81 +159,77 @@
         </div>
     </form>
 </div> {% endcomment %}
-<div class="container-fluid bg-light p-3 my-3">
-<div class="container bg-light p-3 my-5 border rounded bg-gradient">
-    <h3 class="text-center text-2xl text-info mb-4">Tanks and Capacities</h2>
-        <p class="text-secondary">
+<div class="container mx-auto px-4 py-8 bg-light">
+    <div class="w-full">
+        <h2 class="text-center text-3xl font-semibold text-blue-600 mb-8">Tanks and Capacities</h2>
+        <p class="text-gray-400">
             <strong>How to fill this form?</strong>         
         </p>
-        <p class="text-secondary mb-5">
+        <p class="text-gray-600 mb-5">
             First, select the name of the tank used, and corresponding to that tank, enter the storage capacity.
         </p>    
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <form method="POST" action="" style="position: relative;">
-                        {% csrf_token %}
-                        <h3 class="card-title mb-4">Add Tank Names</h3>
-                        <div class="mb-3">
-                            {{ form.name.label_tag }}
-                            {{ form.name }}
-                            {% if form.name.errors %}
-                                <span class="text-danger custom-error">{{ form.name.errors.0 }}</span>
-                            {% endif %}
-                        </div>
-                        <div class="mb-3">
-                            {{ form.capacity.label_tag }}
-                            {{ form.capacity }}
-                            {% if form.capacity.errors %}
-                                <span class="text-danger custom-error">{{ form.capacity.errors.0 }}</span>
-                            {% endif %}
-                        </div>
-                        <div class="mb-3">
-                            {{ form.other_tank_name.label_tag }}
-                            {{ form.other_tank_name }}
-                            {% if form.other_tank_name.errors %}
-                                <span class="text-danger custom-error">{{ form.capacity.errors.0 }}</span>
-                            {% endif %}
-                        </div>
-                        <div class="text-end">
-                            <button type="submit" class="btn btn-primary">Update</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        
-        
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body ">
-                    <div style="position:relative">
-                    <h3 class="card-title mb-4">Existing Tanks</h3>
-                    {% if all_tanks|length %}
-                    <a href="{% url 'delete_tanks_capacities' %}" class="btn btn-danger mb-4" style="position: absolute; right: 0; top:0;">Reset</a>
-                    {% endif %}
+        <div class="flex flex-wrap justify-between pt-5" style="position: relative;">
+            <div class="w-full md:w-1/2 lg:w-1/2 pr-0 md:pr-4 mb-8">
+                <form method="POST" action="" style="position: relative;" class="form-container1 max-w-4xl bg-white p-8 rounded-lg shadow-xl border border-gray-200">
+                    {% csrf_token %}
+                    <h3 class="card-title mb-4">Add Tank Names</h3>
+                    <div class="mb-6">
+                        {{ form.name.label_tag }}
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                            <span class="text-danger custom-error">{{ form.name.errors.0 }}</span>
+                        {% endif %}
                     </div>
+                    <div class="mb-6">
+                        {{ form.capacity.label_tag }}
+                        {{ form.capacity }}
+                        {% if form.capacity.errors %}
+                            <span class="text-danger custom-error">{{ form.capacity.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="mb-6">
+                        {{ form.other_tank_name.label_tag }}
+                        {{ form.other_tank_name }}
+                        {% if form.other_tank_name.errors %}
+                            <span class="text-danger custom-error">{{ form.capacity.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        
+            <div class="w-full md:w-1/2 lg:w-1/2 pr-0 md:pr-4 mb-8">
+                <div id="details-display"
+                    class="max-w-full md:max-w-4xl bg-white p-8 rounded-lg shadow-xl border border-gray-200">
                     {% if all_tanks|length %}
-                        {% comment %} <p class="text-secondary mb-4">Click on the treatment method to edit it.</p> {% endcomment %}
-                        <ul class="list-group">
-                            {% for tank in all_tanks %}
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span>{{ tank.get_tank_name_display }}</span>
-                                    <span class="badge bg-primary">{{ tank.capacity }}</span>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p class="text-secondary mb-4">No tank added yet</p>
+                        <a href="{% url 'delete_tanks_capacities' %}" class="btn btn-danger mb-4" style="position: absolute; right: 0; top:0;">Reset</a>
                     {% endif %}
-                </div>
+                    <div class="mb-6">
+                        <div style="position:relative">
+                            <h3 class="card-title mb-4">Existing Tanks</h3>
+                            {% if all_tanks|length %}
+                                {% comment %} <p class="text-secondary mb-4">Click on the treatment method to edit it.</p> {% endcomment %}
+                                <ul class="list-group">
+                                    {% for tank in all_tanks %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <span>{{ tank.get_tank_name_display }}</span>
+                                            <span class="badge bg-primary">{{ tank.capacity }}</span>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="text-secondary mb-4">No tank added yet</p>
+                            {% endif %}
+                        </div>    
+                    </div>
+                </div>    
             </div>
         </div>
         
     </div>
-    
-</div>
+
     <div class="text-center mt-5" style="position: relative;">
         <a href="{% url 'source_water_profile' %}" class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
     </div>
@@ -243,7 +239,5 @@
 
 </div>
 {% endblock %}
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
