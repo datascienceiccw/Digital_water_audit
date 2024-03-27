@@ -14,7 +14,7 @@
     <div class="flex flex-wrap justify-between pt-5" style="position: relative;">
         {% csrf_token %}
         {% if details %}
-            <a href='{% url "delete_recycled_water_all" %}' class="btn btn-danger m-2" style="position: absolute; top: 0; right:0;">Delete All Kitchens</a>
+            <a href='{% url "delete_recycled_water_all" %}' class="btn btn-danger m-2" style="position: absolute; top: 0; right:0;">Delete All</a>
         {% endif %}
             
         <div class="w-full md:w-1/2 lg:w-1/2 pr-0 md:pr-4 mb-8">
@@ -62,11 +62,11 @@
 
                 {% if all_details|length %}
                         {% comment %} <p class="text-secondary mb-4">Click on the treatment method to edit it.</p> {% endcomment %}
-                        <div class='border rounded p-2 m-3' style="position: relative;"> 
-                        <h3 class="text-center text-3xl font-semibold mb-4 text-blue-400">Recycled Water Details</h3>
+                        <h3 class="text-center text-3xl font-semibold mb-10 text-blue-400">Recycled Water Details</h3>
                             {% for detail in all_details %}
+                            <div class='border rounded p-2 m-3' style="position: relative;">
                             <a href='{% url "delete_recycled_water" detail.id  %}' class="btn btn-danger m-2" style="position: absolute; top: 0; right:0;">Remove</a>
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-2 gap-4 mt-10">
                                     <div>
                                         <div class="bg-gray-100 rounded-lg p-2">
                                             <h4 class="font-semibold mb-2">Usage:</h4>
@@ -85,10 +85,10 @@
                                             <p id="quantity" class="text-gray-800">{{ detail.quantity }}</p>
                                         </div>
                                     </div>
-                                </div>
+                            </div>
+                            </div>
 
                                 {% endfor %}
-                            </div>
                     {% else %}
                         <p class="text-secondary mb-4">No details are added yet.</p>
                     {% endif %}
@@ -101,7 +101,7 @@
     </div>
     {% if all_details|length %}
     <div class="text-center mt-5" style="position: relative;">
-        <a href='{% url "flowchart" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+        <a href='{% url "thank_you" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
 
     </div>
     {% endif %}
