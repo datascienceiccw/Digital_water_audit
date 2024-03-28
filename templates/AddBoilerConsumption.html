@@ -59,7 +59,7 @@
                     </div>
                     <div class="mb-6">
                         <label for="{{ form.blowdown_to_vol.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Blowdown To Volume (in litres):
+                            Blowdown To Volume (in kl):
                         </label>
                         {{ form.blowdown_to_vol }}
                         {% if form.blowdown_to_vol.errors %}
@@ -120,7 +120,13 @@
                                     <div>
                                         <div class="bg-gray-100 rounded-lg p-2">
                                             <h4 class="font-semibold mb-2">Volume of water blown down:</h4>
-                                            <p id="blowdown-to-vol" class="text-gray-800">{{ detail.blowdown_to_vol }} l</p>
+                                            <p id="blowdown-to-vol" class="text-gray-800">{{ detail.blowdown_to_vol }} kl</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Blowdown Frequency Per Day:</h4>
+                                            <p id="blowdown-freq" class="text-gray-800">{{ detail.blowdown_frequency }}</p>
                                         </div>
                                     </div>
                                 </div>
