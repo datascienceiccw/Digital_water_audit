@@ -60,14 +60,7 @@
                     {% if form.unpaved_area.errors %}
                         <span class="text-danger custom-error">{{ form.unpaved_area.errors.0 }}</span>
                     {% endif %}
-                </div>
-                <div class="mb-6">
-                    <label for="{{ form.average_rainfall.id_for_label }}">Average Rainfall (mm/year):</label>
-                    {{ form.average_rainfall }}
-                    {% if form.average_rainfall.errors %}
-                        <span class="text-danger custom-error">{{ form.average_rainfall.errors.0 }}</span>
-                    {% endif %}
-                </div>              
+                </div> 
             </fieldset>
             <div class="text-center mt-5" style="position: relative;">
                 <a href='{% url "fresh_water_treatment_profile_details" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>

@@ -264,7 +264,7 @@ class RainWaterProfileForm(forms.ModelForm):
             "rooftop_area",
             "paved_area",
             "unpaved_area",
-            "average_rainfall",
+
         ]
         widgets = {
             "amount_harvested_water_last_two_years": forms.NumberInput(
@@ -276,7 +276,6 @@ class RainWaterProfileForm(forms.ModelForm):
             "rooftop_area": forms.NumberInput(attrs={"class": "form-control"}),
             "paved_area": forms.NumberInput(attrs={"class": "form-control"}),
             "unpaved_area": forms.NumberInput(attrs={"class": "form-control"}),
-            "average_rainfall": forms.NumberInput(attrs={"class": "form-control"}),
         }
         labels = {
             "amount_harvested_water_last_two_years": "Harvested Water in Last 2 Years (kl)",
@@ -284,7 +283,6 @@ class RainWaterProfileForm(forms.ModelForm):
             "rooftop_area": "Rooftop Area (sq. meters)",
             "paved_area": "Paved Area (sq. meters)",
             "unpaved_area": "Unpaved Area (sq. meters)",
-            "average_rainfall": "Average Rainfall (mm/year)",
         }
 
 
