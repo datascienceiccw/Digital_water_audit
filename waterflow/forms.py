@@ -930,10 +930,20 @@ class SwimmingPoolConsumptionForm(forms.ModelForm):
     # Add Tailwind CSS classes for responsiveness
     widget_classes = "block w-full px-3 py-2 border border-blue-800 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
 
-    swimming_pool_source = forms.ChoiceField(
-        choices=SwimmingPoolConsumption.source_choices,
-        label="Water source choices",
-        widget=forms.Select(attrs={"class": widget_classes}),
+    source_choices = [
+        ('Input freshwater tank', 'Input freshwater tank'),
+        ('Fire tank', 'Fire tank'),
+        ('Softener Storage tank', 'Softener Storage tank'),
+        ('RO Storage tank', 'RO Storage tank'),
+        ('Flush tank', 'Flush tank'),
+        ('Domestic Water tank', 'Domestic Water tank'),
+        ('RO Input tank', 'RO Input tank'),
+        ('Boiler Makeup tank', 'Boiler Makeup tank'),
+    ]
+    swimming_pool_source = forms.MultipleChoiceField(
+        choices=source_choices,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
 
     total_daily_makeup_water = forms.FloatField(

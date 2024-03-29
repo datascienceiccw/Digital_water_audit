@@ -357,6 +357,12 @@ class DriversRoomConsumption(models.Model):
         return dict(self.types_of_commodes).get(self.commode_types, "Unknown")  
 
 
+class SwimmingPoolSource(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+
 class SwimmingPoolConsumption(models.Model):
     source_choices = [
         ('1','Input freshwater tank'),
@@ -367,7 +373,6 @@ class SwimmingPoolConsumption(models.Model):
         ('6','Domestic Water tank'),
         ('7','RO Input tank'),
         ('8','Boiler Makeup tank'),
-        ('9','Others')
     ]
     reject_to_choices = [
     ('1','ETP'),
@@ -377,11 +382,20 @@ class SwimmingPoolConsumption(models.Model):
 
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    swimming_pool_source = models.CharField(max_length=50, choices=source_choices)
+    # swimming_pool_source = models.CharField(max_length=50, choices=source_choices)
+    swimming_pool_source = models.ManyToManyField(SwimmingPoolSource, related_name='consumptions')
+
     total_daily_makeup_water = models.FloatField()
     capacity = models.FloatField()
     reject_to = models.CharField(max_length=255, choices=reject_to_choices)
     reject_to_vol = models.FloatField()
+
+class OtherSwimmingSource(models.Model):
+    swimming_pool_consumption = models.ForeignKey(SwimmingPoolConsumption, on_delete=models.CASCADE, related_name='other_swimming_sources')
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
 
 
 class WaterBodiesConsumption(models.Model):

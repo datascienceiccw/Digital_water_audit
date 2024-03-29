@@ -17,6 +17,8 @@
     {% else %}
         <fieldset class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-gray-200">
     {% endif %}
+
+    {% if not details %}
         <div class="mb-6">
             <label for="{{ form.swimming_pool_source.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
                 Water Source:
@@ -26,6 +28,29 @@
                 <p class="text-red-600 text-xs italic mt-1">{{ form.swimming_pool_source.errors.as_text }}</p>
             {% endif %}
         </div>
+
+        <div id="other-sources-container" class="mb-6 border border-gray-300 p-2 rounded-lg">
+            <label for="other_sources" class="block text-sm font-medium text-gray-800 mb-2">
+                Other Water Sources:
+            </label>
+            <button type="button" id="add-source" class="btn btn-info mb-4">Add Source</button>
+            <div id="dynamic-source-fields"></div>
+        </div>
+        
+
+        {% else %}
+        <div class="mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Filled Water Sources</h3>
+            <div class="bg-white shadow rounded-lg p-4">
+                {% for source in sources %}
+                    <div class="py-2 px-4 border-b border-gray-200">
+                        <p class="text-gray-800">{{ source.name }}</p> <!-- assuming 'name' is a field on the source object -->
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        {% endif %}
 
         <div class="mb-6">
             <label for="{{ form.total_daily_makeup_water.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
@@ -80,15 +105,20 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const sourceNameField = document.querySelector('#{{ form.swimming_pool_source.id_for_label }}');
-    const otherSourceContainer = document.querySelector('.other-source');
-
-    sourceNameField.addEventListener('change', function() {
-        otherSourceContainer.classList.toggle('hidden', sourceNameField.value !== '9');
+    document.addEventListener('DOMContentLoaded', function() {
+        const addSourceButton = document.getElementById('add-source');
+        const dynamicSourceFields = document.getElementById('dynamic-source-fields');
+    
+        addSourceButton.addEventListener('click', function() {
+            const newInput = document.createElement('input');
+            newInput.setAttribute('type', 'text');
+            newInput.setAttribute('name', 'other_sources');
+            newInput.setAttribute('placeholder', 'Enter other source name');
+            newInput.classList.add('block', 'w-full', 'px-3', 'py-2', 'border', 'rounded-md');
+    
+            dynamicSourceFields.appendChild(newInput);
+        });
     });
-
-});
 </script>
 
 {% endblock %}

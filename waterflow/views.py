@@ -16,6 +16,7 @@ from .models import (
     EmployeeRoomConsumption,
     DriversRoomConsumption,
     SwimmingPoolConsumption,
+    SwimmingPoolSource,
     WaterBodiesConsumption,
     LaundryConsumption,
     BoilerConsumption,
@@ -955,6 +956,7 @@ def delete_driversroom(request, driversroom_id):
 
 @login_required
 def swimmingpool_consumption_view(request):
+    # sourcery skip: merge-else-if-into-elif, use-named-expression
     current_user = request.user
     details = SwimmingPoolConsumption.objects.filter(user=current_user).first()
     if request.method == "POST":
@@ -963,6 +965,20 @@ def swimmingpool_consumption_view(request):
             swimmingpool_consumption = form.save(commit=False)
             swimmingpool_consumption.user = current_user
             swimmingpool_consumption.save()
+            
+            other_sources = form.cleaned_data['swimming_pool_source']
+            for name in other_sources:
+                name = name.strip()
+                if name:
+                    source, created = SwimmingPoolSource.objects.get_or_create(name=name)
+                    swimmingpool_consumption.swimming_pool_source.add(source)
+            
+            other_sources = request.POST.getlist('other_sources')
+            if other_sources:
+                for name in other_sources:  # Assuming comma-separated names
+                    source, created = SwimmingPoolSource.objects.get_or_create(name=name.strip())
+                    swimmingpool_consumption.swimming_pool_source.add(source)
+                
             return redirect("waterbodies_consumption")
         else:
             print(form.errors)
@@ -971,9 +987,17 @@ def swimmingpool_consumption_view(request):
             form = SwimmingPoolConsumptionForm(instance=details)
         else:
             form = SwimmingPoolConsumptionForm()
+            
+    swimming_object = SwimmingPoolConsumption.objects.filter(user=current_user).first()
+    sources = []
+    if swimming_object:
+        sources = swimming_object.swimming_pool_source.all()
+    
     return render(
-        request, "SwimmingPoolConsumption.html", {"form": form, "details": details}
+        request, "SwimmingPoolConsumption.html", {"form": form, "details": details, "sources": sources}
     )
+# for source in SwimmingPoolConsumption.objects.all():
+#     print(source.swimming_pool_source.all())
 
 
 @login_required
