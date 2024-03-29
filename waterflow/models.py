@@ -66,7 +66,6 @@ class RainWaterProfile(models.Model):
   rooftop_area = models.FloatField(default=0)
   paved_area = models.FloatField(default=0)
   unpaved_area = models.FloatField(default=0)
-  average_rainfall = models.FloatField(default=0)
 
 
 class FreshWaterTreatmentProfile(models.Model):
@@ -186,7 +185,7 @@ class KitchenDishwasherTapConsumption(ComputedFieldsModel):
         return dict(self.reject_to_choices).get(self.reject_to, "Unknown")
 
 
-class RestaurantConsumption(models.Model):
+class RestaurantConsumption(ComputedFieldsModel):
     accessible_choices = [
         ('1', 'Yes'),
         ('2', 'No'),
@@ -215,6 +214,13 @@ class RestaurantConsumption(models.Model):
     average_occupancy = models.IntegerField(null=True, blank=True)
     reject_to = models.CharField(max_length=50, choices=reject_to_choices, null=True)
     tap_flowrate = models.FloatField(null=True, blank=True)
+    
+    # - compute field handwash water used volume = average occupancy in restauntants *2 handwash_tap_flowrate
+    @computed(models.FloatField())
+    def handwash_water_used_volume(self):
+        return self.average_occupancy*2*self.tap_flowrate
+    
+    
 
     def get_reject_to_display(self):
         return dict(self.reject_to_choices).get(self.reject_to, "Unknown")  
@@ -250,7 +256,7 @@ class BanquetConsumption(ComputedFieldsModel):
     tap_flowrate = models.FloatField()
     @computed(models.FloatField())
     def restroom_consumption(self):
-        return 1
+        return self.average_occupancy*self.tap_flowrate*2
 
 
 class GuestRoomConsumption(models.Model):
@@ -351,6 +357,12 @@ class DriversRoomConsumption(models.Model):
         return dict(self.types_of_commodes).get(self.commode_types, "Unknown")  
 
 
+class SwimmingPoolSource(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+
 class SwimmingPoolConsumption(models.Model):
     source_choices = [
         ('1','Input freshwater tank'),
@@ -361,7 +373,6 @@ class SwimmingPoolConsumption(models.Model):
         ('6','Domestic Water tank'),
         ('7','RO Input tank'),
         ('8','Boiler Makeup tank'),
-        ('9','Others')
     ]
     reject_to_choices = [
     ('1','ETP'),
@@ -371,11 +382,20 @@ class SwimmingPoolConsumption(models.Model):
 
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    swimming_pool_source = models.CharField(max_length=50, choices=source_choices)
+    # swimming_pool_source = models.CharField(max_length=50, choices=source_choices)
+    swimming_pool_source = models.ManyToManyField(SwimmingPoolSource, related_name='consumptions')
+
     total_daily_makeup_water = models.FloatField()
     capacity = models.FloatField()
     reject_to = models.CharField(max_length=255, choices=reject_to_choices)
     reject_to_vol = models.FloatField()
+
+class OtherSwimmingSource(models.Model):
+    swimming_pool_consumption = models.ForeignKey(SwimmingPoolConsumption, on_delete=models.CASCADE, related_name='other_swimming_sources')
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
 
 
 class WaterBodiesConsumption(models.Model):
@@ -405,7 +425,7 @@ class WaterBodiesConsumption(models.Model):
     reject_to_vol = models.FloatField()
 
 
-class LaundryConsumption(models.Model):
+class LaundryConsumption(ComputedFieldsModel):
     source_choices = [
         ('1','Input freshwater tank'),
         ('2','Fire tank'),
@@ -431,6 +451,15 @@ class LaundryConsumption(models.Model):
     reject_to_vol = models.FloatField()
     washingmachine_capacity = models.FloatField()
     avg_num_solid_clothes = models.FloatField()
+    
+    @computed(models.FloatField())
+    def water_consumption_per_kg_solid_clothes(self):
+        return self.input_vol/self.avg_num_solid_clothes 
+    
+
+    @computed(models.FloatField())
+    def avg_no_of_cycles(self):
+        return (0.8*self.washingmachine_capacity)/self.avg_num_solid_clothes
 
 
 class BoilerConsumption(models.Model):
