@@ -4,33 +4,53 @@ from .models import (
     SourceWaterProfile,
     RainWaterProfile,
     FreshWaterTreatmentProfile,
+    FreshWaterTreatmentMethods,
     BasicDetails,
     FreshWaterTreatmentProfileDetails,
     SourceWaterFlow,
     TanksCapacities,
+    TanksCapacitiesSource,
     DrinkingWaterSource,
+    DrinkingWaterSystem,
+    DrinkingWaterSourceName,
     RestaurantConsumption,
     KitchenDishwasherTapConsumption,
     BanquetConsumption,
+    BanquetSource,
     GuestRoomConsumption,
+    GuestRoomDomesticSource,
+    GuestRoomToiletSource,
     EmployeeRoomConsumption,
+    EmployeeRoomDomesticSource,
+    EmployeeRoomToiletSource,
     DriversRoomConsumption,
+    DriversRoomDomesticSource,
+    DriversRoomToiletSource,
     SwimmingPoolConsumption,
+    SwimmingPoolSource,
     WaterBodiesConsumption,
+    WaterBodiesSource,
     LaundryConsumption,
+    LaundrySource,
     BoilerConsumption,
+    BoilerSource,
     BoilerTreatmentMethods,
     AddBoilerConsumption,
     CalorifierConsumption,
+    CalorifierSource,
     CoolingTowerConsumption,
     AddCoolingTowerConsumption,
+    AddCoolingTowerSource,
     IrrigationConsumption,
+    IrrigationSource,
     OtherConsumption,
+    OtherConsumptionSource,
     WasteWaterTreatment,
     WasteWaterTreatmentSTP,
     WasteWaterTreatmentETP,
     WasteWaterTreatmentOthers,
     TanksAndCapacities,
+    TanksAndCapacitiesSource,
     WaterQualityProfile,
     RecycledWaterProfile,
 )
@@ -145,15 +165,20 @@ def source_water_profile(request):
         form = SourceWaterProfileForm(request.POST)
         if form.is_valid():
             current_user = request.user
-            source_name = form.cleaned_data["source_name"]
-            if SourceWaterProfile.objects.filter(
-                user=current_user, source_name=source_name
-            ).exists():
-                form.add_error("source_name", "Source Water Profile already exists")
-            else:
-                form.instance.user = current_user
-                form.save()
-                return redirect("source_water_profile")
+            form.instance.user = current_user
+            names = request.POST.getlist('source_name')
+            other_source_name = request.POST.getlist('other_source_name')
+            consumptions = request.POST.getlist('source_daily_consumption')
+            cost = request.POST.getlist('source_water_cost')
+            if names and consumptions and cost:
+                for i in range(len(names)):
+                    if names[i] == 'Others':
+                        source_water_profile = SourceWaterProfile.objects.create(user=current_user, source_name=other_source_name[0], source_daily_consumption=consumptions[i], source_water_cost=cost[i])
+                        other_source_name = other_source_name[1:]
+                    else:    
+                        source_water_profile = SourceWaterProfile.objects.create(user=current_user, source_name=names[i], source_daily_consumption=consumptions[i], source_water_cost=cost[i])
+                    source_water_profile.save()
+            return redirect("source_water_profile")
         else:
             print(form.errors)
     else:
@@ -214,21 +239,39 @@ def delete_rainwater(request):
 def fresh_water_treatment_profile(request):
     global treatment_methods
     treatment_methods = []
+    current_user = request.user
     if request.method == "POST":
         form = FreshWaterTreatmentProfileForm(request.POST)
         if form.is_valid():
-            current_user = request.user
-            form.instance.user = current_user
-            form.save()
+            freshwater_treatment = form.save(commit=False)
+            freshwater_treatment.user = current_user
+            # freshwater_treatment.save()
+
+            other_treatment = form.cleaned_data['name']
+            for name in other_treatment:
+                print(name)
+                name = name.strip()
+                if name:
+                    treatment_profile = FreshWaterTreatmentProfile.objects.create(user=current_user, name=name)
+                    treatment_profile.save()
+                    # FreshWaterTreatmentProfile.objects.get_or_create(name=name)
+
+            other_treatment = request.POST.getlist('other_sources')
+            if other_treatment:
+                for name in other_treatment:
+                    treatment_profile = FreshWaterTreatmentProfile.objects.create(user=current_user, name=name)
+                    treatment_profile.save()   
+                    # FreshWaterTreatmentProfile.objects.get_or_create(name=name)  
             return redirect("fresh_water_treatment_profile")
         else:
             print(form.errors)
     else:
         form = FreshWaterTreatmentProfileForm()
 
+    treatment_methods.clear()
     all_treatment_methods = FreshWaterTreatmentProfile.objects.filter(user=request.user)
     for method in all_treatment_methods:
-        treatment_methods.append(method.name)
+        treatment_methods.append(method)
     return render(
         request,
         "FreshWaterTreatmentProfile.html",
@@ -595,12 +638,31 @@ def flowchart_view(request):
 
 @login_required
 def tanks_capacities(request):
+    tank_names = ['Input freshwater tank',
+                'Fire tank',
+                'Softener Storage tank',
+                'RO Storage tank',
+                'Flush tank',
+                'Domestic Water tank',
+                'RO Input tank',
+                'Boiler Makeup tank',
+                'Others']
+    current_user = request.user
     if request.method == "POST":
         form = TanksCapacitiesForm(request.POST)
         if form.is_valid():
-            current_user = request.user
             form.instance.user = current_user
-            form.save()
+            names = request.POST.getlist('name')
+            capacities = request.POST.getlist('capacity')
+            other_tank_name = request.POST.getlist('other_tank_name')
+            if names and capacities:
+                for i in range(len(names)): 
+                    if names[i] == 'Others':
+                        tank_capacity = TanksCapacities.objects.create(user=current_user, name=other_tank_name[0], capacity=capacities[i]) 
+                        other_tank_name = other_tank_name[1:]
+                    else:    
+                        tank_capacity = TanksCapacities.objects.create(user=current_user, name=names[i], capacity=capacities[i])
+                    tank_capacity.save()    
             return redirect("tanks_capacities")
         else:
             print(form.errors)
@@ -609,7 +671,7 @@ def tanks_capacities(request):
 
     all_tanks = TanksCapacities.objects.filter(user=request.user)
     return render(
-        request, "TanksCapacities.html", {"form": form, "all_tanks": all_tanks}
+        request, "TanksCapacities.html", {"form": form, "all_tanks": all_tanks, 'tank_names': tank_names}
     )
 
 
@@ -736,18 +798,46 @@ def drinking_water_source_view(request):
     if request.method == "POST":
         form = DrinkingWaterSourceForm(request.POST)
         if form.is_valid():
-            drinking_water_source = form.save(commit=False)
-            drinking_water_source.user = current_user
-            drinking_water_source.save()
+            drinking_water = form.save(commit=False)
+            drinking_water.user = current_user
+            drinking_water.save()
+
+            source_names = form.cleaned_data['source_name']
+            for name in source_names:
+                name = name.strip()
+                if name:
+                    source, created = DrinkingWaterSystem.objects.get_or_create(name=name)
+                    drinking_water.source_name.add(source)
+
+            source_names = request.POST.getlist('other_sources')
+            sources = request.POST.getlist('source')
+            if source_names:
+                for name in source_names:
+                    source, created = DrinkingWaterSystem.objects.get_or_create(name=name.strip())
+                    drinking_water.source_name.add(source)
+
+            if sources:
+                for name in sources:
+                    water_source, created1 = DrinkingWaterSourceName.objects.get_or_create(name=name.strip()) 
+                    drinking_water.source.add(water_source)                 
+
             messages.success(request, "Drinking water source data saved successfully!")
-            return redirect("kitchen_consumption")
+            return redirect("guestroom_consumption")
     else:
         if details:
             form = DrinkingWaterSourceForm(instance=details)
         else:
             form = DrinkingWaterSourceForm()
+
+    drinking_object = DrinkingWaterSource.objects.filter(user=current_user).first()
+    sources = []
+    water_sources = []
+    if drinking_object:
+        sources = drinking_object.source_name.all() 
+        water_sources = drinking_object.source.all()  
+
     return render(
-        request, "DrinkingWaterSource.html", {"form": form, "details": details}
+        request, "DrinkingWaterSource.html", {"form": form, "details": details, 'sources': sources, 'water_sources': water_sources}
     )
 
 
@@ -808,14 +898,34 @@ def banquet_consumption_view(request):
             banquet_consumption = form.save(commit=False)
             banquet_consumption.user = current_user
             banquet_consumption.save()
+
+            other_sources = form.cleaned_data['drinking_water_source']
+            for name in other_sources:
+                name = name.strip()
+                if name:
+                    source, created = BanquetSource.objects.get_or_create(name=name)
+                    banquet_consumption.drinking_water_source.add(source)
+
+            other_sources = request.POST.getlist('other_sources')
+            if other_sources:
+                for name in other_sources:
+                    source, created = BanquetSource.objects.get_or_create(name=name.strip())
+                    banquet_consumption.drinking_water_source.add(source)  
+
             messages.success(request, "Banquet consumption data saved successfully!")
             return redirect("banquet_consumption")
     else:
         form = BanquetConsumptionForm()
+
+    banquet_object = BanquetConsumption.objects.filter(user=current_user).first()
+    sources = []
+    if banquet_object:
+        sources = banquet_object.drinking_water_source.all()
+
     return render(
         request,
         "BanquetConsumption.html",
-        {"form": form, "details": details, "all_details": all_details},
+        {"form": form, "details": details, "all_details": all_details, 'sources': sources},
     )
 
 
@@ -847,14 +957,50 @@ def guestroom_consumption_view(request):
             guestroom_consumption = form.save(commit=False)
             guestroom_consumption.user = current_user
             guestroom_consumption.save()
+
+            other_domestic_sources = form.cleaned_data['domestic_flushing_source']
+            other_toilet_sources = form.cleaned_data['toilet_flushing_source']
+            for name in other_domestic_sources:
+                name = name.strip()
+                if name:
+                    domestic_source, created = GuestRoomDomesticSource.objects.get_or_create(name=name)
+                    guestroom_consumption.domestic_flushing_source.add(domestic_source)
+
+            for name in other_toilet_sources:
+                name = name.strip()
+                if name:
+                    toilet_source, created = GuestRoomToiletSource.objects.get_or_create(name=name)
+                    guestroom_consumption.toilet_flushing_source.add(toilet_source)   
+
+            other_domestic_sources = request.POST.getlist('other_domestic_sources')
+            other_toilet_sources = request.POST.getlist('other_toilet_sources')
+
+            if other_domestic_sources:
+                for name in other_domestic_sources:
+                    domestic_source, created = GuestRoomDomesticSource.objects.get_or_create(name=name.strip())
+                    guestroom_consumption.domestic_flushing_source.add(domestic_source) 
+
+            if other_toilet_sources:
+                for name in other_toilet_sources:
+                    toilet_source, created = GuestRoomToiletSource.objects.get_or_create(name=name.strip())
+                    guestroom_consumption.toilet_flushing_source.add(toilet_source)
+
             messages.success(request, "Guest Room consumption data saved successfully!")
             return redirect("guestroom_consumption")
     else:
         form = GuestRoomConsumptionForm()
+
+    guestroom_object = GuestRoomConsumption.objects.filter(user=current_user).first()
+    domestic_sources = []
+    toilet_sources = []
+    if guestroom_object:
+        domestic_sources = guestroom_object.domestic_flushing_source.all()
+        toilet_sources = guestroom_object.toilet_flushing_source.all()
+
     return render(
         request,
         "GuestRoomConsumption.html",
-        {"form": form, "details": details, "all_details": all_details},
+        {"form": form, "details": details, "all_details": all_details, 'domestic_sources': domestic_sources, 'toilet_sources': toilet_sources},
     )
 
 
@@ -886,13 +1032,49 @@ def employeeroom_consumption_view(request):
             employeeroom_consumption = form.save(commit=False)
             employeeroom_consumption.user = current_user
             employeeroom_consumption.save()
+
+            other_domestic_sources = form.cleaned_data['domestic_flushing_source']
+            other_toilet_sources = form.cleaned_data['toilet_flushing_source']
+            for name in other_domestic_sources:
+                name = name.strip()
+                if name:
+                    domestic_source, created = EmployeeRoomDomesticSource.objects.get_or_create(name=name)
+                    employeeroom_consumption.domestic_flushing_source.add(domestic_source)
+
+            for name in other_toilet_sources:
+                name = name.strip()
+                if name:
+                    toilet_source, created = EmployeeRoomToiletSource.objects.get_or_create(name=name)
+                    employeeroom_consumption.toilet_flushing_source.add(toilet_source)   
+
+            other_domestic_sources = request.POST.getlist('other_domestic_sources')
+            other_toilet_sources = request.POST.getlist('other_toilet_sources')
+
+            if other_domestic_sources:
+                for name in other_domestic_sources:
+                    domestic_source, created = EmployeeRoomDomesticSource.objects.get_or_create(name=name.strip())
+                    employeeroom_consumption.domestic_flushing_source.add(domestic_source) 
+
+            if other_toilet_sources:
+                for name in other_toilet_sources:
+                    toilet_source, created = EmployeeRoomToiletSource.objects.get_or_create(name=name.strip())
+                    employeeroom_consumption.toilet_flushing_source.add(toilet_source)
+                    
             return redirect("employeeroom_consumption")
     else:
         form = EmployeeRoomConsumptionForm()
+
+    employeeroom_object = EmployeeRoomConsumption.objects.filter(user=current_user).first()
+    domestic_sources = []
+    toilet_sources = []
+    if employeeroom_object:
+        domestic_sources = employeeroom_object.domestic_flushing_source.all()
+        toilet_sources = employeeroom_object.toilet_flushing_source.all()
+
     return render(
         request,
         "EmployeeRoomConsumption.html",
-        {"form": form, "details": details, "all_details": all_details},
+        {"form": form, "details": details, "all_details": all_details, 'domestic_sources': domestic_sources, 'toilet_sources': toilet_sources},
     )
 
 
@@ -926,13 +1108,48 @@ def driversroom_consumption_view(request):
             driversroom_consumption.save()
             # if driversroom_consumption.other_source_name:
             #     driversroom_consumption.drivers_room_source = driversroom_consumption.other_source_name
+            other_domestic_sources = form.cleaned_data['domestic_flushing_source']
+            other_toilet_sources = form.cleaned_data['toilet_flushing_source']
+            for name in other_domestic_sources:
+                name = name.strip()
+                if name:
+                    domestic_source, created = DriversRoomDomesticSource.objects.get_or_create(name=name)
+                    driversroom_consumption.domestic_flushing_source.add(domestic_source)
+
+            for name in other_toilet_sources:
+                name = name.strip()
+                if name:
+                    toilet_source, created = DriversRoomToiletSource.objects.get_or_create(name=name)
+                    driversroom_consumption.toilet_flushing_source.add(toilet_source)   
+
+            other_domestic_sources = request.POST.getlist('other_domestic_sources')
+            other_toilet_sources = request.POST.getlist('other_toilet_sources')
+
+            if other_domestic_sources:
+                for name in other_domestic_sources:
+                    domestic_source, created = DriversRoomDomesticSource.objects.get_or_create(name=name.strip())
+                    driversroom_consumption.domestic_flushing_source.add(domestic_source) 
+
+            if other_toilet_sources:
+                for name in other_toilet_sources:
+                    toilet_source, created = DriversRoomToiletSource.objects.get_or_create(name=name.strip())
+                    driversroom_consumption.toilet_flushing_source.add(toilet_source)
+
             return redirect("driversroom_consumption")
     else:
         form = DriversRoomConsumptionForm()
+
+    driversroom_object = DriversRoomConsumption.objects.filter(user=current_user).first()
+    domestic_sources = []
+    toilet_sources = []
+    if driversroom_object:
+        domestic_sources = driversroom_object.domestic_flushing_source.all()
+        toilet_sources = driversroom_object.toilet_flushing_source.all()
+
     return render(
         request,
         "DriversRoomConsumption.html",
-        {"form": form, "details": details, "all_details": all_details},
+        {"form": form, "details": details, "all_details": all_details, 'domestic_sources': domestic_sources, 'toilet_sources': toilet_sources},
     )
 
 
@@ -955,6 +1172,7 @@ def delete_driversroom(request, driversroom_id):
 
 @login_required
 def swimmingpool_consumption_view(request):
+    # sourcery skip: merge-else-if-into-elif, use-named-expression
     current_user = request.user
     details = SwimmingPoolConsumption.objects.filter(user=current_user).first()
     if request.method == "POST":
@@ -963,6 +1181,20 @@ def swimmingpool_consumption_view(request):
             swimmingpool_consumption = form.save(commit=False)
             swimmingpool_consumption.user = current_user
             swimmingpool_consumption.save()
+            
+            other_sources = form.cleaned_data['swimming_pool_source']
+            for name in other_sources:
+                name = name.strip()
+                if name:
+                    source, created = SwimmingPoolSource.objects.get_or_create(name=name)
+                    swimmingpool_consumption.swimming_pool_source.add(source)
+            
+            other_sources = request.POST.getlist('other_sources')
+            if other_sources:
+                for name in other_sources:  # Assuming comma-separated names
+                    source, created = SwimmingPoolSource.objects.get_or_create(name=name.strip())
+                    swimmingpool_consumption.swimming_pool_source.add(source)
+                
             return redirect("waterbodies_consumption")
         else:
             print(form.errors)
@@ -971,9 +1203,17 @@ def swimmingpool_consumption_view(request):
             form = SwimmingPoolConsumptionForm(instance=details)
         else:
             form = SwimmingPoolConsumptionForm()
+            
+    swimming_object = SwimmingPoolConsumption.objects.filter(user=current_user).first()
+    sources = []
+    if swimming_object:
+        sources = swimming_object.swimming_pool_source.all()
+    
     return render(
-        request, "SwimmingPoolConsumption.html", {"form": form, "details": details}
+        request, "SwimmingPoolConsumption.html", {"form": form, "details": details, "sources": sources}
     )
+# for source in SwimmingPoolConsumption.objects.all():
+#     print(source.swimming_pool_source.all())
 
 
 @login_required
@@ -996,6 +1236,19 @@ def waterbodies_consumption_view(request):
             waterbody_consumption = form.save(commit=False)
             waterbody_consumption.user = current_user
             waterbody_consumption.save()
+
+            other_sources = form.cleaned_data['water_body_source']
+            for name in other_sources:
+                name = name.strip()
+                if name:
+                    source, created = WaterBodiesSource.objects.get_or_create(name=name)
+                    waterbody_consumption.water_body_source.add(source)
+            
+            other_sources = request.POST.getlist('other_sources')
+            if other_sources:
+                for name in other_sources:  # Assuming comma-separated names
+                    source, created = WaterBodiesSource.objects.get_or_create(name=name.strip())
+                    waterbody_consumption.water_body_source.add(source)
             return redirect("laundry_consumption")
         else:
             print(form.errors)
@@ -1004,8 +1257,14 @@ def waterbodies_consumption_view(request):
             form = WaterBodiesConsumptionForm(instance=details)
         else:
             form = WaterBodiesConsumptionForm()
+
+    waterbody_object = WaterBodiesConsumption.objects.filter(user=current_user).first()
+    sources = []
+    if waterbody_object:
+        sources = waterbody_object.water_body_source.all()
+
     return render(
-        request, "WaterBodiesConsumption.html", {"form": form, "details": details}
+        request, "WaterBodiesConsumption.html", {"form": form, "details": details, 'sources': sources}
     )
 
 
@@ -1033,14 +1292,33 @@ def laundry_consumption_view(request):
             laundry_consumption = form.save(commit=False)
             laundry_consumption.user = current_user
             laundry_consumption.save()
+
+            other_sources = form.cleaned_data['laundry_source']
+            for name in other_sources:
+                name = name.strip()
+                if name:
+                    source, created = LaundrySource.objects.get_or_create(name=name)
+                    laundry_consumption.laundry_source.add(source)
+            
+            other_sources = request.POST.getlist('other_sources')
+            if other_sources:
+                for name in other_sources:  # Assuming comma-separated names
+                    source, created = LaundrySource.objects.get_or_create(name=name.strip())
+                    laundry_consumption.laundry_source.add(source)
             return redirect("boiler_consumption")
     else:
         if details:
             form = LaundryConsumptionForm(instance=details)
         else:
             form = LaundryConsumptionForm()
+
+    laundry_object = LaundryConsumption.objects.filter(user=current_user).first()
+    sources = []
+    if laundry_object:
+        sources = laundry_object.laundry_source.all()
+
     return render(
-        request, "LaundryConsumption.html", {"form": form, "details": details}
+        request, "LaundryConsumption.html", {"form": form, "details": details, 'sources': sources}
     )
 
 
@@ -1065,6 +1343,20 @@ def boiler_consumption_view(request):
             consumption = consumption_form.save(commit=False)
             consumption.user = current_user
             consumption.save()
+
+            other_sources = consumption_form.cleaned_data['boiler_source']
+            for name in other_sources:
+                name = name.strip()
+                if name:
+                    source, created = BoilerSource.objects.get_or_create(name=name)
+                    consumption.boiler_source.add(source)
+            
+            other_sources = request.POST.getlist('other_sources')
+            if other_sources:
+                for name in other_sources:  # Assuming comma-separated names
+                    source, created = BoilerSource.objects.get_or_create(name=name.strip())
+                    consumption.boiler_source.add(source)
+                    
             pre_treatment = consumption_form.cleaned_data.get("pre_treatment_boiler")
             if pre_treatment == "2":
                 return redirect("boiler_treatment_method")
@@ -1078,6 +1370,13 @@ def boiler_consumption_view(request):
         else:
             consumption_form = BoilerConsumptionForm(prefix="consumption")
 
+    boiler_object = BoilerConsumption.objects.filter(user=current_user).first()
+    sources = []
+    if_steam = None
+    if boiler_object:
+        sources = boiler_object.boiler_source.all()        
+        if_steam = boiler_object.steam_recovery
+
     return render(
         request,
         "BoilerConsumption.html",
@@ -1086,6 +1385,8 @@ def boiler_consumption_view(request):
             "details": consumption_details,
             "all_details": all_details,
             "all_treatment_methods": all_treatment_methods,
+            "sources": sources,
+            "if_steam" : if_steam
         },
     )
 
@@ -1190,13 +1491,33 @@ def calorifier_consumption_view(request):
             calorifier = form.save(commit=False)
             calorifier.user = current_user
             calorifier.save()
+
+            other_sources = form.cleaned_data['calorifier_source']
+            for name in other_sources:
+                name = name.strip()
+                if name:
+                    source, created = CalorifierSource.objects.get_or_create(name=name)
+                    calorifier.calorifier_source.add(source)
+            
+            other_sources = request.POST.getlist('other_sources')
+            if other_sources:
+                for name in other_sources:  # Assuming comma-separated names
+                    source, created = CalorifierSource.objects.get_or_create(name=name.strip())
+                    calorifier.calorifier_source.add(source)
+        
             return redirect("calorifier_consumption")
     else:
         form = CalorifierConsumptionForm()
+
+    calorifier_object = CalorifierConsumption.objects.filter(user=current_user).first()
+    sources = []
+    if calorifier_object:
+        sources = calorifier_object.calorifier_source.all()
+
     return render(
         request,
         "CalorifierConsumption.html",
-        {"form": form, "details": details, "all_details": all_details},
+        {"form": form, "details": details, "all_details": all_details, 'sources': sources},
     )
 
 
@@ -1263,13 +1584,33 @@ def add_coolingtower_view(request):
             add_coolingtower = form.save(commit=False)
             add_coolingtower.user = current_user
             add_coolingtower.save()
+
+            other_sources = form.cleaned_data['cooling_tower_source']
+            for name in other_sources:
+                name = name.strip()
+                if name:
+                    source, created = AddCoolingTowerSource.objects.get_or_create(name=name)
+                    add_coolingtower.cooling_tower_source.add(source)
+            
+            other_sources = request.POST.getlist('other_sources')
+            if other_sources:
+                for name in other_sources:  # Assuming comma-separated names
+                    source, created = AddCoolingTowerSource.objects.get_or_create(name=name.strip())
+                    add_coolingtower.cooling_tower_source.add(source)
+
             return redirect("add_coolingtower")
     else:
         form = AddCoolingTowerConsumptionForm()
+
+    addCoolingTower_object = AddCoolingTowerConsumption.objects.filter(user=current_user).first()
+    sources = []
+    if addCoolingTower_object:
+        sources = addCoolingTower_object.cooling_tower_source.all()
+
     return render(
         request,
         "AddCoolingTowerConsumption.html",
-        {"form": form, "details": details, "all_details": all_details},
+        {"form": form, "details": details, "all_details": all_details, 'sources': sources},
     )
 
 
@@ -1303,6 +1644,19 @@ def irrigation_consumption_view(request):
             irrigation = form.save(commit=False)
             irrigation.user = current_user
             irrigation.save()
+
+            other_sources = form.cleaned_data['irrigation_source']
+            for name in other_sources:
+                name = name.strip()
+                if name:
+                    source, created = IrrigationSource.objects.get_or_create(name=name)
+                    irrigation.irrigation_source.add(source)
+            
+            other_sources = request.POST.getlist('other_sources')
+            if other_sources:
+                for name in other_sources:  # Assuming comma-separated names
+                    source, created = IrrigationSource.objects.get_or_create(name=name.strip())
+                    irrigation.irrigation_source.add(source)
             return redirect("other_consumption")
     else:
         if details:
@@ -1310,10 +1664,15 @@ def irrigation_consumption_view(request):
         else:
             form = IrrigationConsumptionForm()
 
+    irrigation_object = IrrigationConsumption.objects.filter(user=current_user).first()
+    sources = []
+    if irrigation_object:
+        sources = irrigation_object.irrigation_source.all()        
+
     return render(
         request,
         "IrrigationConsumption.html",
-        {"form": form, "details": details, "all_details": all_details},
+        {"form": form, "details": details, "all_details": all_details, 'sources': sources},
     )
 
 
@@ -1337,6 +1696,19 @@ def other_consumption_view(request):
             other_consumption = form.save(commit=False)
             other_consumption.user = current_user
             other_consumption.save()
+
+            other_sources = form.cleaned_data['other_source']
+            for name in other_sources:
+                name = name.strip()
+                if name:
+                    source, created = OtherConsumptionSource.objects.get_or_create(name=name)
+                    other_consumption.other_source.add(source)
+            
+            other_sources = request.POST.getlist('other_sources')
+            if other_sources:
+                for name in other_sources:  # Assuming comma-separated names
+                    source, created = OtherConsumptionSource.objects.get_or_create(name=name.strip())
+                    other_consumption.other_source.add(source)
             return redirect("wastewater_treatment")
     else:
         if details:
@@ -1344,10 +1716,15 @@ def other_consumption_view(request):
         else:
             form = OtherConsumptionForm()
 
+    other_consumption_object = OtherConsumption.objects.filter(user=current_user).first()
+    sources = []
+    if other_consumption_object:
+        sources = other_consumption_object.other_source.all()        
+
     return render(
         request,
         "OtherConsumption.html",
-        {"form": form, "details": details, "all_details": all_details},
+        {"form": form, "details": details, "all_details": all_details, 'sources': sources},
     )
 
 
@@ -1509,12 +1886,31 @@ def tanks_and_capacities_view(request):
             tanks_and_capacities = form.save(commit=False)
             tanks_and_capacities.user = current_user
             tanks_and_capacities.save()
+
+            other_sources = form.cleaned_data['tank_source']
+            for name in other_sources:
+                name = name.strip()
+                if name:
+                    source, created = TanksAndCapacitiesSource.objects.get_or_create(name=name)
+                    tanks_and_capacities.tank_source.add(source)
+            
+            other_sources = request.POST.getlist('other_sources')
+            if other_sources:
+                for name in other_sources:  # Assuming comma-separated names
+                    source, created = SwimmingPoolSource.objects.get_or_create(name=name.strip())
+                    tanks_and_capacities.tank_source.add(source)
             return redirect("water_quality_profile")
     else:
         if details:
             form = TanksAndCapacitiesForm(instance=details)
         else:
             form = TanksAndCapacitiesForm()
+
+    tanksandcapacities_object = TanksAndCapacities.objects.filter(user=current_user).first()
+    sources = []
+    if tanksandcapacities_object:
+        sources = tanksandcapacities_object.tank_source.all()
+            
 
     return render(
         request,
@@ -1523,6 +1919,7 @@ def tanks_and_capacities_view(request):
             "form": form,
             "details": details,
             "water_treatment_details": water_treatment_details,
+            "sources": sources
         },
     )
 

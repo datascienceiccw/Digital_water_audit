@@ -22,54 +22,56 @@
                 {% csrf_token %}
                 <div id="employeeroom-form" class='form-container grid grid-cols-1 md:grid-cols-3 gap-4'>
                     <div class="mb-6">
-                        <label for="{{ form.domestic_flushing_source.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Domestic Flushing Source:
-                        </label>
+                        {{ form.domestic_flushing_source.label_tag }}
                         {{ form.domestic_flushing_source }}
                         {% if form.domestic_flushing_source.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.domestic_flushing_source.errors.as_text }}</p>
                         {% endif %}
                     </div>
-                    <div class="mb-6">
-                        <label for="{{ form.toilet_flushing_source.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Toilet Flushing Source:
+                    <div id="other-domestic-sources-container" class="mb-6 border border-gray-300 p-2 rounded-lg">
+                        <label for="other_domestic_sources" class="block text-sm font-medium text-gray-800 mb-2">
+                            Other Domestic Flushing Sources:
                         </label>
+                        <button type="button" id="add-domestic-source" class="btn btn-info mb-4">Add Source</button>
+                        <div id="dynamic-domestic-source-fields"></div>
+                    </div>
+                    <div class="mb-6">
+                        {{ form.toilet_flushing_source.label_tag }}
                         {{ form.toilet_flushing_source }}
                         {% if form.toilet_flushing_source.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.toilet_flushing_source.errors.as_text }}</p>
                         {% endif %}
                     </div>
-                    <div class="mb-6">
-                        <label for="{{ form.commode_types.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Types of Commodes:
+                    <div id="other-toilet-sources-container" class="mb-6 border border-gray-300 p-2 rounded-lg">
+                        <label for="other_toilet_sources" class="block text-sm font-medium text-gray-800 mb-2">
+                            Other Toilet Flushing Sources:
                         </label>
+                        <button type="button" id="add-toilet-source" class="btn btn-info mb-4">Add Source</button>
+                        <div id="dynamic-toilet-source-fields"></div>
+                    </div>
+                    <div class="mb-6">
+                        {{ form.commode_types.label_tag }}
                         {{ form.commode_types }}
                         {% if form.commode_types.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.commode_types.errors.as_text }}</p>
                         {% endif %}
                     </div>
                     <div class="mb-6">
-                        <label for="{{ form.water_consumption.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Specific Water Consumption Per Room (kl):
-                        </label>
+                        {{ form.water_consumption.label_tag }}
                         {{ form.water_consumption }}
                         {% if form.water_consumption.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.water_consumption.errors.as_text }}</p>
                         {% endif %}
                     </div>
                     <div class="mb-6">
-                        <label for="{{ form.washbasin_tap_flowrate.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Washbasin Tap Flowrate (litres per min @ 2 bar):
-                        </label>
+                        {{ form.washbasin_tap_flowrate.label_tag }}
                         {{ form.washbasin_tap_flowrate }}
                         {% if form.washbasin_tap_flowrate.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.washbasin_tap_flowrate.errors.as_text }}</p>
                         {% endif %}
                     </div>
                     <div class="mb-6">
-                        <label for="{{ form.toilet_health_faucet_flowrate.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Toilet Health Faucet Flowrate (litres per min @ 2 bar):
-                        </label>
+                        {{ form.toilet_health_faucet_flowrate.label_tag }}
                         {{ form.toilet_health_faucet_flowrate }}
                         {% if form.toilet_health_faucet_flowrate.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.toilet_health_faucet_flowrate.errors.as_text }}</p>
@@ -94,13 +96,17 @@
                                     <div>
                                         <div class="bg-gray-100 rounded-lg p-2">
                                             <h4 class="font-semibold mb-2">Domestic Flushing Source:</h4>
-                                            <p id="restroom-number" class="text-gray-800">{{ detail.get_domestic_flushing_source_display }}</p>
+                                            {% for source in domestic_sources %}
+                                            <p id="restroom-number" class="text-gray-800">{{ source }}</p>
+                                            {% endfor %}
                                         </div>
                                     </div> 
                                     <div>
                                         <div class="bg-gray-100 rounded-lg p-2">
                                             <h4 class="font-semibold mb-2">Toilet Flushing Source:</h4>
-                                            <p id="restroom-number" class="text-gray-800">{{ detail.get_toilet_flushing_source_display }}</p>
+                                            {% for source in toilet_sources %}
+                                            <p id="restroom-number" class="text-gray-800">{{ source }}</p>
+                                            {% endfor %}
                                         </div>
                                     </div> 
                                     <div>
@@ -139,7 +145,7 @@
     </div>
 
     <div class="text-center mt-5" style="position: relative;">
-        <a href='{% url "guestroom_consumption" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
+        <a href='{% url "banquet_consumption" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
     </div>
     {% if all_details|length %}
     <div class="text-center mt-5" style="position: relative;">
@@ -156,14 +162,31 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const sourceNameField = document.querySelector('#{{ form.employee_room_source.id_for_label }}');
-        const otherSourceContainer = document.querySelector('.other-source');
-        const form = document.querySelector('.form-container1');
-    
-        sourceNameField.addEventListener('change', function() {
-            otherSourceContainer.classList.toggle('hidden', sourceNameField.value !== '9');
-        });
+        const addDomesticSourceButton = document.getElementById('add-domestic-source');
+        const dynamicDomesticSourceFields = document.getElementById('dynamic-domestic-source-fields');
 
+        const addToiletSourceButton = document.getElementById('add-toilet-source');
+        const dynamicToiletSourceFields = document.getElementById('dynamic-toilet-source-fields');
+
+        addDomesticSourceButton.addEventListener('click', function() {
+            const newInput = document.createElement('input');
+            newInput.setAttribute('type', 'text');
+            newInput.setAttribute('name', 'other_domestic_sources');
+            newInput.setAttribute('placeholder', 'Enter other domestic flushing source name');
+            newInput.classList.add('block', 'w-full', 'px-3', 'py-2', 'border', 'rounded-md');
+    
+            dynamicDomesticSourceFields.appendChild(newInput);
+        });
+    
+        addToiletSourceButton.addEventListener('click', function() {
+            const newInput = document.createElement('input');
+            newInput.setAttribute('type', 'text');
+            newInput.setAttribute('name', 'other_toilet_sources');
+            newInput.setAttribute('placeholder', 'Enter other toilet flushing source name');
+            newInput.classList.add('block', 'w-full', 'px-3', 'py-2', 'border', 'rounded-md');
+    
+            dynamicToiletSourceFields.appendChild(newInput);
+        });
     });
 </script>
     

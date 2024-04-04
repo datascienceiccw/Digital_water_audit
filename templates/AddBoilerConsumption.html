@@ -22,54 +22,42 @@
                 {% csrf_token %}
                 <div id="each-boiler-form" class='form-container'>
                     <div class="mb-6">
-                        <label for="{{ form.boiler_name.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Boiler Name:
-                        </label>
+                        {{ form.boiler_name.label_tag }}
                         {{ form.boiler_name }}
                         {% if form.boiler_name.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.boiler_name.errors.as_text }}</p>
                         {% endif %}
                     </div>
                     <div class="mb-6">
-                        <label for="{{ form.capacity.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Capacity:
-                        </label>
+                        {{ form.capacity.label_tag }}
                         {{ form.capacity }}
                         {% if form.capacity.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.capacity.errors.as_text }}</p>
                         {% endif %}
                     </div>
                     <div class="mb-6">
-                        <label for="{{ form.avg_running_time.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Average Running Time (in hours):
-                        </label>
+                        {{ form.avg_running_time.label_tag }}
                         {{ form.avg_running_time }}
                         {% if form.avg_running_time.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.avg_running_time.errors.as_text }}</p>
                         {% endif %}
                     </div>
                     <div class="mb-6">
-                        <label for="{{ form.blowdown_to.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Blowdown To:
-                        </label>
+                        {{ form.blowdown_to.label_tag }}
                         {{ form.blowdown_to }}
                         {% if form.blowdown_to.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.blowdown_to.errors.as_text }}</p>
                         {% endif %}
                     </div>
                     <div class="mb-6">
-                        <label for="{{ form.blowdown_to_vol.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Blowdown To Volume (in litres):
-                        </label>
+                        {{ form.blowdown_to_vol.label_tag }}
                         {{ form.blowdown_to_vol }}
                         {% if form.blowdown_to_vol.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.blowdown_to_vol.errors.as_text }}</p>
                         {% endif %}
                     </div>
                     <div class="mb-6">
-                        <label for="{{ form.blowdown_frequency.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Blowdown Frequency Per Day:
-                        </label>
+                        {{ form.blowdown_frequency.label_tag }}
                         {{ form.blowdown_frequency }}
                         {% if form.blowdown_frequency.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.blowdown_frequency.errors.as_text }}</p>
@@ -120,7 +108,13 @@
                                     <div>
                                         <div class="bg-gray-100 rounded-lg p-2">
                                             <h4 class="font-semibold mb-2">Volume of water blown down:</h4>
-                                            <p id="blowdown-to-vol" class="text-gray-800">{{ detail.blowdown_to_vol }} l</p>
+                                            <p id="blowdown-to-vol" class="text-gray-800">{{ detail.blowdown_to_vol }} kl</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="bg-gray-100 rounded-lg p-2">
+                                            <h4 class="font-semibold mb-2">Blowdown Frequency Per Day:</h4>
+                                            <p id="blowdown-freq" class="text-gray-800">{{ detail.blowdown_frequency }}</p>
                                         </div>
                                     </div>
                                 </div>

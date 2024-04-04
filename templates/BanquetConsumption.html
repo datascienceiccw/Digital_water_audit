@@ -22,54 +22,49 @@
                 {% csrf_token %}
                 <div id="banquet-form" class='form-container'>
                     <div class="mb-6">
-                        <label for="{{ form.banquet_name.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Banquet Name:
-                        </label>
+                        {{ form.banquet_name.label_tag }}
                         {{ form.banquet_name }}
                         {% if form.banquet_name.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.banquet_name.errors.as_text }}</p>
                         {% endif %}
                     </div>
                     <div class="mb-6">
-                        <label for="{{ form.seating_cappacity.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Seating Capacity:
-                        </label>
+                        {{ form.seating_capacity.label_tag }}
                         {{ form.seating_capacity }}
                         {% if form.seating_capacity.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.seating_capacity.errors.as_text }}</p>
                         {% endif %}
                     </div>
                     <div class="mb-6">
-                        <label for="{{ form.average_occupancy.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Average Occupancy per day:
-                        </label>
+                        {{ form.average_occupancy.label_tag }}
                         {{ form.average_occupancy }}
                         {% if form.average_occupancy.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.average_occupancy.errors.as_text }}</p>
                         {% endif %}
                     </div>
                     <div class="mb-6">
-                        <label for="{{ form.drinking_water_consumed.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Drinking Water Sources:
-                        </label>
+                        {{ form.drinking_water_source.label_tag }}
                         {{ form.drinking_water_source }}
                         {% if form.drinking_water_source.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.drinking_water_source.errors.as_text }}</p>
                         {% endif %}
                     </div>
-                    <div class="mb-6">
-                        <label for="{{ form.drinking_water_consumed.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Drinking Water Consumed (in litres):
+                    <div id="other-sources-container" class="mb-6 border border-gray-300 p-2 rounded-lg">
+                        <label for="other_sources" class="block text-sm font-medium text-gray-800 mb-2">
+                            Other Water Sources:
                         </label>
+                        <button type="button" id="add-source" class="btn btn-info mb-4">Add Source</button>
+                        <div id="dynamic-source-fields"></div>
+                    </div>
+                    <div class="mb-6">
+                        {{ form.drinking_water_consumed.label_tag }}
                         {{ form.drinking_water_consumed }}
                         {% if form.drinking_water_consumed.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.drinking_water_consumed.errors.as_text }}</p>
                         {% endif %}
                     </div>
                     <div class="mb-6">
-                        <label for="{{ form.tap_flowrate.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Tap Flowrate (litres per min @ 2 bar):
-                        </label>
+                        {{ form.tap_flowrate.label_tag }}
                         {{ form.tap_flowrate }}
                         {% if form.tap_flowrate.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.tap_flowrate.errors.as_text }}</p>
@@ -116,7 +111,9 @@
                                     <div>
                                         <div class="bg-gray-100 rounded-lg p-2">
                                             <h4 class="font-semibold mb-2">Banquet Water Source:</h4>
-                                            <p id="banquet-source" class="text-gray-800">{{ detail.get_banquet_source_display }}</p>
+                                            {% for source in sources %}
+                                            <p id="banquet-source" class="text-gray-800">{{ source }}</p>
+                                            {% endfor %}
                                         </div>
                                     </div>
                                     <div>
@@ -141,7 +138,7 @@
     </div>
     {% if all_details|length %}
     <div class="text-center mt-5" style="position: relative;">
-        <a href='{% url "guestroom_consumption" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
+        <a href='{% url "employeeroom_consumption" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
     </div>
     {% endif %}
 </div>
@@ -150,14 +147,18 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const sourceNameField = document.querySelector('#{{ form.banquet_source.id_for_label }}');
-        const otherSourceContainer = document.querySelector('.other-source');
-        const form = document.querySelector('.form-container1');
+        const addSourceButton = document.getElementById('add-source');
+        const dynamicSourceFields = document.getElementById('dynamic-source-fields');
     
-        sourceNameField.addEventListener('change', function() {
-            otherSourceContainer.classList.toggle('hidden', sourceNameField.value !== '9');
+        addSourceButton.addEventListener('click', function() {
+            const newInput = document.createElement('input');
+            newInput.setAttribute('type', 'text');
+            newInput.setAttribute('name', 'other_sources');
+            newInput.setAttribute('placeholder', 'Enter other source name');
+            newInput.classList.add('block', 'w-full', 'px-3', 'py-2', 'border', 'rounded-md');
+    
+            dynamicSourceFields.appendChild(newInput);
         });
-
     });
 </script>
     

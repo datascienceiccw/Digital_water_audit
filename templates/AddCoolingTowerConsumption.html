@@ -22,72 +22,56 @@
                 {% csrf_token %}
                 <div id="each-coolingtower-form" class='form-container'>
                     <div class="mb-6">
-                        <label for="{{ form.coolingtower_name.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Cooling Tower Name:
-                        </label>
+                        {{ form.coolingtower_name.label_tag }}
                         {{ form.coolingtower_name }}
                         {% if form.coolingtower_name.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.coolingtower_name.errors.as_text }}</p>
                         {% endif %}
                     </div>
                     <div class="mb-6">
-                        <label for="{{ form.cooling_tower_source.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Water Source:
-                        </label>
+                        {{ form.cooling_tower_source.label_tag }}
                         {{ form.cooling_tower_source }}
                         {% if form.cooling_tower_source.errors %}
                         <p class="text-red-600 text-xs italic mt-1">{{ form.cooling_tower_source.errors.as_text }}</p>
                         {% endif %}
                     </div>
-                    <div class="mb-6 other-source hidden">
-                        <label for="{{ form.other_source_name.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Specify other source:
+                    <div id="other-sources-container" class="mb-6 border border-gray-300 p-2 rounded-lg">
+                        <label for="other_sources" class="block text-sm font-medium text-gray-800 mb-2">
+                            Other Water Sources:
                         </label>
-                        {{ form.other_source_name }}
-                        {% if form.other_source_name.errors %}
-                        <p class="text-red-600 text-xs italic mt-1">{{ form.other_source_name.errors.as_text }}</p>
-                        {% endif %}
+                        <button type="button" id="add-source" class="btn btn-info mb-4">Add Source</button>
+                        <div id="dynamic-source-fields"></div>
                     </div>
                     <div class="mb-6">
-                        <label for="{{ form.capacity.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Capacity (kl):
-                        </label>
+                        {{ form.capacity.label_tag }}
                         {{ form.capacity }}
                         {% if form.capacity.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.capacity.errors.as_text }}</p>
                         {% endif %}
                     </div>
                     <div class="mb-6">
-                        <label for="{{ form.blowdown_volume.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Blowdown Volume (kl):
-                        </label>
+                        {{ form.blowdown_volume.label_tag }}
                         {{ form.blowdown_volume }}
                         {% if form.blowdown_volume.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.blowdown_volume.errors.as_text }}</p>
                         {% endif %}
                     </div>
                     <div class="mb-6">
-                        <label for="{{ form.blowdown_to.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Blowdown To:
-                        </label>
+                        {{ form.blowdown_to.label_tag }}
                         {{ form.blowdown_to }}
                         {% if form.blowdown_to.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.blowdown_to.errors.as_text }}</p>
                         {% endif %}
                     </div>
                     <div class="mb-6">
-                        <label for="{{ form.coolingtower_age.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Age of Cooling Tower (in years):
-                        </label>
+                        {{ form.coolingtower_age.label_tag }}
                         {{ form.coolingtower_age }}
                         {% if form.coolingtower_age.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.coolingtower_age.errors.as_text }}</p>
                         {% endif %}
                     </div>
                     <div class="mb-6">
-                        <label for="{{ form.coolingtower_coc.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Cooling Tower C.O.C:
-                        </label>
+                        {{ form.coolingtower_coc.label_tag }}
                         {{ form.coolingtower_coc }}
                         {% if form.coolingtower_coc.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.coolingtower_coc.errors.as_text }}</p>
@@ -118,17 +102,12 @@
                         
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
-                                        {% if detail.other_source_name %}
                                         <div class="bg-gray-100 rounded-lg p-2">
                                             <h4 class="font-semibold mb-2">Water Source:</h4>
-                                            <p id="cooling-tower-source" class="text-gray-800">{{ detail.other_source_name }}</p>
+                                            {% for source in sources %}
+                                            <p id="cooling-tower-source" class="text-gray-800">{{ source.name }}</p>
+                                            {% endfor %}
                                         </div>
-                                        {% else %}
-                                        <div class="bg-gray-100 rounded-lg p-2">
-                                            <h4 class="font-semibold mb-2">Water Source:</h4>
-                                            <p id="cooling-tower-source" class="text-gray-800">{{ detail.get_cooling_tower_source_display }}</p>
-                                        </div>
-                                        {% endif %}
                                     </div>
                                     <div>
                                         <div class="bg-gray-100 rounded-lg p-2">
@@ -183,16 +162,21 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const sourceNameField = document.querySelector('#{{ form.cooling_tower_source.id_for_label }}');
-        const otherSourceContainer = document.querySelector('.other-source');
-        const form = document.querySelector('.form-container1');
+        const addSourceButton = document.getElementById('add-source');
+        const dynamicSourceFields = document.getElementById('dynamic-source-fields');
     
-        sourceNameField.addEventListener('change', function() {
-            otherSourceContainer.classList.toggle('hidden', sourceNameField.value !== '9');
+        addSourceButton.addEventListener('click', function() {
+            const newInput = document.createElement('input');
+            newInput.setAttribute('type', 'text');
+            newInput.setAttribute('name', 'other_sources');
+            newInput.setAttribute('placeholder', 'Enter other source name');
+            newInput.classList.add('block', 'w-full', 'px-3', 'py-2', 'border', 'rounded-md');
+    
+            dynamicSourceFields.appendChild(newInput);
         });
-
     });
-</script>
+    
+    </script>
     
 {% endblock %}
 
