@@ -22,36 +22,28 @@
                 {% csrf_token %}
                 <div id="calorifier-form" class='form-container'>
                     <div class="mb-6">
-                        <label for="{{ form.calorifier_source.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Water Source:
-                        </label>
+                        {{ form.calorifier_source.label_tag }}
                         {{ form.calorifier_source }}
                         {% if form.calorifier_source.errors %}
                         <p class="text-red-600 text-xs italic mt-1">{{ form.calorifier_source.errors.as_text }}</p>
                         {% endif %}
                     </div>
-                    <div class="mb-6 other-source hidden">
-                        <label for="{{ form.other_source_name.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Specify other source:
+                    <div id="other-sources-container" class="mb-6 border border-gray-300 p-2 rounded-lg">
+                        <label for="other_sources" class="block text-sm font-medium text-gray-800 mb-2">
+                            Other Water Sources:
                         </label>
-                        {{ form.other_source_name }}
-                        {% if form.other_source_name.errors %}
-                        <p class="text-red-600 text-xs italic mt-1">{{ form.other_source_name.errors.as_text }}</p>
-                        {% endif %}
+                        <button type="button" id="add-source" class="btn btn-info mb-4">Add Source</button>
+                        <div id="dynamic-source-fields"></div>
                     </div>
                     <div class="mb-6">
-                        <label for="{{ form.capacity.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Capacity (in litres):
-                        </label>
+                        {{ form.capacity.label_tag }}
                         {{ form.capacity }}
                         {% if form.capacity.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.capacity.errors.as_text }}</p>
                         {% endif %}
                     </div>
                     <div class="mb-6">
-                        <label for="{{ form.water_consumed.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                            Water Consumed (in litres):
-                        </label>
+                        {{ form.water_consumed.label_tag }}
                         {{ form.water_consumed }}
                         {% if form.water_consumed.errors %}
                             <p class="text-red-600 text-xs italic mt-1">{{ form.water_consumed.errors.as_text }}</p>
@@ -76,17 +68,12 @@
                         
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
-                                        {% if detail.other_source_name %}
                                         <div class="bg-gray-100 rounded-lg p-2">
                                             <h4 class="font-semibold mb-2">Water Source:</h4>
-                                            <p id="calorifier-source" class="text-gray-800">{{ detail.other_source_name }}</p>
+                                            {% for source in sources %}
+                                            <p id="calorifier-source" class="text-gray-800">{{ source.name }}</p>
+                                            {% endfor %}
                                         </div>
-                                        {% else %}
-                                        <div class="bg-gray-100 rounded-lg p-2">
-                                            <h4 class="font-semibold mb-2">Water Source:</h4>
-                                            <p id="calorifier-source" class="text-gray-800">{{ detail.get_calorifier_source_display }}</p>
-                                        </div>
-                                        {% endif %}
                                     </div>
                                     <div>
                                         <div class="bg-gray-100 rounded-lg p-2">
@@ -129,15 +116,20 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const sourceNameField = document.querySelector('#{{ form.calorifier_source.id_for_label }}');
-        const otherSourceContainer = document.querySelector('.other-source');
-        const form = document.querySelector('.form-container1');
+        const addSourceButton = document.getElementById('add-source');
+        const dynamicSourceFields = document.getElementById('dynamic-source-fields');
     
-        sourceNameField.addEventListener('change', function() {
-            otherSourceContainer.classList.toggle('hidden', sourceNameField.value !== '9');
+        addSourceButton.addEventListener('click', function() {
+            const newInput = document.createElement('input');
+            newInput.setAttribute('type', 'text');
+            newInput.setAttribute('name', 'other_sources');
+            newInput.setAttribute('placeholder', 'Enter other source name');
+            newInput.classList.add('block', 'w-full', 'px-3', 'py-2', 'border', 'rounded-md');
+    
+            dynamicSourceFields.appendChild(newInput);
         });
-
     });
-</script>
+    
+    </script>
     
 {% endblock %}

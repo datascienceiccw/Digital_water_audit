@@ -17,28 +17,42 @@
     {% else %}
         <fieldset class="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-gray-200  form-container grid grid-cols-1 md:grid-cols-3 gap-4">
     {% endif %}
+    {% if not details %}
         <div class="mb-6">
-            <label for="{{ form.laundry_source.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                Water Source:
-            </label>
+            {{ form.laundry_source.label_tag }}
             {{ form.laundry_source }}
             {% if form.laundry_source.errors %}
                 <p class="text-red-600 text-xs italic mt-1">{{ form.laundry_source.errors.as_text }}</p>
             {% endif %}
         </div>
-        <div class="mb-6">
-            <label for="{{ form.input_vol.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                Input Volume of Water:
+        <div id="other-sources-container" class="mb-6 border border-gray-300 p-2 rounded-lg">
+            <label for="other_sources" class="block text-sm font-medium text-gray-800 mb-2">
+                Other Water Sources:
             </label>
+            <button type="button" id="add-source" class="btn btn-info mb-4">Add Source</button>
+            <div id="dynamic-source-fields"></div>
+        </div>
+    {% else %}
+        <div class="mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Water Sources</h3>
+            <div class="bg-white shadow rounded-lg p-4">
+                {% for source in sources %}
+                    <div class="py-2 px-4 border-b border-gray-200">
+                        <p class="text-gray-800">{{ source.name }}</p> <!-- assuming 'name' is a field on the source object -->
+                    </div>
+                {% endfor %}
+            </div>
+        </div> 
+    {% endif %}       
+        <div class="mb-6">
+            {{ form.input_vol.label_tag }}
             {{ form.input_vol }}
             {% if form.input_vol.errors %}
                 <p class="text-red-600 text-xs italic mt-1">{{ form.input_vol.errors.as_text }}</p>
             {% endif %}
         </div>
         <div class="mb-6">
-            <label for="{{ form.reject_to.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                Reject To:
-            </label>
+            {{ form.reject_to.label_tag }}
             {{ form.reject_to }}
             {% if form.reject_to.errors %}
                 <p class="text-red-600 text-xs italic mt-1">{{ form.reject_to.errors.as_text }}</p>
@@ -46,27 +60,21 @@
         </div>
 
         <div class="mb-6">
-            <label for="{{ form.reject_to_vol.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                Volume of water rejected:
-            </label>
+            {{ form.reject_to_vol.label_tag }}
             {{ form.reject_to_vol }}
             {% if form.reject_to_vol.errors %}
                 <p class="text-red-600 text-xs italic mt-1">{{ form.reject_to_vol.errors.as_text }}</p>
             {% endif %}
         </div>
         <div class="mb-6">
-            <label for="{{ form.washingmachine_capacity.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                Washing Machine Capacity (kl):
-            </label>
+            {{ form.washingmachine_capacity.label_tag }}
             {{ form.washingmachine_capacity }}
             {% if form.washingmachine_capacity.errors %}
                 <p class="text-red-600 text-xs italic mt-1">{{ form.washingmachine_capacity.errors.as_text }}</p>
             {% endif %}
         </div>
         <div class="mb-6">
-            <label for="{{ form.avg_num_solid_clothes.id_for_label }}" class="block text-sm font-medium text-gray-800 mb-2">
-                Average Quantity of solid clothes per day (kg):
-            </label>
+            {{ form.avg_num_solid_clothes.label_tag }}
             {{ form.avg_num_solid_clothes }}
             {% if form.avg_num_solid_clothes.errors %}
                 <p class="text-red-600 text-xs italic mt-1">{{ form.avg_num_solid_clothes.errors.as_text }}</p>
@@ -89,22 +97,20 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const sourceNameField = document.querySelector('#{{ form.laundry_source.id_for_label }}');
-    const otherSourceContainer = document.querySelector('.other-source');
-
-    sourceNameField.addEventListener('change', function() {
-        otherSourceContainer.classList.toggle('hidden', sourceNameField.value !== '9');
+    document.addEventListener('DOMContentLoaded', function() {
+        const addSourceButton = document.getElementById('add-source');
+        const dynamicSourceFields = document.getElementById('dynamic-source-fields');
+    
+        addSourceButton.addEventListener('click', function() {
+            const newInput = document.createElement('input');
+            newInput.setAttribute('type', 'text');
+            newInput.setAttribute('name', 'other_sources');
+            newInput.setAttribute('placeholder', 'Enter other source name');
+            newInput.classList.add('block', 'w-full', 'px-3', 'py-2', 'border', 'rounded-md');
+    
+            dynamicSourceFields.appendChild(newInput);
+        });
     });
-
-    const hotWaterField = document.querySelector('#{{ form.hot_water.id_for_label }}');
-    const hotWaterContainer = document.querySelector('.hot-water-qty');
-
-    hotWaterField.addEventListener('change', function() {
-        hotWaterContainer.classList.toggle('hidden', hotWaterField.value !== '2');
-    });
-
-});
 </script>
 
 {% endblock %}

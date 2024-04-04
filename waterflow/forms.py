@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import formset_factory
 from .models import (
     Registration,
     BasicDetails,
@@ -232,27 +233,32 @@ class BasicDetailsForm(forms.ModelForm):
 class SourceWaterProfileForm(forms.ModelForm):
     source_name = forms.ChoiceField(
         choices=[
-            ("1", "Borewell Water"),
-            ("2", "Tanker water"),
-            ("3", "Metro/corporation Water"),
-            ("4", "Rainwater"),
-            ("5", "Others"),
+            ("Borewell Water", "Borewell Water"),
+            ("Tanker water", "Tanker water"),
+            ("Metro/corporation Water", "Metro/corporation Water"),
+            ("Rainwater", "Rainwater"),
+            ("Others", "Others"),
         ],
         label="Name of the Source",
         widget=forms.Select(attrs={"class": "form-control"}),
+        required=False
     )
     source_daily_consumption = forms.FloatField(
         label="Daily Water Consumption from this Source (kl)",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
+        required=False
     )
     source_water_cost = forms.FloatField(
         label="Cost of Water from this Source ₹",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
+        required=False
     )
 
     class Meta:
         model = SourceWaterProfile
         fields = ["source_name", "source_daily_consumption", "source_water_cost"]
+
+
 
 
 class RainWaterProfileForm(forms.ModelForm):
@@ -287,28 +293,32 @@ class RainWaterProfileForm(forms.ModelForm):
 
 
 class FreshWaterTreatmentProfileForm(forms.ModelForm):
-    class Meta:
-        treatment_types = [
-            (
-                "Pressure Sand Filter(PSF)or Multi Grade Filter(MGF)",
-                "Pressure Sand Filter(PSF)or Multi Grade Filter(MGF)",
-            ),
-            ("Iron Removal Filters(IRF)", "Iron Removal Filters(IRF)"),
-            ("Activated Carbon Filter (ACF)", "Activated Carbon Filter (ACF)"),
-            ("Softener", "Softener"),
-            ("Ultrafiltration(UF)", "Ultrafiltration(UF)"),
-            ("Reverse Osmosis(RO)", "Reverse Osmosis(RO)"),
-            ("Others", "Others"),
-        ]
+    # Define widget_classes and treatment_types as class attributes
+    widget_classes = "block w-full px-3 py-2 border border-blue-800 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
 
+    treatment_types = [
+        (
+            "Pressure Sand Filter(PSF) or Multi Grade Filter(MGF)",
+            "Pressure Sand Filter(PSF) or Multi Grade Filter(MGF)",
+        ),
+        ("Iron Removal Filters(IRF)", "Iron Removal Filters(IRF)"),
+        ("Activated Carbon Filter (ACF)", "Activated Carbon Filter (ACF)"),
+        ("Softener", "Softener"),
+        ("Ultrafiltration(UF)", "Ultrafiltration(UF)"),
+        ("Reverse Osmosis(RO)", "Reverse Osmosis(RO)"),
+    ]
+
+    class Meta:
         model = FreshWaterTreatmentProfile
         fields = ["name"]
 
-        widgets = {
-            "name": forms.Select(
-                attrs={"class": "form-select"}, choices=treatment_types
-            )
-        }
+    # Define name field with choices outside the Meta class
+    name = forms.MultipleChoiceField(
+        choices=treatment_types,
+        label="Name",
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
 
 
 class FreshWaterTreatmentProfileDetailsForm(forms.ModelForm):
@@ -375,45 +385,41 @@ class FreshWaterTreatmentProfileDetailsForm(forms.ModelForm):
 
 
 class TanksCapacitiesForm(forms.ModelForm):
-    name = forms.ChoiceField(
-        choices=[
-            ("1", "Input freshwater tank"),
-            ("2", "Fire tank"),
-            ("3", "Softener Storage tank"),
-            ("4", "RO Storage tank"),
-            ("5", "Flush tank"),
-            ("7", "Domestic Water tank"),
-            ("8", "RO Input tank"),
-            ("9", "Boiler Makeup tank"),
-            ("10", "Others"),
-        ],
+
+    source_choices = [
+            ("Input freshwater tank", "Input freshwater tank"),
+            ("Fire tank", "Fire tank"),
+            ("Softener Storage tank", "Softener Storage tank"),
+            ("RO Storage tank", "RO Storage tank"),
+            ("Flush tank", "Flush tank"),
+            ("Domestic Water tank", "Domestic Water tank"),
+            ("RO Input tank", "RO Input tank"),
+            ("Boiler Makeup tank", "Boiler Makeup tank"),
+        ]
+    
+    name = forms.CharField(
         label="Name of the Tank",
-        widget=forms.Select(attrs={"class": "form-control"}),
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+            }
+        ),
+        required=False
     )
     capacity = forms.FloatField(
-        widget=forms.TextInput(
+        widget=forms.NumberInput(
             attrs={
                 "class": "form-control",
                 "placeholder": "Enter the capacity of the tank",
             }
         ),
         label="Capacity (kl)",
-    )
-
-    other_tank_name = forms.CharField(
-        required=False,
-        label="Name (Others)",
-        widget=forms.TextInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Enter the name of the tank if you chose Others in the name field",
-            }
-        ),
+        required=False
     )
 
     class Meta:
         model = TanksCapacities
-        fields = ["name", "capacity", "other_tank_name"]
+        fields = ["name", "capacity"]
 
 
 class SourceWaterFlowForm(forms.ModelForm):
@@ -435,36 +441,40 @@ class DrinkingWaterSourceForm(forms.ModelForm):
         model = DrinkingWaterSource
         fields = [
             "source_name",
-            "other_source_name",
             "source",
             "consumption",
             "cost",
             "used_by",
         ]
 
+    source_choices = [
+        ('1','Input freshwater tank'),
+        ('2','Fire tank'),
+        ('3','Softener Storage tank'),
+        ('4','RO Storage tank'),
+        ('5','Flush tank'),
+        ('6','Domestic Water tank'),
+        ('7','RO Input tank'),
+        ('8','Boiler Makeup tank')
+    ]
     # Add Tailwind CSS classes for responsiveness
     widget_classes = "block w-full px-3 py-2 border border-blue-800 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
 
-    source_name = forms.ChoiceField(
+
+    source_name = forms.MultipleChoiceField(
         choices=DrinkingWaterSource.source_name_choices,
-        label="Drinking Water Source",
-        widget=forms.Select(attrs={"class": widget_classes}),
+        widget=forms.CheckboxSelectMultiple,
+        label="Drinking Water System",
+        required=False
     )
 
-    other_source_name = forms.CharField(
-        required=False,
-        widget=forms.TextInput(
-            attrs={
-                "class": f"{widget_classes} mt-4",
-                "placeholder": "Enter other source",
-            }
-        ),
-    )
 
     source = forms.CharField(
         widget=forms.TextInput(
             attrs={"class": widget_classes, "placeholder": "Enter the source of water"}
-        )
+        ),
+        label="Water Source",
+        required=False
     )
 
     consumption = forms.FloatField(
@@ -480,7 +490,8 @@ class DrinkingWaterSourceForm(forms.ModelForm):
     cost = forms.FloatField(
         widget=forms.NumberInput(
             attrs={"class": widget_classes, "placeholder": "Enter the cost of water"}
-        )
+        ),
+        label="Cost"
     )
 
     used_by = forms.ChoiceField(
@@ -688,7 +699,8 @@ class BanquetConsumptionForm(forms.ModelForm):
     banquet_name = forms.CharField(
         widget=forms.TextInput(
             attrs={"class": widget_classes, "placeholder": "Enter banquet name"}
-        )
+        ),
+        label='Banquet Name'
     )
 
     seating_capacity = forms.FloatField(
@@ -697,7 +709,8 @@ class BanquetConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter seating capacity of banquet",
             }
-        )
+        ),
+        label='Seating Capacity'
     )
 
     average_occupancy = forms.IntegerField(
@@ -706,30 +719,33 @@ class BanquetConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter the average occupancy",
             }
-        )
+        ),
+        label='Average Occupancy Per Room'
     )
 
-    drinking_water_source = forms.ChoiceField(
+    drinking_water_source = forms.MultipleChoiceField(
         choices=[
-            ("1", "In House RO System"),
-            ("2", "Bottled Water"),
-            ("3", "Individual RO Purifiers"),
-            ("4", "Others"),
+            ("In House RO System", "In House RO System"),
+            ("Bottled Water", "Bottled Water"),
+            ("Individual RO Purifiers", "Individual RO Purifiers"),
         ],
         label="Drinking Water Source",
-        widget=forms.Select(attrs={"class": "form-control"}),
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
 
     drinking_water_consumed = forms.FloatField(
         widget=forms.NumberInput(
             attrs={"class": widget_classes, "placeholder": "Enter the volume consumed"}
-        )
+        ),
+        label='Drinking Water Consumed (in kl)'
     )
 
     tap_flowrate = forms.FloatField(
         widget=forms.NumberInput(
             attrs={"class": widget_classes, "placeholder": "Enter the flow rate"}
-        )
+        ),
+        label='Tap Flowrate (litres per min @ 2 bar)'
     )
 
 
@@ -747,18 +763,18 @@ class GuestRoomConsumptionForm(forms.ModelForm):
     # Add Tailwind CSS classes for responsiveness
     widget_classes = "block w-full px-3 py-2 border border-blue-800 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
 
-    domestic_flushing_source = forms.ChoiceField(
-        widget=forms.Select(
-            attrs={"class": widget_classes, "placeholder": "Enter the source of domestic flushing water"}
-        ),
+    domestic_flushing_source = forms.MultipleChoiceField(
+        choices=GuestRoomConsumption.source_choices,
+        widget=forms.CheckboxSelectMultiple,
         label = "Domestic Flushing Source",
-        choices=GuestRoomConsumption.source_choices,        
+        required=False
     )
 
-    toilet_flushing_source = forms.ChoiceField(
+    toilet_flushing_source = forms.MultipleChoiceField(
         choices=GuestRoomConsumption.source_choices,
-        label="Toilet Flushing Source",
-        widget=forms.Select(attrs={"class": widget_classes}),
+        widget=forms.CheckboxSelectMultiple,
+        label = "Toilet Flushing Source",
+        required=False
     )
 
     water_consumption = forms.FloatField(
@@ -809,16 +825,18 @@ class EmployeeRoomConsumptionForm(forms.ModelForm):
     # Add Tailwind CSS classes for responsiveness
     widget_classes = "block w-full px-3 py-2 border border-blue-800 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
 
-    domestic_flushing_source = forms.ChoiceField(
+    domestic_flushing_source = forms.MultipleChoiceField(
         choices=EmployeeRoomConsumption.source_choices,
-        label= "Domestic Flushing Source",
-        widget=forms.Select(attrs={"class": widget_classes}),
+        widget=forms.CheckboxSelectMultiple,
+        label = "Domestic Flushing Source",
+        required=False
     )
 
-    toilet_flushing_source = forms.ChoiceField(
+    toilet_flushing_source = forms.MultipleChoiceField(
         choices=EmployeeRoomConsumption.source_choices,
-        label="Toilet Flushing Source",
-        widget=forms.Select(attrs={"class": widget_classes}),
+        widget=forms.CheckboxSelectMultiple,
+        label = "Toilet Flushing Source",
+        required=False
     )
 
     water_consumption = forms.IntegerField(
@@ -827,7 +845,8 @@ class EmployeeRoomConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter the specific water consumption per room",
             }
-        )
+        ),
+        label='Specific Water Consumption Per Room (kl)'
     )
 
     commode_types = forms.ChoiceField(
@@ -842,7 +861,8 @@ class EmployeeRoomConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter the number of restrooms",
             }
-        )
+        ),
+        label='Washbasin Tap Flowrate (litres per min @ 2 bar)'
     )
 
     toilet_health_faucet_flowrate = forms.IntegerField(
@@ -851,7 +871,8 @@ class EmployeeRoomConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter the number of restrooms",
             }
-        )
+        ),
+        label='Toilet Health Faucet Flowrate (litres per min @ 2 bar)'
     )
 
 
@@ -869,18 +890,18 @@ class DriversRoomConsumptionForm(forms.ModelForm):
     # Add Tailwind CSS classes for responsiveness
     widget_classes = "block w-full px-3 py-2 border border-blue-800 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
 
-    domestic_flushing_source = forms.ChoiceField(
-        widget=forms.Select(
-            attrs={"class": widget_classes, "placeholder": "Enter the source of domestic flushing water"}
-        ),
+    domestic_flushing_source = forms.MultipleChoiceField(
+        choices=DriversRoomConsumption.source_choices,
+        widget=forms.CheckboxSelectMultiple,
         label = "Domestic Flushing Source",
-        choices=DriversRoomConsumption.source_choices,        
+        required=False
     )
 
-    toilet_flushing_source = forms.ChoiceField(
+    toilet_flushing_source = forms.MultipleChoiceField(
         choices=DriversRoomConsumption.source_choices,
-        label="Toilet Flushing Source",
-        widget=forms.Select(attrs={"class": widget_classes}),
+        widget=forms.CheckboxSelectMultiple,
+        label = "Toilet Flushing Source",
+        required=False
     )
 
     water_consumption = forms.FloatField(
@@ -992,10 +1013,10 @@ class WaterBodiesConsumptionForm(forms.ModelForm):
     # Add Tailwind CSS classes for responsiveness
     widget_classes = "block w-full px-3 py-2 border border-blue-800 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
 
-    water_body_source = forms.ChoiceField(
+    water_body_source = forms.MultipleChoiceField(
         choices=WaterBodiesConsumption.source_choices,
-        label="Water source choices",
-        widget=forms.Select(attrs={"class": widget_classes}),
+        label="Water Source",
+        widget=forms.CheckboxSelectMultiple,
     )
 
     daily_makeup_water = forms.FloatField(
@@ -1004,7 +1025,8 @@ class WaterBodiesConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter the daily makeup of water bodies",
             }
-        )
+        ),
+        label='Daily Makeup Water (kl)'
     )
 
     capacity = forms.FloatField(
@@ -1013,7 +1035,8 @@ class WaterBodiesConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter the capacity of water bodies",
             }
-        )
+        ),
+        label='Capacity (kl)'
     )
 
     reject_to = forms.ChoiceField(
@@ -1028,7 +1051,8 @@ class WaterBodiesConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter volume of water rejected",
             }
-        )
+        ),
+        label='Volume of water rejected (kl)'
     )
 
 
@@ -1047,10 +1071,11 @@ class LaundryConsumptionForm(forms.ModelForm):
     # Add Tailwind CSS classes for responsiveness
     widget_classes = "block w-full px-3 py-2 border border-blue-800 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
 
-    laundry_source = forms.ChoiceField(
+    laundry_source = forms.MultipleChoiceField(
         choices=WaterBodiesConsumption.source_choices,
-        label="Water source choices",
-        widget=forms.Select(attrs={"class": widget_classes}),
+        label="Water Source",
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
 
     input_vol = forms.FloatField(
@@ -1059,7 +1084,8 @@ class LaundryConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter the volume of water input",
             }
-        )
+        ),
+        label='Input Volume of Water'
     )
 
     reject_to_vol = forms.FloatField(
@@ -1068,7 +1094,8 @@ class LaundryConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter volume of water rejected",
             }
-        )
+        ),
+        label='Volume of water rejected'
     )
 
     reject_to = forms.ChoiceField(
@@ -1083,7 +1110,8 @@ class LaundryConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter the total solid clothes per day",
             }
-        )
+        ),
+        label='Washing Machine Capacity (kl)'
     )
 
     avg_num_solid_clothes = forms.FloatField(
@@ -1092,7 +1120,8 @@ class LaundryConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter the quantity of solid clothes washed per day",
             }
-        )
+        ),
+        label='Average Quantity of solid clothes per day (kg)'
     )
 
 class BoilerConsumptionForm(forms.ModelForm):
@@ -1100,7 +1129,6 @@ class BoilerConsumptionForm(forms.ModelForm):
         model = BoilerConsumption
         fields = [
             "boiler_source",
-            "other_source_name",
             "pre_treatment_boiler",
             "boiler_units",
             "steam_recovery",
@@ -1110,20 +1138,11 @@ class BoilerConsumptionForm(forms.ModelForm):
     # Add Tailwind CSS classes for responsiveness
     widget_classes = "block w-full px-3 py-2 border border-blue-800 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
 
-    boiler_source = forms.ChoiceField(
+    boiler_source = forms.MultipleChoiceField(
         choices=BoilerConsumption.source_choices,
-        label="Water source choices",
-        widget=forms.Select(attrs={"class": widget_classes}),
-    )
-
-    other_source_name = forms.CharField(
-        required=False,
-        widget=forms.TextInput(
-            attrs={
-                "class": f"{widget_classes} mt-4",
-                "placeholder": "Enter other source",
-            }
-        ),
+        label="Water Source",
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
 
     pre_treatment_boiler = forms.ChoiceField(
@@ -1138,12 +1157,13 @@ class BoilerConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter the number of boiler units",
             }
-        )
+        ),
+        label='Number of Boiler Units'
     )
 
     steam_recovery = forms.ChoiceField(
         choices=BoilerConsumption.steam_recovery_choices,
-        label="Steam Recovery",
+        label="Has Steam Recovery",
         widget=forms.Select(attrs={"class": widget_classes}),
     )
 
@@ -1155,6 +1175,7 @@ class BoilerConsumptionForm(forms.ModelForm):
                 "placeholder": "Enter the recovery rate",
             }
         ),
+        label='Recovery Rate'
     )
 
 
@@ -1190,7 +1211,8 @@ class AddBoilerConsumptionForm(forms.ModelForm):
     boiler_name = forms.CharField(
         widget=forms.TextInput(
             attrs={"class": widget_classes, "placeholder": "Enter the name of Boiler"}
-        )
+        ),
+        label='Boiler Name'
     )
 
     capacity = forms.FloatField(
@@ -1199,18 +1221,20 @@ class AddBoilerConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter the capacity of boiler",
             }
-        )
+        ),
+        label='Capacity'
     )
 
     avg_running_time = forms.FloatField(
         widget=forms.NumberInput(
             attrs={"class": widget_classes, "placeholder": "Enter the average run time"}
-        )
+        ),
+        label='Average Running Time (in hours)'
     )
 
     blowdown_to = forms.ChoiceField(
         choices=BoilerConsumption.blowdown_choices,
-        label="Reject To",
+        label="Blowdown To",
         widget=forms.Select(attrs={"class": widget_classes}),
     )
 
@@ -1220,7 +1244,8 @@ class AddBoilerConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter volume of water rejected",
             }
-        )
+        ),
+        label='Blowdown To Volume (in kl)'
     )
 
     blowdown_frequency = forms.IntegerField(
@@ -1229,7 +1254,8 @@ class AddBoilerConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter the frequency of blowdown",
             }
-        )
+        ),
+        label='Blowdown Frequency Per Day'
     )
 
 class CalorifierConsumptionForm(forms.ModelForm):
@@ -1237,7 +1263,6 @@ class CalorifierConsumptionForm(forms.ModelForm):
         model = CalorifierConsumption
         fields = [
             "calorifier_source",
-            "other_source_name",
             "capacity",
             "water_consumed",
         ]
@@ -1245,20 +1270,11 @@ class CalorifierConsumptionForm(forms.ModelForm):
     # Add Tailwind CSS classes for responsiveness
     widget_classes = "block w-full px-3 py-2 border border-blue-800 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
 
-    calorifier_source = forms.ChoiceField(
+    calorifier_source = forms.MultipleChoiceField(
         choices=CalorifierConsumption.source_choices,
-        label="Water source choices",
-        widget=forms.Select(attrs={"class": widget_classes}),
-    )
-
-    other_source_name = forms.CharField(
-        required=False,
-        widget=forms.TextInput(
-            attrs={
-                "class": f"{widget_classes} mt-4",
-                "placeholder": "Enter other source",
-            }
-        ),
+        label="Water Sources",
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
 
     capacity = forms.FloatField(
@@ -1267,7 +1283,8 @@ class CalorifierConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter the capacity of calorifier",
             }
-        )
+        ),
+        label='Capacity'
     )
 
     water_consumed = forms.FloatField(
@@ -1276,7 +1293,8 @@ class CalorifierConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter the quantity of water consumed",
             }
-        )
+        ),
+        label='Water Consumed (in kl)'
     )
 
 
@@ -1333,7 +1351,6 @@ class AddCoolingTowerConsumptionForm(forms.ModelForm):
         fields = [
             "coolingtower_name",
             "cooling_tower_source",
-            "other_source_name",
             "capacity",
             "blowdown_volume",
             "blowdown_to",
@@ -1350,23 +1367,15 @@ class AddCoolingTowerConsumptionForm(forms.ModelForm):
                 "class": f"{widget_classes} mt-4",
                 "placeholder": "Enter the name of cooling tower",
             }
-        )
-    )
-
-    cooling_tower_source = forms.ChoiceField(
-        choices=AddCoolingTowerConsumption.source_choices,
-        label="Water source choices",
-        widget=forms.Select(attrs={"class": widget_classes}),
-    )
-
-    other_source_name = forms.CharField(
-        required=False,
-        widget=forms.TextInput(
-            attrs={
-                "class": f"{widget_classes} mt-4",
-                "placeholder": "Enter other source",
-            }
         ),
+        label='Cooling Tower Name'
+    )
+
+    cooling_tower_source = forms.MultipleChoiceField(
+        choices=AddCoolingTowerConsumption.source_choices,
+        label="Water Sources",
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
 
     capacity = forms.FloatField(
@@ -1375,7 +1384,8 @@ class AddCoolingTowerConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter the capacity of cooling tower",
             }
-        )
+        ),
+        label='Capacity (in kl)'
     )
 
     blowdown_volume = forms.FloatField(
@@ -1384,12 +1394,13 @@ class AddCoolingTowerConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter the blowdown volume",
             }
-        )
+        ),
+        label='Blowdown Volume (in kl)'
     )
 
     blowdown_to = forms.ChoiceField(
         choices=AddCoolingTowerConsumption.blowdown_choices,
-        label="Blow Down To",
+        label="Blowdown To",
         widget=forms.Select(attrs={"class": widget_classes}),
     )
 
@@ -1399,13 +1410,15 @@ class AddCoolingTowerConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter the age of cooling tower",
             }
-        )
+        ),
+        label='Age of Cooling Tower (in years)'
     )
 
     coolingtower_coc = forms.IntegerField(
         widget=forms.NumberInput(
             attrs={"class": widget_classes, "placeholder": "Enter cooling tower C.O.C"}
-        )
+        ),
+        label='Cooling Tower C.O.C'
     )
 
 
@@ -1415,7 +1428,6 @@ class IrrigationConsumptionForm(forms.ModelForm):
         fields = [
             "daily_water_consumption",
             "irrigation_source",
-            "other_source_name",
             "amount_consumed",
             "lawn_area",
             "irrigation_frequency",
@@ -1433,23 +1445,15 @@ class IrrigationConsumptionForm(forms.ModelForm):
                 "class": f"{widget_classes} mt-4",
                 "placeholder": "Enter daily water consumption",
             }
-        )
-    )
-
-    irrigation_source = forms.ChoiceField(
-        choices=IrrigationConsumption.source_choices,
-        label="Water source choices",
-        widget=forms.Select(attrs={"class": widget_classes}),
-    )
-
-    other_source_name = forms.CharField(
-        required=False,
-        widget=forms.TextInput(
-            attrs={
-                "class": f"{widget_classes} mt-4",
-                "placeholder": "Enter other source",
-            }
         ),
+        label='Daily Water Consumption'
+    )
+
+    irrigation_source = forms.MultipleChoiceField(
+        choices=IrrigationConsumption.source_choices,
+        label="Water Sources",
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
 
     amount_consumed = forms.FloatField(
@@ -1458,18 +1462,20 @@ class IrrigationConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter the quantity of water consumed",
             }
-        )
+        ),
+        label='Quantity of Water Consumed (in kl)'
     )
 
     lawn_area = forms.FloatField(
         widget=forms.NumberInput(
             attrs={"class": widget_classes, "placeholder": "Enter the total lawn area"}
-        )
+        ),
+        label='Lawn Area'
     )
 
     irrigation_frequency = forms.ChoiceField(
         choices=IrrigationConsumption.irrigation_frequency_options,
-        label="Irrigation Frequency",
+        label="Frequency of Irrigation",
         widget=forms.Select(attrs={"class": widget_classes}),
     )
 
@@ -1481,6 +1487,7 @@ class IrrigationConsumptionForm(forms.ModelForm):
                 "placeholder": "Enter other irrigation frequency",
             }
         ),
+        label='Other Irrigation Frequency'
     )
 
     irrigation_technique = forms.ChoiceField(
@@ -1497,6 +1504,7 @@ class IrrigationConsumptionForm(forms.ModelForm):
                 "placeholder": "Enter other irrigation technique",
             }
         ),
+        label='Other Irrigation Technique'
     )
 
 
@@ -1506,7 +1514,6 @@ class OtherConsumptionForm(forms.ModelForm):
         fields = [
             "process_type",
             "other_source",
-            "other_source_name",
             "amount_consumed",
             "reject_to",
             "car_wash",
@@ -1525,20 +1532,10 @@ class OtherConsumptionForm(forms.ModelForm):
         )
     )
 
-    other_source = forms.ChoiceField(
+    other_source = forms.MultipleChoiceField(
         choices=OtherConsumption.source_choices,
-        label="Water source choices",
-        widget=forms.Select(attrs={"class": widget_classes}),
-    )
-
-    other_source_name = forms.CharField(
-        required=False,
-        widget=forms.TextInput(
-            attrs={
-                "class": f"{widget_classes} mt-4",
-                "placeholder": "Enter other source",
-            }
-        ),
+        label="Water Sources",
+        widget=forms.CheckboxSelectMultiple,
     )
 
     amount_consumed = forms.FloatField(
@@ -1547,7 +1544,8 @@ class OtherConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter the quantity of water consumed",
             }
-        )
+        ),
+        label='Quantity of Water Consumed (in kl)'
     )
 
     reject_to = forms.ChoiceField(
@@ -1562,7 +1560,8 @@ class OtherConsumptionForm(forms.ModelForm):
                 "class": widget_classes,
                 "placeholder": "Enter the quantity of water consumed in car wash",
             }
-        )
+        ),
+        label='Quantity of water used in car wash (in kl)'
     )
 
     others = forms.CharField(
@@ -1570,6 +1569,7 @@ class OtherConsumptionForm(forms.ModelForm):
         widget=forms.TextInput(
             attrs={"class": f"{widget_classes} mt-4", "placeholder": "Others"}
         ),
+        label='Others'
     )
 
 
@@ -1834,7 +1834,6 @@ class TanksAndCapacitiesForm(forms.ModelForm):
         fields = [
             "tank_name",
             "tank_source",
-            "other_source_name",
             "capacity",
             "sequence_flow",
             "other_sequence_flow",
@@ -1850,26 +1849,21 @@ class TanksAndCapacitiesForm(forms.ModelForm):
                 "class": f"{widget_classes} mt-4",
                 "placeholder": "Enter the name of the tank",
             }
-        )
+        ),
+        label='Tank Name'
     )
 
-    tank_source = forms.ChoiceField(
+    tank_source = forms.MultipleChoiceField(
         choices=TanksAndCapacities.source_choices,
         label="Water Sources",
-        widget=forms.Select(attrs={"class": widget_classes}),
-    )
-
-    other_source_name = forms.CharField(
-        required=False,
-        widget=forms.TextInput(
-            attrs={"class": widget_classes, "placeholder": "Mention other water source"}
-        ),
+        widget=forms.CheckboxSelectMultiple,
     )
 
     capacity = forms.FloatField(
         widget=forms.NumberInput(
             attrs={"class": widget_classes, "placeholder": "Enter the capacity"}
-        )
+        ),
+        label='Capacity'
     )
 
     sequence_flow = forms.ChoiceField(
@@ -1886,11 +1880,12 @@ class TanksAndCapacitiesForm(forms.ModelForm):
                 "placeholder": "Mention other sequence flow",
             }
         ),
+        label='Other Sequence Flow'
     )
 
     technology_type = forms.ChoiceField(
         choices=TanksAndCapacities.technology_type_choices,
-        label="Technology type choices",
+        label="Technology Type",
         widget=forms.Select(attrs={"class": widget_classes}),
     )
 

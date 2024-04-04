@@ -9,27 +9,18 @@
             <div class="w-full md:w-1/2 lg:w-1/2 pr-0 md:pr-4 mb-8">
                 <form method="POST" action="" class="form-container1 max-w-4xl bg-white p-8 rounded-lg shadow-xl border border-gray-200">
                     {% csrf_token %}
-                    <h3 class="text-center">Add Sources</h3>
+                    <h3 class="text-center">Add Sources:</h3>
                     <div class="mb-6">
-                        {{ form.source_name.label_tag }}
-                        {{ form.source_name }}
-                        {% if form.source_name.errors %}
-                            <div class="text-danger">{{ form.source_name.errors }}</div>
-                        {% endif %}
-                    </div>
-                    <div class="mb-6">
-                        {{ form.source_daily_consumption.label_tag }}
-                        {{ form.source_daily_consumption }}
-                        {% if form.source_daily_consumption.errors %}
-                            <div class="text-danger">{{ form.source_daily_consumption.errors }}</div>
-                        {% endif %}
-                    </div>
-                    <div class="mb-6">
-                        {{ form.source_water_cost.label_tag }}
-                        {{ form.source_water_cost }}
-                        {% if form.source_water_cost.errors %}
-                            <div class="text-danger">{{ form.source_water_cost.errors }}</div>
-                        {% endif %}
+                        <div class="md:w-1/2 lg:w-1/2 pr-0 md:pr-4 mb-8">
+                            <button type="button" onclick="addInput('Borewell Water')" class="btn btn-info mb-4" value="Borewell Water">Borewell Water</button>
+                            <button type="button" onclick="addInput('Tanker water')" class="btn btn-info mb-4" value="Tanker water">Tanker water</button>
+                            <button type="button" onclick="addInput('Metro/corporation Water')" class="btn btn-info mb-4" value="Metro/corporation Water">Metro/corporation Water</button>
+                            <button type="button" onclick="addInput('Rainwater')" class="btn btn-info mb-4" value="Rainwater">Rainwater</button>
+                            <button type="button" onclick="addInput('Others')" class="btn btn-info mb-4" value="Others">Others</button>
+                        </div> 
+                        <div class="md:w-1/2 lg:w-1/2 pr-0 md:pr-4 mb-8">
+                            <div id="inputs"></div>
+                        </div>      
                     </div>
                     <div class="text-end">
                         <button type="submit" class="btn btn-primary">Update</button>
@@ -48,12 +39,11 @@
                         <div style="position:relative">
                             <h3 class="text-centre">Existing Water Sources</h3>
                                 {% if all_sources|length %}
-                                    {% comment %} <p class="text-secondary mb-4">Click on the treatment method to edit it.</p> {% endcomment %}
                                     <ul class="list-group">
                                         {% for source in all_sources %}
                                             <li class="list-group-item flex justify-between items-center">
-                                                <span>{{ source.get_source_name_display }}</span>
-                                                <span class="bg-gray-500 text-white px-2 py-2 border rounded">{{ source.source_daily_consumption }} kl &nbsp | &nbsp {{ source.source_water_cost }} ₹</span>
+                                                <span>{{ source.source_name }}</span>
+                                                <span class="bg-gray-500 text-white px-2 py-2 border rounded">{{ source.source_daily_consumption }} kl &nbsp | &nbsp ₹ {{ source.source_water_cost }} </span>
                                             </li>
                                         {% endfor %}
                                     </ul>
@@ -75,6 +65,26 @@
     </div> 
 
 </div>
+<script>
+    function addInput(buttonValue) {
+        const container = document.getElementById('inputs');
+        const inputGroup = document.createElement('div');
+        inputGroup.classList.add('mb-4');
+        inputGroup.innerHTML = `
+            ${buttonValue === 'Others' ? `
+            <label class="block text-gray-700 text-sm font-bold mb-2">Other Source Name</label>
+            <input type="text" name="other_source_name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        ` : ''}
+            <label class="block text-gray-700 text-sm font-bold mb-2">${buttonValue} Consumption</label>
+            <input type="text" name="source_daily_consumption" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            <label class="block text-gray-700 text-sm font-bold mb-2">${buttonValue} Cost</label>
+            <input type="text" name="source_water_cost" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            <input type="hidden" name="source_name" value="${buttonValue}">
+        `;
+        container.appendChild(inputGroup);
+    }
+</script>
+
 {% endblock %}
 </body>
 </html>
