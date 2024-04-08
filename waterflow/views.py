@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
 from .models import (
     SourceWaterProfile,
     RainWaterProfile,
@@ -98,6 +100,18 @@ import json
 import plotly
 import plotly.graph_objs as go
 from .dash_source_app import create_user_dash_app
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, Image
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
+from io import BytesIO
+from io import BytesIO
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, Image
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
 
 
 def home_view(request):
@@ -707,7 +721,7 @@ def source_water_flow(request):
     treatment_method = FreshWaterTreatmentProfile.objects.filter(user=current_user)
     tanks = TanksCapacities.objects.filter(user=current_user)
     for fresh_water_source in fresh_water_sources:
-        sources.append(dict(SOURCE_CHOICES)[fresh_water_source.source_name])
+        sources.append(fresh_water_source.source_name)
     for method in treatment_method:
         sources.append(method.name)
         destinations.append(method.name)
@@ -715,8 +729,8 @@ def source_water_flow(request):
         if tank=='10':
             sources.append(tank.other_tank_name)
             destinations.append(tank.other_tank_name)
-        sources.append(dict(tank_names)[tank.name])
-        destinations.append(dict(tank_names)[tank.name])
+        sources.append(tank.name)
+        destinations.append(tank.name)
 
     template_sources = sources
     template_destinations = destinations
@@ -726,8 +740,6 @@ def source_water_flow(request):
         form_sources.append((source,sources[source]))
     for destination in range(len(destinations)):
         form_destinations.append((destination,destinations[destination]))
-    print(f'The destinations are {destinations}')
-    print(f'The sources are {sources}')
     if request.method == "POST":
         form = SourceWaterFlowForm(request.POST,user=current_user)
         if form.is_valid():
@@ -2010,3 +2022,70 @@ def delete_recycled_water(request, recycled_water_id):
 
 def show_map_view(request):
     return render(request, "rainfall_map.html")
+
+
+
+def generate_pdf_file():
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    
+    styles = getSampleStyleSheet()
+    
+
+    # Custom styles
+    title_style = styles['Title'].clone('TitleStyle')
+    title_style.textColor = colors.darkblue
+    title_style.spaceAfter = 20
+
+    header_style = styles['Heading2'].clone('HeaderStyle')
+    header_style.textColor = colors.darkgreen
+
+    body_style = styles['BodyText'].clone('BodyStyle')
+    body_style.spaceAfter = 6
+
+
+    # Title
+    elements = [Paragraph("Digital Water Audit Tool Report", title_style)]
+
+
+    # Introduction/Summary
+    intro_text = "This summary presents the key findings from the water audit conducted on [Date]."
+    elements += [Paragraph(intro_text, body_style), Spacer(1, 10)]
+
+
+    # Findings Table
+    data = [['Parameter', 'Observed Value', 'Standard Value', 'Compliance'],
+            ['Parameter 1', '50', '30', 'No'],
+            ['Parameter 2', '40', '50', 'Yes'],
+            ['Parameter 3', '60', '60', 'Yes']]
+    table_style = TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.lightblue),
+        ('GRID', (0, 0), (-1, -1), 1, colors.darkblue)
+    ])
+    table = Table(data, style=table_style)
+    elements.append(table)
+    elements.append(Spacer(1, 20))
+
+
+    # Recommendations
+    recommendations_text = "Based on the findings, we recommend immediate action to address non-compliance areas."
+    elements.append(Paragraph(recommendations_text, body_style))
+
+
+    # Build the document
+    doc.build(elements)
+
+    buffer.seek(0)
+    return buffer
+
+@login_required
+def generate_pdf(request):
+    pdf_content = generate_pdf_file()
+    response = FileResponse(pdf_content, filename='report.pdf')
+    response['Content-Disposition'] = 'inline; filename="report.pdf"'
+    return response

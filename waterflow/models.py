@@ -196,7 +196,7 @@ class DrinkingWaterSource(models.Model):
     # source_name = models.CharField(max_length=255, choices=source_name_choices)
     source_name = models.ManyToManyField(DrinkingWaterSystem, related_name='drinking_water_system')
     # other_source_name = models.CharField(max_length=255, null=True)
-    source = models.ManyToManyField(DrinkingWaterSourceName, related_name='drinking_water_source', null=True)
+    source = models.ManyToManyField(DrinkingWaterSourceName, related_name='drinking_water_source')
     consumption = models.FloatField()
     cost = models.FloatField()
     used_by = models.CharField(max_length=255, choices=used_by_choices, null=True)  

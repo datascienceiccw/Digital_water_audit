@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
-from waterflow.views import home_view, thank_you_view, source_water_pie_chart, flowchart_view, user_home_view, logout_view, source_dash_view, show_map_view
+from waterflow.views import home_view, thank_you_view, source_water_pie_chart, flowchart_view, user_home_view, logout_view, source_dash_view, generate_pdf
 from django.contrib.auth.views import LoginView
 
 urlpatterns = [
@@ -22,12 +22,14 @@ urlpatterns = [
 
     path('accounts/', include('allauth.urls')),
     # path('accounts/', include('allauth.socialaccount.urls')),
-    
+
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
-     path('source-dash/', source_dash_view, name='source_dash_view'),
-     path(
-        "map.html", TemplateView.as_view(template_name="chennai_rainfall_map.html")
+    path('source-dash/', source_dash_view, name='source_dash_view'),
+    path(
+        "map.html", TemplateView.as_view(
+            template_name="chennai_rainfall_map.html")
     ),
+    path('generate-pdf/', generate_pdf, name='generate_pdf')
 
 
 ]

@@ -398,4 +398,6 @@ urlpatterns = [
         name="delete_recycled_water_all",
     ),
     path("delete-recycled-water/<int:recycled_water_id>/", delete_recycled_water, name="delete_recycled_water"),
+    
+    
 ]
