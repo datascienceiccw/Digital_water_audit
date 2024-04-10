@@ -12,12 +12,12 @@
                     </div>
                 {% else %}
                     {% if not is_rainwater_present %}
-                    <div id="warningAlert" class="alert alert-warning" role="alert">
+                    {% comment %} <div id="warningAlert" class="alert alert-warning" role="alert">
                         <strong>Warning!</strong> You did not select rainwater in the preceding form. If this was an oversight, please return to the previous page to include it.
                         <div class="mt-2" style="position: relative;">
                             <a href='{% url "source_water_profile" %}' class="btn btn-primary px-2" style="position: absolute; bottom: 0; right: 0;">Go back</a>
                         </div>
-                    </div>
+                    </div> {% endcomment %}
                     {% endif %}    
                 {% endif %}
                 {% csrf_token %}
