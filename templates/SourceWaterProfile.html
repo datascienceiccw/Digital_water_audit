@@ -16,11 +16,12 @@
                     <h3 class="text-lg font-semibold text-blue-500 mb-6">Add Sources</h3>
                     <div class="flex flex-wrap -mx-2 mb-6">
                         <div class="px-2 w-full">
-                            <button type="button" onclick="addInput('Borewell Water')" class="btn btn-info mb-4 w-full" value="Borewell Water">Borewell Water</button>
-                            <button type="button" onclick="addInput('Tanker water')" class="btn btn-info mb-4 w-full" value="Tanker water">Tanker water</button>
-                            <button type="button" onclick="addInput('Metro/corporation Water')" class="btn btn-info mb-4 w-full" value="Metro/corporation Water">Metro/corporation Water</button>
-                            <button type="button" onclick="addInput('Rainwater')" class="btn btn-info mb-4 w-full" value="Rainwater">Rainwater</button>
-                            <button type="button" onclick="addInput('Others')" class="btn btn-info mb-4 w-full" value="Others">Others</button>
+                            <button type="button" onclick="addInput('Borewell Water', this)" class="btn btn-info mb-4 w-full" value="Borewell Water">Borewell Water</button>
+
+                            <button type="button" onclick="addInput('Tanker water', this)" class="btn btn-info mb-4 w-full" value="Tanker water">Tanker water</button>
+                            <button type="button" onclick="addInput('Metro/corporation Water', this)" class="btn btn-info mb-4 w-full" value="Metro/corporation Water">Metro/corporation Water</button>
+                            <button type="button" onclick="addInput('Rainwater', this)" class="btn btn-info mb-4 w-full" value="Rainwater">Rainwater</button>
+                            <button type="button" onclick="addInput('Others', this)" class="btn btn-info mb-4 w-full" value="Others">Others</button>
                         </div>
                         <div class="px-2 w-full">
                             <div id="inputs"></div>
@@ -62,8 +63,7 @@
     </div>
 </div>
 <script>
-    function addInput(buttonValue) {
-        const container = document.getElementById('inputs');
+    function addInput(buttonValue, buttonElement) {
         const inputGroup = document.createElement('div');
         inputGroup.classList.add('mb-4');
         inputGroup.innerHTML = `
@@ -77,8 +77,10 @@
             <input type="text" name="source_water_cost" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
             <input type="hidden" name="source_name" value="${buttonValue}">
         `;
-        container.appendChild(inputGroup);
+    
+        buttonElement.parentNode.insertBefore(inputGroup, buttonElement.nextSibling);
     }
+    
 </script>
 
 {% endblock %}
