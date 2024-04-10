@@ -2,187 +2,24 @@
 {% load static %}
 
 {% block content %}
-{% comment %} <div class="container mt-5">
-    <form method="POST" action="">
-        {% csrf_token %}
-        <h3 class="text-center text-info mb-4">Water Treatment Profile</h2>
-        <p class="text-secondary">
-            <strong>How to fill this form?</strong>         
-        </p>
-
-        <p class="text-secondary mb-5">
-            On the left-hand side, check a box if you use that treatment method and on the right-hand side enter the sequence number in which you use this method.
-            For example, if you first use psf/mgf, then irf, and then uf, then check these boxes and enter the numbers 1, 2, and 3 for psf/mgf, irf, and uf respectively.
-        </p>    
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="form-group">
-                    {{ form.psf_mgf.label_tag }}
-                    {{ form.psf_mgf }}
-                    {% if form.psf_mgf.errors %}
-                        <span class="text-danger custom-error">{{ form.psf_mgf.errors.0 }}</span>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    {{ form.psf_mgf_sequence_number.label_tag }}
-                    {{ form.psf_mgf_sequence_number }}
-                    {% if form.psf_mgf_sequence_number.errors %}
-                        <span class="text-danger custom-error">{{ form.psf_mgf_sequence_number.errors.0 }}</span>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="form-group">
-                    {{ form.irf.label_tag }}
-                    {{ form.irf }}
-                    {% if form.irf.errors %}
-                        <span class="text-danger custom-error">{{ form.irf.errors.0 }}</span>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    {{ form.irf_sequence_number.label_tag }}
-                    {{ form.irf_sequence_number }}
-                    {% if form.irf_sequence_number.errors %}
-                        <span class="text-danger custom-error">{{ form.irf_sequence_number.errors.0 }}</span>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="form-group">
-                    {{ form.acf.label_tag }}
-                    {{ form.acf }}
-                    {% if form.acf.errors %}
-                        <span class="text-danger custom-error">{{ form.acf.errors.0 }}</span>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    {{ form.acf_sequence_number.label_tag }}
-                    {{ form.acf_sequence_number }}
-                    {% if form.acf_sequence_number.errors %}
-                        <span class="text-danger custom-error">{{ form.acf_sequence_number.errors.0 }}</span>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="form-group">
-                    {{ form.softener.label_tag }}
-                    {{ form.softener }}
-                    {% if form.softener.errors %}
-                        <span class="text-danger custom-error">{{ form.softener.errors.0 }}</span>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    {{ form.softener_sequence_number.label_tag }}
-                    {{ form.softener_sequence_number }}
-                    {% if form.softener_sequence_number.errors %}
-                        <span class="text-danger custom-error">{{ form.softener_sequence_number.errors.0 }}</span>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="form-group">
-                    {{ form.uf.label_tag }}
-                    {{ form.uf }}
-                    {% if form.uf.errors %}
-                        <span class="text-danger custom-error">{{ form.uf.errors.0 }}</span>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    {{ form.uf_sequence_number.label_tag }}
-                    {{ form.uf_sequence_number }}
-                    {% if form.uf_sequence_number.errors %}
-                        <span class="text-danger custom-error">{{ form.uf_sequence_number.errors.0 }}</span>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="form-group">
-                    {{ form.ro_plant.label_tag }}
-                    {{ form.ro_plant }}
-                    {% if form.ro_plant.errors %}
-                        <span class="text-danger custom-error">{{ form.ro_plant.errors.0 }}</span>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    {{ form.ro_plant_sequence_number.label_tag }}
-                    {{ form.ro_plant_sequence_number }}
-                    {% if form.ro_plant_sequence_number.errors %}
-                        <span class="text-danger custom-error">{{ form.ro_plant_sequence_number.errors.0 }}</span>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="form-group">
-                    {{ form.others.label_tag }}
-                    {{ form.others }}
-                    {% if form.others.errors %}
-                        <span class="text-danger custom-error">{{ form.others.errors.0 }}</span>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    {{ form.others_sequence_number.label_tag }}
-                    {{ form.others_sequence_number }}
-                    {% if form.others_sequence_number.errors %}
-                        <span class="text-danger custom-error">{{ form.others_sequence_number.errors.0 }}</span>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        <div class="text-center mt-5" style="position: relative;">
-            <button type="submit" class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</button>
-        </div>
-    </form>
-</div> {% endcomment %}
 <div class="container mx-auto px-4 py-8 bg-light">
     <div class="w-full">
-        <h2 class="text-center text-3xl font-semibold text-blue-600 mb-8">Tanks and Capacities</h2>
-        <p class="text-gray-400">
-            <strong>How to fill this form?</strong>         
-        </p>
+        <h2 class="text-center text-4xl font-bold text-blue-600 mb-10">Tanks and Capacities</h2>
         <p class="text-gray-600 mb-5">
-            First, select the name of the tank used, and corresponding to that tank, enter the storage capacity.
-        </p>    
-        <div class="flex flex-wrap justify-between pt-5" style="position: relative;">
-            <div class="w-full md:w-1/2 lg:w-1/2 pr-0 md:pr-4 mb-8">
-                <form method="POST" action="" style="position: relative;" class="form-container1 max-w-4xl bg-white p-8 rounded-lg shadow-xl border border-gray-200">
+            <strong>How to fill this form?</strong> First, select the name of the tank used, and corresponding to that tank, enter the storage capacity.
+        </p>
+        <div class="flex flex-wrap -mx-4">
+            <div class="w-full md:w-1/2 px-4 mb-8">
+                <form method="POST" action="" class="bg-white p-8 rounded-lg shadow-xl border border-gray-200 relative">
                     {% csrf_token %}
-                    <h3 class="card-title mb-4">Add Tank Names</h3>
+                    <h3 class="text-lg font-semibold text-blue-500 mb-6">Add Tank Names</h3>
                     <div class="mb-6">
-                        {{ form.name.label_tag }}
-                        <div class="md:w-1/2 lg:w-1/2 pr-0 md:pr-4 mb-8">
+                        <div class="space-y-4">
                             {% for name in tank_names %}
-                            <button type="button" onclick="addInput('{{ name }}')" class="btn btn-info mb-4" value="{{ name }}">{{ name }}</button>
+                            <button type="button" onclick="addInput('{{ name }}', this)" class="btn btn-info w-full" value="{{ name }}">{{ name }}</button>
                             {% endfor %}
                         </div>    
-                        <div class="md:w-1/2 lg:w-1/2 pr-0 md:pr-4 mb-8">
-                            <div id="inputs"></div>
-                        </div>
+                        <div id="inputs"></div>
                     </div>
                     <div class="text-end">
                         <button type="submit" class="btn btn-primary">Update</button>
@@ -190,61 +27,45 @@
                 </form>
             </div>
         
-            <div class="w-full md:w-1/2 lg:w-1/2 pr-0 md:pr-4 mb-8">
-                <div id="details-display"
-                    class="max-w-full md:max-w-4xl bg-white p-8 rounded-lg shadow-xl border border-gray-200">
+            <div class="w-full md:w-1/2 px-4 mb-8">
+                <div class="bg-white p-8 rounded-lg shadow-xl border border-gray-200 relative">
                     {% if all_tanks|length %}
-                        <a href="{% url 'delete_tanks_capacities' %}" class="btn btn-danger mb-4" style="position: absolute; right: 0; top:0;">Reset</a>
+                        <a href="{% url 'delete_tanks_capacities' %}" class="btn btn-danger absolute right-0 top-0 m-2">Reset</a>
                     {% endif %}
-                    <div class="mb-6">
-                        <div style="position:relative">
-                            <h3 class="card-title mb-4">Existing Tanks</h3>
-                            {% if all_tanks|length %}
-                                {% comment %} <p class="text-secondary mb-4">Click on the treatment method to edit it.</p> {% endcomment %}
-                                <ul class="list-group">
-                                    {% for tank in all_tanks %}
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <span>{{ tank.name }}</span>
-                                            <span class="badge bg-primary">{{ tank.capacity }}</span>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            {% else %}
-                                <p class="text-secondary mb-4">No tank added yet</p>
-                            {% endif %}
-                        </div>    
-                    </div>
+                    <h3 class="text-lg font-semibold text-blue-500 mb-6">Existing Tanks</h3>
+                    {% if all_tanks|length %}
+                        <ul class="list-group">
+                            {% for tank in all_tanks %}
+                                <li class="list-group-item flex justify-between items-center">
+                                    <span>{{ tank.name }}</span>
+                                    <span class="badge bg-primary rounded-full px-4">{{ tank.capacity }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-secondary mb-4">No tank added yet</p>
+                    {% endif %}
                 </div>    
             </div>
         </div>
         
+        <div class="flex justify-between mt-8">
+            <a href="{% url 'source_water_profile' %}" class="btn btn-primary">Previous</a>
+            <a href="{% url 'fresh_water_treatment_profile' %}" class="btn btn-primary">Next</a>
+        </div> 
     </div>
-
-    <div class="text-center mt-5" style="position: relative;">
-        <a href="{% url 'source_water_profile' %}" class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>
-    </div>
-    <div class="text-center mt-5" style="position: relative;">
-        <a href="{% url 'fresh_water_treatment_profile' %}" class="btn btn-primary px-5" style="position: absolute; bottom: 0; right: 0;">Next</a>
-    </div> 
-
 </div>
+
 <script>
-    function addInput(buttonValue) {
-        const container = document.getElementById('inputs');
+    function addInput(buttonValue, buttonElement) {
         const inputGroup = document.createElement('div');
-        inputGroup.classList.add('mb-4');
+        inputGroup.classList.add('mb-4', 'bg-gray-100', 'p-4', 'rounded');
         inputGroup.innerHTML = `
-            ${buttonValue === 'Others' ? `
-            <label class="block text-gray-700 text-sm font-bold mb-2">Other Tank Name</label>
-            <input type="text" name="other_tank_name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-        ` : ''}
             <label class="block text-gray-700 text-sm font-bold mb-2">${buttonValue} Capacity</label>
-            <input type="text" name="capacity" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            <input type="text" name="capacity" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2">
             <input type="hidden" name="name" value="${buttonValue}">
         `;
-        container.appendChild(inputGroup);
+        buttonElement.parentNode.insertBefore(inputGroup, buttonElement.nextSibling);
     }
-</script>   
+</script>
 {% endblock %}
-</body>
-</html>

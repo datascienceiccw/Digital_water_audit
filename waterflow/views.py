@@ -188,12 +188,13 @@ def source_water_profile(request):
             cost = request.POST.getlist('source_water_cost')
             if names and consumptions and cost:
                 for i in range(len(names)):
-                    if names[i] == 'Others':
-                        source_water_profile = SourceWaterProfile.objects.create(user=current_user, source_name=other_source_name[0], source_daily_consumption=consumptions[i], source_water_cost=cost[i])
-                        other_source_name = other_source_name[1:]
-                    else:    
-                        source_water_profile = SourceWaterProfile.objects.create(user=current_user, source_name=names[i], source_daily_consumption=consumptions[i], source_water_cost=cost[i])
-                    source_water_profile.save()
+                    if consumptions[i] and cost[i]:
+                        if names[i] == 'Others':
+                            source_water_profile = SourceWaterProfile.objects.create(user=current_user, source_name=other_source_name[0], source_daily_consumption=consumptions[i], source_water_cost=cost[i])
+                            other_source_name = other_source_name[1:]
+                        else:    
+                            source_water_profile = SourceWaterProfile.objects.create(user=current_user, source_name=names[i], source_daily_consumption=consumptions[i], source_water_cost=cost[i])
+                        source_water_profile.save()
             return redirect("source_water_profile")
         else:
             print(form.errors)
@@ -670,15 +671,17 @@ def tanks_capacities(request):
             form.instance.user = current_user
             names = request.POST.getlist('name')
             capacities = request.POST.getlist('capacity')
+            print(capacities)
             other_tank_name = request.POST.getlist('other_tank_name')
             if names and capacities:
-                for i in range(len(names)): 
-                    if names[i] == 'Others':
-                        tank_capacity = TanksCapacities.objects.create(user=current_user, name=other_tank_name[0], capacity=capacities[i]) 
-                        other_tank_name = other_tank_name[1:]
-                    else:    
-                        tank_capacity = TanksCapacities.objects.create(user=current_user, name=names[i], capacity=capacities[i])
-                    tank_capacity.save()    
+                for i in range(len(names)):
+                    if capacities[i]:  # Check if capacity is non-empty
+                        if names[i] == 'Others':
+                            tank_capacity = TanksCapacities.objects.create(user=current_user, name=other_tank_name[0], capacity=capacities[i])
+                            other_tank_name = other_tank_name[1:]
+                        else:
+                            tank_capacity = TanksCapacities.objects.create(user=current_user, name=names[i], capacity=capacities[i])
+                        tank_capacity.save()
             return redirect("tanks_capacities")
         else:
             print(form.errors)
