@@ -110,8 +110,10 @@ from io import BytesIO
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, Image
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER
+
 
 
 def home_view(request):
@@ -2024,60 +2026,66 @@ def show_map_view(request):
     return render(request, "rainfall_map.html")
 
 
-
 def generate_pdf_file():
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter)
-    
+    doc.onFirstPage = lambda canvas, doc: canvas.setTitle("Digital Water Audit Report")
+
     styles = getSampleStyleSheet()
-    
 
     # Custom styles
     title_style = styles['Title'].clone('TitleStyle')
     title_style.textColor = colors.darkblue
-    title_style.spaceAfter = 20
+    title_style.spaceAfter = 50
+    title_style.fontSize = 28
 
-    header_style = styles['Heading2'].clone('HeaderStyle')
-    header_style.textColor = colors.darkgreen
+    heading_style = styles['Heading1'].clone('HeadingStyle')
+    heading_style.spaceBefore = 10
+    heading_style.spaceAfter = 10
+    heading_style.leftIndent = 20
 
-    body_style = styles['BodyText'].clone('BodyStyle')
-    body_style.spaceAfter = 6
 
+    center_style = ParagraphStyle(name='Center', alignment=TA_CENTER)
 
     # Title
-    elements = [Paragraph("Digital Water Audit Tool Report", title_style)]
+    elements = [Paragraph("Digital Water Audit Report", title_style)]
 
+    # Logo image
+    logo = "static/main_logo.png" 
+    logo_img = Image(logo)  # Set width and height as needed
+    logo_img.hAlign = 'CENTER'  
+    elements.append(logo_img)
+    elements.append(Spacer(1, 24))
 
-    # Introduction/Summary
-    intro_text = "This summary presents the key findings from the water audit conducted on [Date]."
-    elements += [Paragraph(intro_text, body_style), Spacer(1, 10)]
+    # Description Text
+    description_text = "This report provides an detailed analysis of the water audit findings and insights."
+    elements.append(Paragraph(description_text, center_style))
+    
+    elements.append(PageBreak())
+    
+    # Index Page
+    
+    elements.append(Paragraph("Index", title_style))
+    elements.append(Spacer(1, 24))
+    
+    
 
+    # List of sections
+    sections = [
+        "1. Introduction",
+        "2. Source Water Profile",
+        "3. Fresh Water Treatment Profile",
+        "4. Tanks and Capacities",
+        "5. Consumption Details",
+        "6. Waste Water Treatment",
+        "7. Water Quality Profile",
+        "8. Recycled Water Profile",
+        "9. Conclusion"
+    ]
 
-    # Findings Table
-    data = [['Parameter', 'Observed Value', 'Standard Value', 'Compliance'],
-            ['Parameter 1', '50', '30', 'No'],
-            ['Parameter 2', '40', '50', 'Yes'],
-            ['Parameter 3', '60', '60', 'Yes']]
-    table_style = TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.lightblue),
-        ('GRID', (0, 0), (-1, -1), 1, colors.darkblue)
-    ])
-    table = Table(data, style=table_style)
-    elements.append(table)
-    elements.append(Spacer(1, 20))
+    for section in sections:
+        elements.append(Paragraph(section, heading_style))
 
-
-    # Recommendations
-    recommendations_text = "Based on the findings, we recommend immediate action to address non-compliance areas."
-    elements.append(Paragraph(recommendations_text, body_style))
-
-
-    # Build the document
     doc.build(elements)
 
     buffer.seek(0)
