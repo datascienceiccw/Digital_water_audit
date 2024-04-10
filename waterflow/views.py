@@ -276,8 +276,9 @@ def fresh_water_treatment_profile(request):
             other_treatment = request.POST.getlist('other_sources')
             if other_treatment:
                 for name in other_treatment:
-                    treatment_profile = FreshWaterTreatmentProfile.objects.create(user=current_user, name=name)
-                    treatment_profile.save()   
+                    if name:
+                        treatment_profile = FreshWaterTreatmentProfile.objects.create(user=current_user, name=name)
+                        treatment_profile.save()   
                     # FreshWaterTreatmentProfile.objects.get_or_create(name=name)  
             return redirect("fresh_water_treatment_profile")
         else:
