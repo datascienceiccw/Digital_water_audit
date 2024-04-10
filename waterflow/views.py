@@ -113,7 +113,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER
-
+from django.forms import modelformset_factory
 
 
 def home_view(request):
@@ -698,62 +698,59 @@ def delete_tanks_capacities(request):
     return redirect("tanks_capacities")
 
 
+
+
+
 @login_required
 def source_water_flow(request):
-    current_user = request.user
-    tank_names = [('1','Input freshwater tank'),
-                ('2','Fire tank'),
-                ('3','Softener Storage tank'),
-                ('4','RO Storage tank'),
-                ('5','Flush tank'),
-                ('7','Domestic Water tank'),
-                ('8','RO Input tank'),
-                ('9','Boiler Makeup tank'),
-                ('10','Others')]
-    SOURCE_CHOICES = [
-        ('1', 'Borewell Water'),
-        ('2', 'Tanker water'),
-        ('3', 'Metro/corporation Water'),
-        ('4', 'Rainwater'),
-        ('5', 'Others'),
-    ]
-    sources = []
-    destinations = []
-    fresh_water_sources = SourceWaterProfile.objects.filter(user=current_user)
-    treatment_method = FreshWaterTreatmentProfile.objects.filter(user=current_user)
-    tanks = TanksCapacities.objects.filter(user=current_user)
-    for fresh_water_source in fresh_water_sources:
-        sources.append(fresh_water_source.source_name)
-    for method in treatment_method:
-        sources.append(method.name)
-        destinations.append(method.name)
-    for tank in tanks:
-        if tank=='10':
-            sources.append(tank.other_tank_name)
-            destinations.append(tank.other_tank_name)
-        sources.append(tank.name)
-        destinations.append(tank.name)
+    existing_entries = SourceWaterFlow.objects.filter(user=request.user).exists()
+    extra_forms = 0 if existing_entries else 1
 
-    template_sources = sources
-    template_destinations = destinations
-    form_sources = []
-    form_destinations = []
-    for source in range(len(sources)):
-        form_sources.append((source,sources[source]))
-    for destination in range(len(destinations)):
-        form_destinations.append((destination,destinations[destination]))
-    if request.method == "POST":
-        form = SourceWaterFlowForm(request.POST,user=current_user)
-        if form.is_valid():
-            current_user = request.user
-            form.instance.user = current_user
-            form.save()
-            return redirect('source-destination')
-        else:
-            print(form.errors)
-    else:
-        form = SourceWaterFlowForm(sources=form_sources,destinations=form_destinations)
-    return render(request, "SourceWaterFlow.html", {'form': form, 'sources': sources, 'destinations': destinations})
+    SourceWaterFlowFormSet = modelformset_factory(SourceWaterFlow, form=SourceWaterFlowForm, extra=extra_forms, can_delete=True)
+
+    # Fetching all sources and destinations from the database
+    fresh_water_sources = SourceWaterProfile.objects.filter(user=request.user)
+    treatment_methods = FreshWaterTreatmentProfile.objects.filter(user=request.user)
+    tanks = TanksCapacities.objects.filter(user=request.user)
+
+    sources = [(source.id, source.source_name) for source in fresh_water_sources] + \
+              [(method.id, method.name) for method in treatment_methods] + \
+              [(tank.id, tank.name) for tank in tanks]
+
+    destinations = [(method.id, method.name) for method in treatment_methods] + \
+                   [(tank.id, tank.name) for tank in tanks]
+
+
+    if 'reset' in request.POST:
+        SourceWaterFlow.objects.filter(user=request.user).delete()
+        existing_entries = False
+        return redirect('source_water_flow')
+
+    if request.method == "POST" and not existing_entries:
+        formset = SourceWaterFlowFormSet(
+            request.POST,
+            request.FILES,
+            queryset=SourceWaterFlow.objects.none(),
+            form_kwargs={'sources': sources, 'destinations': destinations}
+        )
+        if formset.is_valid():
+            instances = formset.save(commit=False)
+            for instance in instances:
+                if instance.source and instance.destination and instance.volume:
+                    instance.user = request.user
+                    instance.save()
+            existing_entries = True
+            return redirect('source_water_flow')
+
+    formset = SourceWaterFlowFormSet(
+        queryset=SourceWaterFlow.objects.filter(user=request.user) if existing_entries else SourceWaterFlow.objects.none(),
+        form_kwargs={'sources': sources, 'destinations': destinations}
+    )
+
+    return render(request, "SourceWaterFlow.html", {
+        'formset': formset,
+        'existing_entries': existing_entries
+    })
 
 
 @login_required

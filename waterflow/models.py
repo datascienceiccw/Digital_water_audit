@@ -151,10 +151,17 @@ class OtherTanksCapacitiesSource(models.Model):
     def __str__(self):
         return self.name    
     
+# class SourceWaterFlow(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+#     source = models.CharField(max_length=255,null=True,blank=True)
+#     destination = models.CharField(max_length=255,null=True,blank=True)
+
 class SourceWaterFlow(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    source = models.CharField(max_length=255,null=True,blank=True)
-    destination = models.CharField(max_length=255,null=True,blank=True)
+    source = models.CharField(max_length=255, null=True, blank=True)
+    destination = models.CharField(max_length=255, null=True, blank=True)
+    volume = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  # Assuming volume is a decimal
+
 
 
 class DrinkingWaterSystem(models.Model):

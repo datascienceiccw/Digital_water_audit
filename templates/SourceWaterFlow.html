@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+{% comment %} 
 <div class="container mx-auto bg-gray-100 p-3">
     <div class="bg-white p-6 border rounded-lg shadow-lg">
         <h3 class="text-center text-3xl text-blue-500 mb-4">Sources and Destinations</h3>
@@ -47,5 +48,69 @@
         <a href="{% url 'fresh_water_treatment_profile_details' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Previous</a>
         <a href="{% url 'rainwater_details' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded">Next</a>
     </div>
+</div> {% endcomment %}
+
+<div class="container mx-auto bg-gray-100 p-3">
+    <div class="bg-white p-6 border rounded-lg shadow-lg">
+        <h3 class="text-center text-3xl text-blue-500 mb-4">Source Water Flow</h3>
+        <p class="text-gray-600 mb-4">
+            Please fill out the form below to define the water flow. Add multiple entries by clicking "Add More". 
+            Once submitted, entries cannot be modified but can be reset to start over.
+        </p>
+        <form method="POST" action="" class="relative">
+            {% if existing_entries %}
+                <div class="flex justify-end mt-4">
+                    <button type="submit" name="reset" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Reset</button>
+                </div>
+            {% endif %}
+            {% csrf_token %}
+            <fieldset id="formset-fieldset" {% if existing_entries %}disabled{% endif %}>
+                {{ formset.management_form }}
+                <div id="formset-container">
+                    {% for form in formset %}
+                        <div class="grid grid-cols-3 gap-4 mb-4 form-row">
+                            <div>{{ form.source.label_tag }}{{ form.source }}</div>
+                            <div>{{ form.volume.label_tag }}{{ form.volume }}</div>
+                            <div>{{ form.destination.label_tag }}{{ form.destination }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="flex justify-end mt-4">
+                    {% if not existing_entries %}
+                        <button type="button" id="add-more" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add More</button>
+                        {% endif %}
+                    </div>
+                    {% if not existing_entries %}
+                    <div class="flex justify-center mt-4">
+                        <input type="submit" value="Submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                    </div>
+                {% endif %}
+            </fieldset>
+           
+        </form>
+    </div>
+    <div class="flex justify-between mt-5">
+        <a href="{% url 'fresh_water_treatment_profile_details' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Previous</a>
+        <a href="{% url 'rainwater_details' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded">Next</a>
+    </div>
 </div>
+
+{% if not existing_entries %}
+<script type="text/javascript">
+    document.getElementById('add-more').addEventListener('click', () => {
+        let container = document.getElementById('formset-container');
+        let newForm = container.querySelector('.form-row').cloneNode(true);
+        let totalForms = document.getElementById('id_form-TOTAL_FORMS');
+        let formNum = totalForms.value;
+
+        newForm.innerHTML = newForm.innerHTML.replace(/-0-/g, `-${formNum}-`);
+        newForm.innerHTML = newForm.innerHTML.replace(/__prefix__/g, formNum);
+        container.appendChild(newForm);
+        
+        totalForms.value = parseInt(formNum) + 1;
+    });
+</script>
+
+{% endif %}
+
 {% endblock %}

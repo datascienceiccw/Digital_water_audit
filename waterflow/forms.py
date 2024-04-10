@@ -422,18 +422,45 @@ class TanksCapacitiesForm(forms.ModelForm):
         fields = ["name", "capacity"]
 
 
+# class SourceWaterFlowForm(forms.ModelForm):
+#     source = forms.ChoiceField(choices=(),widget=forms.Select(attrs={'class': 'form-control'}))
+#     destination = forms.ChoiceField(choices=(),widget=forms.Select(attrs={'class': 'form-control'}))
+#     def __init__(self, sources=None, destinations=None,*args, **kwargs):
+#         self.source_choices = sources
+#         self.destination_choices = destinations
+#         super(SourceWaterFlowForm, self).__init__(*args,**kwargs)
+#         self.fields['source'].choices = self.source_choices
+#         self.fields['destination'].choices = self.destination_choices    
+#     class Meta:
+#         model = SourceWaterFlow
+#         fields = ['source','destination']
+
 class SourceWaterFlowForm(forms.ModelForm):
-    source = forms.ChoiceField(choices=(),widget=forms.Select(attrs={'class': 'form-control'}))
-    destination = forms.ChoiceField(choices=(),widget=forms.Select(attrs={'class': 'form-control'}))
-    def __init__(self, sources=None, destinations=None,*args, **kwargs):
-        self.source_choices = sources
-        self.destination_choices = destinations
-        super(SourceWaterFlowForm, self).__init__(*args,**kwargs)
-        self.fields['source'].choices = self.source_choices
-        self.fields['destination'].choices = self.destination_choices    
+    source = forms.ChoiceField(
+        choices=(),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label="Source"
+    )
+    destination = forms.ChoiceField(
+        choices=(),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label="Destination"
+    )
+    volume = forms.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        widget=forms.NumberInput(attrs={'class': 'form-control'}),
+        label="Volume (kl)"
+    )
+
+    def __init__(self, *args, sources=(), destinations=(), **kwargs):
+        super(SourceWaterFlowForm, self).__init__(*args, **kwargs)
+        self.fields['source'].choices = sources
+        self.fields['destination'].choices = destinations
+
     class Meta:
         model = SourceWaterFlow
-        fields = ['source','destination']
+        fields = ['source', 'destination', 'volume']
 
 
 class DrinkingWaterSourceForm(forms.ModelForm):
