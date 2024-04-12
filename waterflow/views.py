@@ -717,13 +717,13 @@ def source_water_flow(request):
     treatment_methods = FreshWaterTreatmentProfile.objects.filter(user=request.user)
     tanks = TanksCapacities.objects.filter(user=request.user)
 
-    sources = [(source.id, source.source_name) for source in fresh_water_sources] + \
-              [(method.id, method.name) for method in treatment_methods] + \
-              [(tank.id, tank.name) for tank in tanks]
+    sources = [(source.source_name, source.source_name) for source in fresh_water_sources] + \
+              [(method.name, method.name) for method in treatment_methods] + \
+              [(tank.name, tank.name) for tank in tanks]
 
-    destinations = [(method.id, method.name) for method in treatment_methods] + \
-                   [(tank.id, tank.name) for tank in tanks]
-
+    destinations = [(method.name, method.name) for method in treatment_methods] + \
+                   [(tank.name, tank.name) for tank in tanks]
+    print(sources)
 
     if 'reset' in request.POST:
         SourceWaterFlow.objects.filter(user=request.user).delete()
