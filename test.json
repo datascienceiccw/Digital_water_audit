@@ -1,0 +1,54 @@
+[
+    {
+        "name": "Borewell Water",
+        "children": [
+            {
+                "name": "Fire tank",
+                "children": []
+            },
+            {
+                "name": "Pressure Sand Filter (PSF)",
+                "children": [
+                    {
+                        "name": "Activated Carbon Filter (ACF)",
+                        "children": [
+                            {
+                                "name": "Iron Removal Filters (IRF)",
+                                "children": [
+                                    {
+                                        "name": "Softener",
+                                        "children": [
+                                            {
+                                                "name": "1",
+                                                "children": []
+                                            }
+                                        ],
+                                        "volume": 200
+                                    }
+                                ],
+                                "volume": 200
+                            }
+                        ],
+                        "volume": 200
+                    }
+                ],
+                "volume": 200
+            }
+        ],
+        "volume": 200
+    },
+    {
+        "name": "Tanker water",
+        "children": [
+            {
+                "name": "Fire tank",
+                "children": []
+            },
+            {
+                "name": "Input freshwater tank",
+                "children": []
+            }
+        ],
+        "volume": 200
+    }
+]

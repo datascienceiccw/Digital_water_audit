@@ -39,6 +39,8 @@ function App() {
   useEffect(() => {
     const loadedSources = window.sourcesData || [];
     const loadedTreatment = window.treatmentData || [];
+    const sourceWaterFlow = window.sourceWaterFlow || [];
+    console.log("sourceWaterFlow", sourceWaterFlow);
     const { nodes: initializedNodes, edges: initializedEdges } =
       initializeFlowchart(loadedSources, loadedTreatment);
 

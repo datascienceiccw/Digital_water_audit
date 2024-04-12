@@ -233,7 +233,6 @@ def rainwater(request):  # sourcery skip: assign-if-exp, merge-else-if-into-elif
     is_rainwater_present = SourceWaterProfile.objects.filter(
         user=current_user, source_name=4
     ).exists()
-    print(is_rainwater_present)
     return render(
         request,
         "rainwater.html",
@@ -266,7 +265,6 @@ def fresh_water_treatment_profile(request):
 
             other_treatment = form.cleaned_data['name']
             for name in other_treatment:
-                print(name)
                 name = name.strip()
                 if name:
                     treatment_profile = FreshWaterTreatmentProfile.objects.create(user=current_user, name=name)
@@ -310,7 +308,6 @@ def fresh_water_treatment_profile_details(request):
     if request.method == "POST":
         if "reset" in request.POST:
             profile_id_to_reset = request.POST["reset"]
-            print(profile_id_to_reset)
             FreshWaterTreatmentProfileDetails.objects.filter(
                 profile_id=profile_id_to_reset
             ).delete()
@@ -640,17 +637,48 @@ def get_freshwater_treatment(user):
 
     return json.dumps(treatments_data)
 
+def build_nested_structure(flat_data):
+    # Create a dictionary for holding the node information
+    nodes = {}
+    # Helper function to add nodes and children
+    def add_node(source, destination, volume):
+        if source in nodes:
+            nodes[source]['children'].append(nodes[destination])
+        else:
+            nodes[source] = {'name': source, 'children': [nodes[destination]]}
+        nodes[source]['volume'] = volume  # Include the volume of flow from source to destination
+
+    # Initialize nodes dictionary with all possible nodes (both sources and destinations)
+    for item in flat_data:
+        nodes[item['source']] = {'name': item['source'], 'children': []}
+        nodes[item['destination']] = {'name': item['destination'], 'children': []}
+    
+    # Link nodes according to the source-destination relationships
+    for item in flat_data:
+        add_node(item['source'], item['destination'], str(item['volume']))
+
+    # Find root nodes (which are not anyone's destination)
+    root_nodes = {name: node for name, node in nodes.items() if not any(name == child['name'] for n in nodes.values() for child in n['children'])}
+    
+    return list(root_nodes.values())
+
+
 
 @login_required
 def flowchart_view(request):
     user = request.user
     sources_json = get_source_water(user)
     treatements_json = get_freshwater_treatment(user)
+    source_water_flows = SourceWaterFlow.objects.filter(user=user).values()
+    nested_structure = build_nested_structure(source_water_flows)
+    nested_structure_json = json.dumps(nested_structure, indent=4)
 
     context = {
         "sources": sources_json,
         "treatments": treatements_json,
+        "source_water_flow": nested_structure_json,
     }
+    print(context['source_water_flow'])
     return render(request, "flowchart.html", context)
 
 
@@ -672,7 +700,6 @@ def tanks_capacities(request):
             form.instance.user = current_user
             names = request.POST.getlist('name')
             capacities = request.POST.getlist('capacity')
-            print(capacities)
             other_tank_name = request.POST.getlist('other_tank_name')
             if names and capacities:
                 for i in range(len(names)):
@@ -723,7 +750,6 @@ def source_water_flow(request):
 
     destinations = [(method.name, method.name) for method in treatment_methods] + \
                    [(tank.name, tank.name) for tank in tanks]
-    print(sources)
 
     if 'reset' in request.POST:
         SourceWaterFlow.objects.filter(user=request.user).delete()
@@ -750,11 +776,14 @@ def source_water_flow(request):
         queryset=SourceWaterFlow.objects.filter(user=request.user) if existing_entries else SourceWaterFlow.objects.none(),
         form_kwargs={'sources': sources, 'destinations': destinations}
     )
-
     return render(request, "SourceWaterFlow.html", {
         'formset': formset,
         'existing_entries': existing_entries
     })
+
+
+
+
 
 
 @login_required
@@ -1242,12 +1271,9 @@ def delete_swimmingpool_consumption(request):
 def waterbodies_consumption_view(request):
     current_user = request.user
     details = WaterBodiesConsumption.objects.filter(user=current_user).first()
-    print(details)
     if request.method == "POST":
-        print('post')
         form = WaterBodiesConsumptionForm(request.POST)
         if form.is_valid():
-            print('form')
             waterbody_consumption = form.save(commit=False)
             waterbody_consumption.user = current_user
             waterbody_consumption.save()
@@ -1892,7 +1918,6 @@ def tanks_and_capacities_view(request):
     water_treatment_details = WasteWaterTreatment.objects.filter(
         user=current_user
     ).first()
-    print(water_treatment_details)
 
     if request.method == "POST":
         form = TanksAndCapacitiesForm(request.POST)
