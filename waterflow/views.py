@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.http import FileResponse
-from reportlab.pdfgen import canvas
+from django.core.serializers import serialize
 from .models import (
     SourceWaterProfile,
     RainWaterProfile,
@@ -502,109 +502,6 @@ def source_water_pie_chart(request):
     return render(request, "water_chart.html", context)
 
 
-# previous implementation of flowchart_view using mermaid.js
-# @login_required
-# def flowchart_view(request):  # sourcery skip: dict-comprehension
-#     current_user = request.user
-#     source_water_profile = SourceWaterProfile.objects.filter(
-#         user=current_user).all()
-#     treatment_profile = FreshWaterTreatmentProfile.objects.filter(
-#         user=current_user).all()
-#     treatment_profile_seq_dic = {}
-#     for treatment in treatment_profile:
-#         treatment_profile_seq_dic[treatment.sequence_number] = treatment.name
-#     mermaid_code = generate_mermaid_code(
-#         current_user, source_water_profile, treatment_profile_seq_dic)
-
-#     return render(request, 'flowchart.html', {'mermaid_code': mermaid_code})
-
-# def source_water_mermaid_content(source_water_profile):
-#     source_water_mermaid = """
-#     style subgraphcontent fill:black,stroke:#333
-#     subgraph subgraphcontent[<b> </b>]"""
-
-#     # A dictionary to map source names for the Mermaid diagram
-#     source_names = {
-#         '1': 'Borewell Water',
-#         '2': 'Tanker Water',
-#         '3': 'Metro Water',
-#         '4': 'Rain Water',
-#         '5': 'Others'
-#     }
-
-#     # Iterate over each source water profile entry
-#     for source in source_water_profile:
-#         source_name = source_names.get(source.source_name, "Unknown")
-#         source_consumption = source.source_daily_consumption
-#         if source_consumption > 0:
-#             source_water_mermaid += f'\n    style {source.source_name} fill:#1ca3ec,stroke:black,stroke-width:2px;'
-#             source_water_mermaid += f'\n    {source.source_name}[({source_name})] -->|{source_consumption} kl| A[Total Source Water]'
-
-#     source_water_mermaid += '''\nend \n'''
-#     return source_water_mermaid
-
-
-# def get_total_source_water(current_user):
-#     source_water_profiles = SourceWaterProfile.objects.filter(user=current_user)
-#     total_input_water = sum(profile.source_daily_consumption for profile in source_water_profiles)
-#     return total_input_water
-
-
-# def get_input_reject_water_from_treatments(current_user):
-#     treatment_profiles = FreshWaterTreatmentProfile.objects.filter(
-#         user=current_user).all()
-#     dic = {}
-#     for treatment in treatment_profiles:
-#         dic[treatment.name] = (float(treatment.details.input_water), float(
-#             treatment.details.reject_water))
-#     return dic
-
-
-# def fresh_water_treatment_mermaid_content(current_user, seq_dict):
-#     total_source_water = get_total_source_water(current_user)
-#     input_reject_dic = get_input_reject_water_from_treatments(current_user)
-#     fresh_water_treatment_mermaid = """
-#     style subgraphcontent1 fill:black,stroke:#333
-#     subgraph subgraphcontent1[<b> </b>]\n
-#     """
-#     prev_node = 'A'
-#     fresh_water_treatment_mermaid += f'   style {prev_node} fill:green,stroke:black,stroke-width:2px;\n'
-#     fresh_water_treatment_mermaid += f'   {prev_node} --> |{total_source_water} kl| '
-
-#     for key, value in sorted(seq_dict.items()):
-#         main_node = chr(66 + key - 1)  # ASCII character starting from 'B'
-#         # Additional node connected to each main node
-#         aux_node = f'A{main_node}'
-
-#         # Add main node and connect it to the auxiliary node
-#         fresh_water_treatment_mermaid += f'{main_node}("{value}") -->|{input_reject_dic[value][1]} kl| {aux_node}("Reject")\n'
-#         fresh_water_treatment_mermaid += f'style {aux_node} fill:red,stroke:black,stroke-width:2px;'
-#         # Connect to the next main node if not the last key
-#         if key != max(seq_dict.keys()):
-#             next_main_node = chr(66 + key)
-#             fresh_water_treatment_mermaid += f'   {main_node} --> |{input_reject_dic[value][0]} kl| {next_main_node}\n'
-#             print(next_main_node)
-#         else:
-#           fresh_water_treatment_mermaid += f' {main_node} --> |{input_reject_dic[value][0]} kl| K[Tanks]\n'
-#           fresh_water_treatment_mermaid += f'style K fill:green,stroke:black,stroke-width:2px;'
-
-
-#     fresh_water_treatment_mermaid += '\nend'
-#     return fresh_water_treatment_mermaid
-
-# def generate_mermaid_code(current_user, source_water_profile, treatment_profile_seq_dic):
-#     mermaid_code = """
-#     graph TB;
-#     style A fill:gray,stroke:black,stroke-width:2px;
-#     """
-
-#     mermaid_code += source_water_mermaid_content(source_water_profile)
-#     mermaid_code += fresh_water_treatment_mermaid_content(
-#         current_user, treatment_profile_seq_dic)
-#     # print(mermaid_code)
-#     return mermaid_code
-
-
 def get_source_water(user):
     sources = SourceWaterProfile.objects.filter(user=user)
     # Manual construction of data to include get_source_name_display
@@ -637,48 +534,39 @@ def get_freshwater_treatment(user):
 
     return json.dumps(treatments_data)
 
-def build_nested_structure(flat_data):
-    # Create a dictionary for holding the node information
-    nodes = {}
-    # Helper function to add nodes and children
-    def add_node(source, destination, volume):
-        if source in nodes:
-            nodes[source]['children'].append(nodes[destination])
-        else:
-            nodes[source] = {'name': source, 'children': [nodes[destination]]}
-        nodes[source]['volume'] = volume  # Include the volume of flow from source to destination
+from rest_framework import serializers
 
-    # Initialize nodes dictionary with all possible nodes (both sources and destinations)
-    for item in flat_data:
-        nodes[item['source']] = {'name': item['source'], 'children': []}
-        nodes[item['destination']] = {'name': item['destination'], 'children': []}
-    
-    # Link nodes according to the source-destination relationships
-    for item in flat_data:
-        add_node(item['source'], item['destination'], str(item['volume']))
+class SourceWaterFlowSerializer(serializers.ModelSerializer):
+    node_type = serializers.SerializerMethodField()
+    reject_water = serializers.SerializerMethodField()
 
-    # Find root nodes (which are not anyone's destination)
-    root_nodes = {name: node for name, node in nodes.items() if not any(name == child['name'] for n in nodes.values() for child in n['children'])}
-    
-    return list(root_nodes.values())
+    class Meta:
+        model = SourceWaterFlow
+        fields = ['source', 'destination', 'volume', 'node_type', 'reject_water']
 
+    def get_node_type(self, obj):
+        # Logic to determine node type based on your specific criteria
+        if "tank" in obj.destination.lower():
+            return 'tankNode'
+        elif any(meth.name in obj.destination for meth in FreshWaterTreatmentMethods.objects.all()):
+            return 'treatmentNode'
+        return 'sourceNode'
+
+    def get_reject_water(self, obj):
+        # Fetch reject water information if it's a treatment process
+        details = FreshWaterTreatmentProfileDetails.objects.filter(profile__name=obj.destination).first()
+        return details.reject_water if details else None
 
 
 @login_required
 def flowchart_view(request):
     user = request.user
-    sources_json = get_source_water(user)
-    treatements_json = get_freshwater_treatment(user)
-    source_water_flows = SourceWaterFlow.objects.filter(user=user).values()
-    nested_structure = build_nested_structure(source_water_flows)
-    nested_structure_json = json.dumps(nested_structure, indent=4)
+    source_water_flow_data = SourceWaterFlow.objects.filter(user=user).all()
+    source_water_flow_json = serialize('json', source_water_flow_data)
 
     context = {
-        "sources": sources_json,
-        "treatments": treatements_json,
-        "source_water_flow": nested_structure_json,
+        "source_water_flow": source_water_flow_json,
     }
-    print(context['source_water_flow'])
     return render(request, "flowchart.html", context)
 
 

@@ -8,7 +8,7 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import {
   SourceNode,
-  TotalSourceWaterNode,
+  Tanks,
   TreatmentNode,
   RejectNode,
 } from "./Components/Node";
@@ -17,7 +17,7 @@ import { initializeFlowchart } from "./initializeFlowchart";
 
 const nodeTypes = {
   sourceNode: SourceNode,
-  totalNode: TotalSourceWaterNode,
+  totalNode: Tanks,
   treatmentNode: TreatmentNode,
   rejectNode: RejectNode,
 };
@@ -37,12 +37,10 @@ function App() {
   );
 
   useEffect(() => {
-    const loadedSources = window.sourcesData || [];
-    const loadedTreatment = window.treatmentData || [];
     const sourceWaterFlow = window.sourceWaterFlow || [];
-    console.log("sourceWaterFlow", sourceWaterFlow);
+    const parsedData = typeof sourceWaterFlow === 'string' ? JSON.parse(sourceWaterFlow) : sourceWaterFlow;
     const { nodes: initializedNodes, edges: initializedEdges } =
-      initializeFlowchart(loadedSources, loadedTreatment);
+      initializeFlowchart(parsedData);
 
     // Store the initial layout in a ref after initialization
     initialLayoutRef.current = {

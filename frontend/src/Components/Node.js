@@ -21,7 +21,7 @@ const SourceNode = ({ data }) => (
 );
 
 // Total Source Water Node Component
-const TotalSourceWaterNode = ({ data }) => (
+const Tanks = ({ data }) => (
   <div className="flex flex-col items-center justify-center w-32 h-20 bg-green-50 border border-green-300 rounded-lg shadow-sm text-center">
     <FaHandHoldingWater className="text-green-500 text-2xl mb-1" />
     <div className="text-xs text-green-700">{data.label}</div>
@@ -86,4 +86,4 @@ const RejectNode = ({ data }) => (
   </div>
 );
 
-export { SourceNode, TotalSourceWaterNode, TreatmentNode, RejectNode };
+export { SourceNode, Tanks, TreatmentNode, RejectNode };

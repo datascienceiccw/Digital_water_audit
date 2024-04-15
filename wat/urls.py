@@ -2,7 +2,9 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 from waterflow.views import home_view, thank_you_view, source_water_pie_chart, flowchart_view, user_home_view, logout_view, source_dash_view, generate_pdf
-from django.contrib.auth.views import LoginView
+from django.conf.urls.static import static
+from django.conf import settings
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,3 +35,7 @@ urlpatterns = [
 
 
 ]
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += [
+        path('hello', TemplateView.as_view(template_name='index.html')),
+    ]

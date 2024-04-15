@@ -1,128 +1,74 @@
-// initializeFlowchart.js
+export const initializeFlowchart = (sourceWaterFlowData) => {
+  const nodesMap = new Map();
+  const levelsMap = new Map();
+  const edges = [];
+  const adjacencyList = new Map();
 
-export const initializeFlowchart = (loadedSources, loadedTreatment) => {
-  const sortedTreatment = loadedTreatment.sort(
-    (a, b) => a.seq_number - b.seq_number
-  );
+  sourceWaterFlowData.forEach(item => {
+    const source = item.fields.source;
+    const destination = item.fields.destination;
+    const volume = parseFloat(item.fields.volume); 
 
-  let totalInputWater = loadedSources.reduce(
-    (sum, source) => sum + parseFloat(source.consumption),
-    0
-  );
-  let nodes = [],
-    edges = [];
-  let treatmentXPosition = 600; // Initial X position for the first treatment node
+    if (!nodesMap.has(source)) {
+      nodesMap.set(source, {
+        id: `node-${source.replace(/\s+/g, '-')}`,
+        type: 'sourceNode', // Consider dynamic type assignment if needed in future
+        data: { label: source }
+      });
+    }
+    if (!nodesMap.has(destination)) {
+      nodesMap.set(destination, {
+        id: `node-${destination.replace(/\s+/g, '-')}`,
+        type: 'treatmentNode', // Consider dynamic type assignment if needed in future
+        data: { label: destination }
+      });
+    }
 
-  const verticalSpacing = 100; // Vertical spacing between nodes
-  const sourcesYPositionStart = 25; // Starting Y position for source nodes
-  const totalNodeYPosition =
-    sourcesYPositionStart + ((loadedSources.length - 1) * verticalSpacing) / 2;
-
-  const sourceNodes = loadedSources.map((source, index) => ({
-    id: source.id.toString(),
-    data: { label: source.name },
-    position: { x: 100, y: sourcesYPositionStart + index * verticalSpacing },
-    type: "sourceNode",
-  }));
-
-  const totalSourceWaterNode = {
-    id: "total",
-    data: {
-      label: "Total Source Water",
-      consumption: totalInputWater.toFixed(2),
-    },
-    position: { x: 400, y: totalNodeYPosition },
-    type: "totalNode",
-  };
-
-  nodes.push(...sourceNodes, totalSourceWaterNode);
-
-  sortedTreatment.forEach((treatment, index) => {
-    const treatmentNodeId = `treatment-${treatment.id}`;
-    nodes.push({
-      id: treatmentNodeId,
-      data: { label: treatment.name },
-      position: { x: treatmentXPosition, y: 100 },
-      type: "treatmentNode",
-    });
-
-    const sourceId =
-      index === 0 ? "total" : `treatment-${sortedTreatment[index - 1].id}`;
+    const edgeId = `e-${nodesMap.get(source).id}-${nodesMap.get(destination).id}`;
     edges.push({
-      id: `e${sourceId}-${treatmentNodeId}`,
-      source: sourceId,
-      target: treatmentNodeId,
-      type: "waterEdge",
-      data: {
-        consumption:
-          index === 0
-            ? totalInputWater.toFixed(2)
-            : sortedTreatment[index - 1].product_water,
-      },
+      id: edgeId,
+      source: nodesMap.get(source).id,
+      target: nodesMap.get(destination).id,
+      type: 'waterEdge',
+      data: { consumption: volume.toFixed(2) }, // Check volume is a number
       animated: true,
     });
 
-    const rejectWaterNodeId = `reject-${treatment.id}`;
-    nodes.push({
-      id: rejectWaterNodeId,
-      data: { label: `Reject: ${treatment.reject_water} KL` },
-      position: { x: treatmentXPosition, y: 250 },
-      type: "rejectNode",
-    });
-
-    edges.push({
-      id: `e${treatmentNodeId}-${rejectWaterNodeId}`,
-      source: treatmentNodeId,
-      sourceHandle: "treatment-bottom",
-      target: rejectWaterNodeId,
-      type: "waterEdge",
-      data: { consumption: treatment.reject_water },
-      animated: true,
-    });
-
-    treatmentXPosition += 250; // Increment X position for next treatment node
+    if (!adjacencyList.has(source)) {
+      adjacencyList.set(source, []);
+    }
+    adjacencyList.get(source).push(destination);
   });
 
-  const sourceEdges = loadedSources.map((source) => ({
-    id: `e${source.id}-total`,
-    source: source.id.toString(),
-    target: "total",
-    type: "waterEdge",
-    data: { consumption: source.consumption },
-    animated: true,
-  }));
+  const queue = Array.from(nodesMap.keys()).filter(key => ![...adjacencyList.values()].flatMap(v => v).includes(key));
+  queue.forEach(source => levelsMap.set(source, 0));
 
-  const lastTreatment = sortedTreatment[sortedTreatment.length - 1];
-  const lastTreatmentNodeId = `treatment-${lastTreatment.id}`;
+  while (queue.length > 0) {
+    const current = queue.shift();
+    const currentLevel = levelsMap.get(current);
+    const neighbors = adjacencyList.get(current) || [];
 
-  // Create the final tank node
-  const finalTankNodeId = "final-tank";
-  const finalTankNode = {
-    id: finalTankNodeId,
-    data: {
-      label: "Final Tank",
-      consumption: lastTreatment.product_water + " KL",
-    },
-    position: { x: treatmentXPosition, y: 100 }, // Position to align or place suitably in the flow
-    type: "totalNode", // Or create a new type 'finalTankNode' similar to 'totalNode' for styling
-  };
+    neighbors.forEach(neighbor => {
+      if (!levelsMap.has(neighbor) || levelsMap.get(neighbor) > currentLevel + 1) {
+        levelsMap.set(neighbor, currentLevel + 1);
+        queue.push(neighbor);
+      }
+    });
+  }
 
-  // Create an edge from the last treatment to the final tank
-  const finalEdge = {
-    id: `e${lastTreatmentNodeId}-${finalTankNodeId}`,
-    source: lastTreatmentNodeId,
-    target: finalTankNodeId,
-    sourceHandle: "treatment-right", // Assuming the last treatment outputs from its right handle
-    type: "waterEdge",
-    data: { consumption: lastTreatment.product_water }, // Displaying product water into the tank
-    animated: true,
-  };
+  const HORIZONTAL_GAP = 300;
+  const VERTICAL_GAP = 150;
+  const levelIndices = {};
 
-  // Add the final tank node and edge to the arrays
-  nodes.push(finalTankNode);
-  edges.push(finalEdge);
+  Array.from(nodesMap.entries()).forEach(([name, node]) => {
+    const level = levelsMap.get(name);
+    levelIndices[level] = levelIndices[level] || 0;
+    node.position = {
+      x: level * HORIZONTAL_GAP,
+      y: levelIndices[level] * VERTICAL_GAP + VERTICAL_GAP
+    };
+    levelIndices[level] += 1;
+  });
 
-  edges.push(...sourceEdges);
-
-  return { nodes, edges };
+  return { nodes: Array.from(nodesMap.values()), edges };
 };

@@ -1,54 +1,82 @@
 [
-    {
-        "name": "Borewell Water",
-        "children": [
-            {
-                "name": "Fire tank",
-                "children": []
-            },
-            {
-                "name": "Pressure Sand Filter (PSF)",
-                "children": [
-                    {
-                        "name": "Activated Carbon Filter (ACF)",
-                        "children": [
-                            {
-                                "name": "Iron Removal Filters (IRF)",
-                                "children": [
-                                    {
-                                        "name": "Softener",
-                                        "children": [
-                                            {
-                                                "name": "1",
-                                                "children": []
-                                            }
-                                        ],
-                                        "volume": 200
-                                    }
-                                ],
-                                "volume": 200
-                            }
-                        ],
-                        "volume": 200
-                    }
-                ],
-                "volume": 200
-            }
-        ],
-        "volume": 200
-    },
-    {
-        "name": "Tanker water",
-        "children": [
-            {
-                "name": "Fire tank",
-                "children": []
-            },
-            {
-                "name": "Input freshwater tank",
-                "children": []
-            }
-        ],
-        "volume": 200
+  {
+    "model": "waterflow.sourcewaterflow",
+    "pk": 12,
+    "fields": {
+      "user": 2,
+      "source": "Borewell Water",
+      "destination": "Fire tank",
+      "volume": 100.0
     }
+  },
+  {
+    "model": "waterflow.sourcewaterflow",
+    "pk": 13,
+    "fields": {
+      "user": 2,
+      "source": "Tanker water",
+      "destination": "Fire tank",
+      "volume": 100.0
+    }
+  },
+  {
+    "model": "waterflow.sourcewaterflow",
+    "pk": 14,
+    "fields": {
+      "user": 2,
+      "source": "Tanker water",
+      "destination": "Input freshwater tank",
+      "volume": 200.0
+    }
+  },
+  {
+    "model": "waterflow.sourcewaterflow",
+    "pk": 15,
+    "fields": {
+      "user": 2,
+      "source": "Borewell Water",
+      "destination": "Pressure Sand Filter(PSF) or Multi Grade Filter(MGF)",
+      "volume": 200.0
+    }
+  },
+  {
+    "model": "waterflow.sourcewaterflow",
+    "pk": 16,
+    "fields": {
+      "user": 2,
+      "source": "Pressure Sand Filter(PSF) or Multi Grade Filter(MGF)",
+      "destination": "Activated Carbon Filter (ACF)",
+      "volume": 200.0
+    }
+  },
+  {
+    "model": "waterflow.sourcewaterflow",
+    "pk": 17,
+    "fields": {
+      "user": 2,
+      "source": "Activated Carbon Filter (ACF)",
+      "destination": "Iron Removal Filters(IRF)",
+      "volume": 200.0
+    }
+  },
+  {
+    "model": "waterflow.sourcewaterflow",
+    "pk": 18,
+    "fields": {
+      "user": 2,
+      "source": "Iron Removal Filters(IRF)",
+      "destination": "Softener",
+      "volume": 200.0
+    }
+  },
+  {
+    "model": "waterflow.sourcewaterflow",
+    "pk": 19,
+    "fields": {
+      "user": 2,
+      "source": "Softener",
+      "destination": "1",
+      "volume": 200.0
+    }
+  }
 ]

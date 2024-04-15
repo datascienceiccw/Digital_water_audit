@@ -16,16 +16,13 @@
 </div>
 
 <script type="text/javascript">
-  var sourcesData = {{ sources|safe }};
-  var treatmentData = {{ treatments|safe }};
-  var sourceWaterFlow = {{ source_water_flow|safe }};
+  var sourceWaterFlow = JSON.parse('{{ source_water_flow|safe }}');
 </script>
 
 <!-- For Development -->
 <script src="http://localhost:3000/static/js/bundle.js"></script>
-
 <!-- Comment out during development
-<script src="{% static 'js/main.38dff78c.js' %}"></script>
+  <script src="{% static 'js/main.8c664cbc.js' %}?v=1"></script>
 -->
 
 {% endblock %}
