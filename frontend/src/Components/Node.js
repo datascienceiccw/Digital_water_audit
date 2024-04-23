@@ -15,7 +15,6 @@ const SourceNode = ({ data }) => (
       type="source"
       position={Position.Right}
       id="source-right" // Specific ID for the handle
-      style={{ background: '#3182ce', width: 7, height: 7, borderRadius: '50%' }}
     />
   </div>
 );
