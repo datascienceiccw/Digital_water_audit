@@ -158,8 +158,6 @@ def basic_details(request):  # sourcery skip: assign-if-exp, merge-else-if-into-
             form.instance.user = current_user
             form.save()
             return redirect("source-water-profile/")
-        else:
-            print(form.errors)
     else:
         if details:
             form = BasicDetailsForm(instance=details)
