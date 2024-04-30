@@ -5,17 +5,16 @@
     <div class="container mx-auto px-4 py-8 bg-light">
         <div class='w-full'>
             <form method="POST" action="">
-            {% if details %}    
-                <div class="text-center my-2 p-3" style="position: relative;">
-                    <a href='{% url "delete_basic_details" %}' class="btn btn-danger mb-4 mr-2" style="position: absolute; top: 0; right:0;">Reset</a>
-                </div>
+            {% if form.errors %}
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ field.label }}: </strong>{{ error }}
+                        </div>
+                        {% endfor %}
+                    {% endfor %}
             {% endif %}
             {% csrf_token %}
-            {% if details %}
-                <fieldset disabled="disabled">
-            {% else %}
-                <fieldset>
-            {% endif %}
             <div class="form-container1 max-w-full bg-white p-8 rounded-lg shadow-xl border border-gray-200 mb-8">
                 <h3 class="text-center text-3xl font-semibold text-blue-600 mb-8">Basic Details Form</h3>
                 <div id="basic-details-form" class='form-container grid grid-cols-1 md:grid-cols-3 gap-4'>
@@ -161,7 +160,6 @@
                     </div>
                 </div>
             </div>    
-            </fieldset>
         </div>
         <div class="text-center mt-5" style="position: relative;">
             <a href='{% url "user_home" %}' class="btn btn-primary px-5" style="position: absolute; bottom: 0; left: 0;">Previous</a>

@@ -22,14 +22,14 @@ class Registration(models.Model):
 class BasicDetails(models.Model):
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, null=True, blank=True)
-    first_name = models.TextField(null=False)
-    last_name = models.TextField(null=False)
-    designation = models.TextField(null=True)
-    contact_number = models.TextField(null=False)
-    email_address = models.EmailField(null=False)
-    organization_name = models.TextField(null=False)
-    organization_web_address = models.TextField(null=True)
-    address = models.TextField(null=True)
+    first_name = models.TextField(null=True, blank=True)
+    last_name = models.TextField(null=True, blank=True)
+    designation = models.TextField(null=True, blank=True)
+    contact_number = models.TextField(null=True, blank=True)
+    email_address = models.EmailField(null=True, blank=True)
+    organization_name = models.TextField(null=True, blank=True)
+    organization_web_address = models.TextField(null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
     organization_type = models.TextField(null=True,blank=True,default='Hospitality')
     num_permanent_employees = models.IntegerField(default=0)
     num_temporary_employees = models.IntegerField(default=0)
@@ -40,7 +40,7 @@ class BasicDetails(models.Model):
     total_built_up_area = models.IntegerField(default=0)
     total_green_area = models.IntegerField(default=0)
     total_air_conditioned_space_area = models.IntegerField(default=0)
-    pin_code = models.IntegerField()
+    pin_code = models.IntegerField(null=True, blank=True)
 
 
 class SourceWaterProfile(models.Model):

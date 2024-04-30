@@ -148,22 +148,48 @@ def logout_view(request):
     return HttpResponseRedirect("/")
 
 
+# @login_required
+# def basic_details(request):  
+#     current_user = request.user
+#     details = BasicDetails.objects.filter(user=current_user).first()
+#     if request.method == "POST":
+#         form = BasicDetailsForm(request.POST or None, initial={'organization_type':'Hospitality'})
+#         if form.is_valid():
+#             form.instance.user = current_user
+#             form.save()
+#             return redirect("source-water-profile/")
+#     else:
+#         if details:
+#             form = BasicDetailsForm(instance=details)
+#         else:
+#             form = BasicDetailsForm()
+#     return render(request, "BasicDetails.html", {"form": form, "details": details})
+
 @login_required
-def basic_details(request):  # sourcery skip: assign-if-exp, merge-else-if-into-elif
+def basic_details(request):  
     current_user = request.user
     details = BasicDetails.objects.filter(user=current_user).first()
+    
     if request.method == "POST":
-        form = BasicDetailsForm(request.POST or None, initial={'organization_type':'Hospitality'})
+        form = BasicDetailsForm(request.POST, instance=details)
         if form.is_valid():
-            form.instance.user = current_user
-            form.save()
-            return redirect("source-water-profile/")
+            basic_details = form.save(commit=False)
+            if not details:
+                basic_details.user = current_user
+            basic_details.save()
+            return redirect("source-water-profile/") 
+        else:
+            for error in form.errors:
+                print(error)
+
     else:
         if details:
             form = BasicDetailsForm(instance=details)
         else:
-            form = BasicDetailsForm()
-    return render(request, "BasicDetails.html", {"form": form, "details": details})
+            form = BasicDetailsForm(initial={'organization_type': 'Hospitality'})
+
+    return render(request, "BasicDetails.html", {"form": form})
+
 
 
 @login_required

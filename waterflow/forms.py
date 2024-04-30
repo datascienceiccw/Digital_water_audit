@@ -1,5 +1,7 @@
 from django import forms
-from django.forms import formset_factory
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
+
 from .models import (
     Registration,
     BasicDetails,
@@ -78,32 +80,6 @@ class RegistrationForm(forms.ModelForm):
 
 
 class BasicDetailsForm(forms.ModelForm):
-    first_name = (forms.CharField(label="First Name"),)
-    last_name = (forms.CharField(),)
-    designation = (forms.CharField(),)
-    contact_number = (forms.CharField(),)
-    email_address = (forms.EmailField(),)
-    organization_name = (forms.CharField(),)
-    organization_web_address = (forms.URLField(),)
-    address = (forms.CharField(),)
-    pin_code = (forms.IntegerField(),)
-    organization_type = (forms.ChoiceField(required=False,initial='Hospitality'),)
-    num_permanent_employees = (forms.IntegerField(),)
-    num_temporary_employees = (forms.IntegerField(),)
-    num_rooms = (forms.IntegerField(),)
-    average_occupancy = (
-        forms.IntegerField(
-            help_text="Average number of hotel rooms occupied in an year"
-        ),
-    )
-    average_room_occupancy = (forms.IntegerField(help_text="Average number of people in a room"),)
-    total_area = (forms.FloatField(label="Total Area (sq.m)"),)
-    total_built_up_area = (forms.FloatField(label="Total Built up Area (sq.m)"),)
-    total_green_area = (forms.FloatField(label="Total Green Area (sq.m)"),)
-    total_air_conditioned_space_area = (
-        forms.FloatField(label="Total Air Conditioned Space Area (sq.m)"),
-    )
-
     class Meta:
         org_types = [
             ("1", "Hospitality"),
@@ -135,10 +111,10 @@ class BasicDetailsForm(forms.ModelForm):
 
         widgets = {
             "first_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your first name"}
+                attrs={"class": "form-control", "placeholder": "Enter your first name"},
             ),
             "last_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Enter your last name"}
+                attrs={"class": "form-control", "placeholder": "Enter your last name"},
             ),
             "designation": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Enter your designation"}
@@ -158,7 +134,7 @@ class BasicDetailsForm(forms.ModelForm):
                     "placeholder": "Enter your organization name",
                 }
             ),
-            "organization_web_address": forms.URLInput(
+            "organization_web_address": forms.TextInput(
                 attrs={
                     "class": "form-control",
                     "placeholder": "Enter organization web address",
@@ -228,7 +204,77 @@ class BasicDetailsForm(forms.ModelForm):
                 }
             ),
         }
-
+    
+    # validation for first name
+    def clean_first_name(self):
+        first_name = self.cleaned_data.get('first_name')
+        if len(first_name) == 0:
+            raise forms.ValidationError("First name is required.", code='invalid')
+        return first_name
+    # validation for last name
+    def clean_last_name(self):
+        last_name = self.cleaned_data.get('last_name')
+        if len(last_name) == 0:
+            raise forms.ValidationError("Last name is required.", code='invalid')
+        return last_name
+    
+    # validation for designation
+    def clean_designation(self):
+        designation = self.cleaned_data.get('designation')
+        if len(designation) == 0:
+            raise forms.ValidationError("Designation is required.", code='invalid')
+        return designation
+    
+    # validation for contact number
+    def clean_contact_number(self):
+        contact_number = self.cleaned_data.get('contact_number')
+        if len(contact_number) == 0:
+            raise forms.ValidationError("Contact number is required.", code='invalid')
+        elif len(contact_number) < 10 or len(contact_number) > 10:
+            raise forms.ValidationError("Contact number should be of 10 digits.", code='invalid')
+        return contact_number
+    # validation for email address
+    def clean_email_address(self):
+        email_address = self.cleaned_data.get('email_address')
+        if len(email_address) == 0:
+            raise forms.ValidationError("Email address is required.", code='invalid')
+        return email_address
+    
+    # validation for organization name
+    def clean_organization_name(self):
+        organization_name = self.cleaned_data.get('organization_name')
+        if len(organization_name) == 0:
+            raise forms.ValidationError("Organization name is required.", code='invalid')
+        return organization_name
+    # validation for organization web address
+    def clean_organization_web_address(self):
+        organization_web_address = self.cleaned_data.get('organization_web_address', '')
+        if not organization_web_address:
+            raise forms.ValidationError("Organization web address is required.", code='invalid')
+        
+        url_validator = URLValidator()
+        try:
+            url_validator(organization_web_address)
+        except ValidationError as e:
+            raise forms.ValidationError("Enter a valid URL, like 'https://iccw.world/'", code='invalid') from e
+        
+        return organization_web_address
+    # validation for address
+    def clean_address(self):
+        address = self.cleaned_data.get('address')
+        if len(address) == 0:
+            raise forms.ValidationError("Address is required.", code='invalid')
+        return address
+    
+    # validation for pin code
+    def clean_pin_code(self):
+        pin_code = str(self.cleaned_data.get('pin_code'))
+        if len(pin_code) == 0:
+            raise forms.ValidationError("Pin code is required.", code='invalid')
+        elif len(pin_code) < 6 or len(pin_code) > 6:
+            raise forms.ValidationError("Pin code should be of 6 digits.", code='invalid')
+        return pin_code
+    
 
 class SourceWaterProfileForm(forms.ModelForm):
     source_name = forms.ChoiceField(
