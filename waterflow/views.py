@@ -148,23 +148,6 @@ def logout_view(request):
     return HttpResponseRedirect("/")
 
 
-# @login_required
-# def basic_details(request):  
-#     current_user = request.user
-#     details = BasicDetails.objects.filter(user=current_user).first()
-#     if request.method == "POST":
-#         form = BasicDetailsForm(request.POST or None, initial={'organization_type':'Hospitality'})
-#         if form.is_valid():
-#             form.instance.user = current_user
-#             form.save()
-#             return redirect("source-water-profile/")
-#     else:
-#         if details:
-#             form = BasicDetailsForm(instance=details)
-#         else:
-#             form = BasicDetailsForm()
-#     return render(request, "BasicDetails.html", {"form": form, "details": details})
-
 @login_required
 def basic_details(request):  
     current_user = request.user
@@ -180,7 +163,7 @@ def basic_details(request):
             return redirect("source-water-profile/") 
         else:
             for error in form.errors:
-                print(error)
+                print('Error : ',error)
 
     else:
         if details:
@@ -612,7 +595,8 @@ def tanks_capacities(request):
             form.instance.user = current_user
             names = request.POST.getlist('name')
             capacities = request.POST.getlist('capacity')
-            other_tank_name = request.POST.getlist('other_tank_name')
+            other_tank_name = request.POST.getlist('tank_name')
+            print(other_tank_name)
             if names and capacities:
                 for i in range(len(names)):
                     if capacities[i]:  # Check if capacity is non-empty

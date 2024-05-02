@@ -64,22 +64,43 @@
 </div>
 <script>
     function addInput(buttonValue, buttonElement) {
+        // Generate a unique ID for the input group based on the button value and a random number for "Others"
+        const uniqueSuffix = buttonValue === 'Others' ? Math.random().toString(36).substr(2, 9) : '';
+        const inputGroupId = `input-group-${buttonValue.replace(/\s+/g, '-').toLowerCase()}-${uniqueSuffix}`;
+    
+        // If it's not the "Others" button, check if the group already exists and toggle its visibility
+        if (buttonValue !== 'Others') {
+            const existingInputGroup = document.getElementById(inputGroupId);
+            if (existingInputGroup) {
+                // Toggle the visibility of the existing input group
+                existingInputGroup.style.display = existingInputGroup.style.display === 'none' ? 'block' : 'none';
+                return; 
+            }
+        }
+        // Create a new input group because it does not exist or "Others" button was clicked
         const inputGroup = document.createElement('div');
+        inputGroup.setAttribute('id', inputGroupId); // Set the ID for the input group
         inputGroup.classList.add('mb-4');
         inputGroup.innerHTML = `
             ${buttonValue === 'Others' ? `
             <label class="block text-gray-700 text-sm font-bold mb-2">Other Source Name</label>
-            <input type="text" name="other_source_name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            <input type="text" name="other_source_name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
             ` : ''}
             <label class="block text-gray-700 text-sm font-bold mb-2">${buttonValue} Consumption (KL)</label>
-            <input type="text" name="source_daily_consumption" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            <input type="number" name="source_daily_consumption" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" min="0" required>
             <label class="block text-gray-700 text-sm font-bold mb-2">${buttonValue} Cost ₹</label>
-            <input type="text" name="source_water_cost" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            <input type="number" name="source_water_cost" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" min="0" required>
             <input type="hidden" name="source_name" value="${buttonValue}">
         `;
     
+        // Set initial display style to 'block'
+        inputGroup.style.display = 'block';
+    
+        // Insert the new input group after the button in the DOM
         buttonElement.parentNode.insertBefore(inputGroup, buttonElement.nextSibling);
     }
+    
+    
     
 </script>
 
