@@ -112,7 +112,7 @@ from reportlab.pdfgen import canvas
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, Image
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
-from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 from django.forms import modelformset_factory
 
 
@@ -1948,74 +1948,287 @@ def show_map_view(request):
     return render(request, "rainfall_map.html")
 
 
-def generate_pdf_file():
-    buffer = BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=letter)
-    doc.onFirstPage = lambda canvas, doc: canvas.setTitle("Digital Water Audit Report")
+# def generate_pdf_file():
+#     buffer = BytesIO()
+#     doc = SimpleDocTemplate(buffer, pagesize=letter)
+#     doc.onFirstPage = lambda canvas, doc: canvas.setTitle("Digital Water Audit Report")
 
-    styles = getSampleStyleSheet()
+#     styles = getSampleStyleSheet()
 
-    # Custom styles
+#     # Custom styles
+#     title_style = styles['Title'].clone('TitleStyle')
+#     title_style.textColor = colors.darkblue
+#     title_style.spaceAfter = 50
+#     title_style.fontSize = 28
+
+#     heading_style = styles['Heading1'].clone('HeadingStyle')
+#     heading_style.spaceBefore = 10
+#     heading_style.spaceAfter = 10
+#     heading_style.leftIndent = 20
+
+
+#     center_style = ParagraphStyle(name='Center', alignment=TA_CENTER)
+
+#     # Title
+#     elements = [Paragraph("Digital Water Audit Report", title_style)]
+
+#     # Logo image
+#     logo = "static/main_logo.png" 
+#     logo_img = Image(logo, width=300, height=300)  # Set width and height as needed
+#     logo_img.hAlign = 'CENTER'  
+#     elements.append(logo_img)
+#     elements.append(Spacer(1, 24))
+
+#     # Description Text
+#     description_text = "This report provides an detailed analysis of the water audit findings and insights."
+#     elements.append(Paragraph(description_text, center_style))
+    
+#     elements.append(PageBreak())
+    
+#     # Index Page
+    
+#     elements.append(Paragraph("Index", title_style))
+#     elements.append(Spacer(1, 24))
+    
+    
+
+#     # List of sections
+#     sections = [
+#         "1. Introduction",
+#         "2. Source Water Profile",
+#         "3. Fresh Water Treatment Profile",
+#         "4. Tanks and Capacities",
+#         "5. Consumption Details",
+#         "6. Waste Water Treatment",
+#         "7. Water Quality Profile",
+#         "8. Recycled Water Profile",
+#         "9. Conclusion"
+#     ]
+
+#     for section in sections:
+#         elements.append(Paragraph(section, heading_style))
+
+#     doc.build(elements)
+
+#     buffer.seek(0)
+#     return buffer
+
+# @login_required
+# def generate_pdf(request):
+#     pdf_content = generate_pdf_file()
+#     response = FileResponse(pdf_content, filename='report.pdf')
+#     response['Content-Disposition'] = 'inline; filename="report.pdf"'
+#     return response
+
+
+
+
+def initialize_styles():
+    return getSampleStyleSheet()
+
+
+
+def create_title_page(styles, user_details):
+    elements = []
+    
+    # Title setup with enhanced styling
     title_style = styles['Title'].clone('TitleStyle')
-    title_style.textColor = colors.darkblue
-    title_style.spaceAfter = 50
-    title_style.fontSize = 28
+    title_style.textColor = colors.navy  # Subtle, professional color
+    title_style.fontSize = 24  # Slightly smaller for elegance
+    title_style.alignment = TA_CENTER
+    title_paragraph = Paragraph("Digital Water Audit Report", title_style)
+    elements.append(title_paragraph)
+    elements.append(Spacer(1, 12))  # Adjusted for balance
 
+    # Logo setup, centered and resized appropriately
+    logo = "static/main_logo.png"
+    logo_img = Image(logo, width=300, height=300)  # Smaller dimensions for balance
+    logo_img.hAlign = 'CENTER'
+    elements.append(logo_img)
+    elements.append(Spacer(1, 20))
+
+    # Description with justified alignment for clean text flow
+    description_style = ParagraphStyle(name='Justify', alignment=TA_JUSTIFY, fontSize=12)
+    description_text = "This report provides a summary analysis of the water audit findings and insights."
+    description_paragraph = Paragraph(description_text, description_style)
+    elements.append(description_paragraph)
+    # elements.append(Spacer(1, 20))
+
+    elements.append(Spacer(1, 24))
+    # Contact information with left alignment and subtle indentations
+    contact_style = ParagraphStyle(name='ContactInfo', alignment=TA_CENTER, leftIndent=10, rightIndent=50,
+                                    spaceBefore=10, spaceAfter=10, fontSize=12)
+
+    
+    
+    # User organization information
+    user_info_content = f"""<b> <font color="grey"> Water Audit at:- </font></b><br/><br/>
+       <b> {user_details.organization_name}</b> <br/>
+        {user_details.address}<br/><br/>
+        Email: <font color="blue">{user_details.email_address}</font><br/>
+        Phone: {user_details.contact_number}"""
+    user_info = Paragraph(user_info_content, contact_style)
+    elements.append(user_info)
+
+    elements.append(Spacer(1, 24))
+    
+    # Our organization information
+    our_info_content = """<b> <font color="grey"> Contact Us: </font> </b><br/><br/>
+        <b> INTERNATIONAL CENTRE FOR CLEAN WATER</b>,<br/>
+        2ND FLOOR, BLOCK – B, IIT MADRAS RESEARCH PARK,<br/>
+        KANAGAM ROAD, TARAMANI, CHENNAI, TAMIL NADU - 600 113<br/><br/>
+        Email: <font color="blue">office@iccwindia.org</font><br/>
+        Phone: +91 44 4305 1312 / 4212 5680"""
+    our_info = Paragraph(our_info_content, contact_style)
+    elements.append(our_info)
+      # More space to ensure clean separation before page break
+    elements.append(PageBreak())
+
+    return elements
+
+
+def create_index_page(styles):
+    elements = []
+    title_style = styles['Title'].clone('TitleStyle')
+    title_style.fontSize = 22
+    title_style.textColor = colors.navy
     heading_style = styles['Heading1'].clone('HeadingStyle')
     heading_style.spaceBefore = 10
     heading_style.spaceAfter = 10
     heading_style.leftIndent = 20
+    # make heading style as hyperlink
+    heading_style.textColor = colors.blue
 
-
-    center_style = ParagraphStyle(name='Center', alignment=TA_CENTER)
-
-    # Title
-    elements = [Paragraph("Digital Water Audit Report", title_style)]
-
-    # Logo image
-    logo = "static/main_logo.png" 
-    logo_img = Image(logo)  # Set width and height as needed
-    logo_img.hAlign = 'CENTER'  
-    elements.append(logo_img)
-    elements.append(Spacer(1, 24))
-
-    # Description Text
-    description_text = "This report provides an detailed analysis of the water audit findings and insights."
-    elements.append(Paragraph(description_text, center_style))
-    
-    elements.append(PageBreak())
-    
-    # Index Page
-    
     elements.append(Paragraph("Index", title_style))
     elements.append(Spacer(1, 24))
     
+    exec_summary = '1. <u> <a href="#exec_sum">Executive Summary</a></u>'
+    elements.append(Paragraph(exec_summary, heading_style))
+    
+    intro = '2. <u> <a href="#exec_sum">Introduction</a></u>' 
+    elements.append(Paragraph(intro, heading_style))
+    
+    source_water = '3. <u> <a href="#exec_sum">Source Water Profile</a></u>'
+    elements.append(Paragraph(source_water, heading_style))
+    
+    fresh_water = '4. <u> <a href="#exec_sum">Fresh Water Treatment Profile</a></u>'
+    elements.append(Paragraph(fresh_water, heading_style))
+    
+    consumption = '5. <u> <a href="#exec_sum">Consumption Details</a></u>'
+    elements.append(Paragraph(consumption, heading_style))
+    
+    waste_water = '6. <u> <a href="#exec_sum">Waste Water Treatment</a></u>'
+    elements.append(Paragraph(waste_water, heading_style))
+    
+    water_quality = '7. <u> <a href="#exec_sum">Water Quality Profile</a></u>'
+    elements.append(Paragraph(water_quality, heading_style))
+    
+    water_saving = '8. <u> <a href="#exec_sum">Water Saving Solutions</a></u>'
+    elements.append(Paragraph(water_saving, heading_style))
+    
+    conclusion = '9. <u> <a href="#exec_sum">Conclusion</a></u>'
+    elements.append(Paragraph(conclusion, heading_style))
     
 
-    # List of sections
-    sections = [
-        "1. Introduction",
-        "2. Source Water Profile",
-        "3. Fresh Water Treatment Profile",
-        "4. Tanks and Capacities",
-        "5. Consumption Details",
-        "6. Waste Water Treatment",
-        "7. Water Quality Profile",
-        "8. Recycled Water Profile",
-        "9. Conclusion"
+    elements.append(PageBreak())
+    
+    return elements
+
+
+def create_executive_summary(styles, user_details):
+    elements = []
+
+    # Title setup
+    title_style = styles['Title'].clone('TitleStyle')
+    title_style.fontSize = 22
+    title_style.textColor = colors.navy
+    title_style.alignment = TA_CENTER
+    title_paragraph = Paragraph("<a name='exec_sum'/> Executive Summary", title_style)
+    elements.append(title_paragraph)
+    elements.append(Spacer(1, 18))
+ 
+    # Executive summary content
+    summary_style = styles['BodyText'].clone('SummaryStyle')
+    summary_style.alignment = TA_JUSTIFY
+    summary_style.fontSize = 12
+    summary_style.spaceBefore = 6
+    summary_style.spaceAfter = 6
+    summary_text = f"""
+    The Digital Water Audit Report for <b>{user_details.organization_name}</b> summarizes the key findings, recommendations, and insights from the comprehensive water audit conducted at {user_details.address}. Key findings highlight areas of potential improvement, cost savings, and environmental benefits. Recommendations are intended to guide strategic decisions to enhance water efficiency and sustainability.
+    """
+    summary_paragraph = Paragraph(summary_text, summary_style)
+    elements.append(summary_paragraph)
+    elements.append(Spacer(1, 24))
+
+    
+    title_style = styles['Title'].clone('TitleStyle')
+    title_style.fontSize = 18
+    title_style.textColor = colors.navy
+    title_style.alignment = TA_CENTER
+    title_paragraph = Paragraph("Organisation Details", title_style)
+    elements.append(title_paragraph)
+    
+    
+    # Organization details in a table
+    table_data = [
+        ['Organization Name', user_details.organization_name],
+        ['Address', user_details.address],
+        ['Contact Number', user_details.contact_number],
+        ['Email Address', user_details.email_address],
+        ['Organization Type', user_details.organization_type],
+        ['Number of Permanent Employees', user_details.num_permanent_employees],
+        ['Number of Temporary Employees', user_details.num_temporary_employees],
+        ['Number of Rooms', user_details.num_rooms],
+        ['Average Occupancy per Year', user_details.average_occupancy],
+        ['Total Area (sq ft)', user_details.total_area],
+        ['Built-Up Area (sq ft)', user_details.total_built_up_area],
+        ['Green Area (sq ft)', user_details.total_green_area],
+        ['Air-Conditioned Space (sq ft)', user_details.total_air_conditioned_space_area]
     ]
 
-    for section in sections:
-        elements.append(Paragraph(section, heading_style))
+    table = Table(table_data, colWidths=[200, 280], spaceBefore=20, spaceAfter=20)
+    table_style = TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.darkblue),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        # ('GRID', (0, 0), (-1, -1), 1, colors.gray),
 
+    ])
+    table.setStyle(table_style)
+    elements.append(table)
+
+    elements.append(Spacer(1, 24))
+    
+    return elements
+
+def generate_pdf_file(user_details):
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    doc.onFirstPage = lambda canvas, doc: canvas.setTitle("Digital Water Audit Report")
+    
+    styles = initialize_styles()
+    elements = []
+    elements.extend(create_title_page(styles, user_details))
+    elements.extend(create_index_page(styles))
+    elements.extend(create_executive_summary(styles, user_details))
+    
     doc.build(elements)
-
     buffer.seek(0)
     return buffer
 
+
 @login_required
 def generate_pdf(request):
-    pdf_content = generate_pdf_file()
+    # Retrieve user's organization details
+    user_details = get_object_or_404(BasicDetails, user=request.user)
+    
+    # Generate PDF
+    pdf_content = generate_pdf_file(user_details)
+    
     response = FileResponse(pdf_content, filename='report.pdf')
     response['Content-Disposition'] = 'inline; filename="report.pdf"'
     return response
