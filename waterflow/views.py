@@ -2026,7 +2026,7 @@ def show_map_view(request):
 def initialize_styles():
     return getSampleStyleSheet()
 
-
+from reportlab.platypus import HRFlowable, PageBreak
 
 def create_title_page(styles, user_details):
     elements = []
@@ -2034,11 +2034,11 @@ def create_title_page(styles, user_details):
     # Title setup with enhanced styling
     title_style = styles['Title'].clone('TitleStyle')
     title_style.textColor = colors.navy  # Subtle, professional color
-    title_style.fontSize = 24  # Slightly smaller for elegance
+    title_style.fontSize = 30  # Slightly smaller for elegance
     title_style.alignment = TA_CENTER
     title_paragraph = Paragraph("Digital Water Audit Report", title_style)
     elements.append(title_paragraph)
-    elements.append(Spacer(1, 12))  # Adjusted for balance
+    elements.append(Spacer(1, 24))  # Adjusted for balance
 
     # Logo setup, centered and resized appropriately
     logo = "static/main_logo.png"
@@ -2054,33 +2054,41 @@ def create_title_page(styles, user_details):
     elements.append(description_paragraph)
     # elements.append(Spacer(1, 20))
 
-    elements.append(Spacer(1, 24))
+    elements.append(Spacer(1, 5))
+    elements.append(HRFlowable(width="100%", thickness=1, lineCap='round', color=colors.lightgrey, spaceBefore=1, spaceAfter=1, hAlign='CENTER', vAlign='BOTTOM', dash=None))
     # Contact information with left alignment and subtle indentations
-    contact_style = ParagraphStyle(name='ContactInfo', alignment=TA_CENTER, leftIndent=10, rightIndent=50,
+    main_style = ParagraphStyle(name='main_style', alignment=TA_CENTER, leftIndent=10, rightIndent=50,
                                     spaceBefore=10, spaceAfter=10, fontSize=12)
+    
+    address_style = ParagraphStyle(name='address_style', alignment=TA_CENTER, leftIndent=10, rightIndent=50,
+                                    spaceBefore=10, spaceAfter=10, fontSize=11, textColor=colors.grey)
 
     
+    elements.append(Paragraph('<b> <font color="grey"> Water Audit at:</font> </b>', main_style))
+    organization_name = f'<b> <font color="#00008B"> {user_details.organization_name} </font></b>'
+    elements.append(Paragraph(organization_name, main_style))
     
-    # User organization information
-    user_info_content = f"""<b> <font color="grey"> Water Audit at:- </font></b><br/><br/>
-       <b> {user_details.organization_name}</b> <br/>
+    address = f"""
         {user_details.address}<br/><br/>
         Email: <font color="blue">{user_details.email_address}</font><br/>
         Phone: {user_details.contact_number}"""
-    user_info = Paragraph(user_info_content, contact_style)
+    user_info = Paragraph(address, address_style)
     elements.append(user_info)
 
-    elements.append(Spacer(1, 24))
+    elements.append(Spacer(1, 5))
+    elements.append(HRFlowable(width="100%", thickness=1, lineCap='round', color=colors.lightgrey, spaceBefore=1, spaceAfter=1, hAlign='CENTER', vAlign='BOTTOM', dash=None))
     
+    elements.append(Paragraph('<b> <font color="grey"> Contact Us:</font> </b>', main_style))
+    elements.append(Paragraph('<b> <font color="#00008B"> INTERNATIONAL CENTRE FOR CLEAN WATER </font> </b>', main_style))
     # Our organization information
-    our_info_content = """<b> <font color="grey"> Contact Us: </font> </b><br/><br/>
-        <b> INTERNATIONAL CENTRE FOR CLEAN WATER</b>,<br/>
-        2ND FLOOR, BLOCK – B, IIT MADRAS RESEARCH PARK,<br/>
+    address = """
+        2ND FLOOR, BLOCK – B, IIT MADRAS RESEARCH PARK,
         KANAGAM ROAD, TARAMANI, CHENNAI, TAMIL NADU - 600 113<br/><br/>
-        Email: <font color="blue">office@iccwindia.org</font><br/>
-        Phone: +91 44 4305 1312 / 4212 5680"""
-    our_info = Paragraph(our_info_content, contact_style)
+        Email: <font color="blue">nagarjuna@iccwindia.org</font><br/>
+        Phone: +91 7676702164"""
+    our_info = Paragraph(address, address_style)
     elements.append(our_info)
+    elements.append(HRFlowable(width="100%", thickness=1, lineCap='round', color=colors.lightgrey, spaceBefore=1, spaceAfter=1, hAlign='CENTER', vAlign='BOTTOM', dash=None))
       # More space to ensure clean separation before page break
     elements.append(PageBreak())
 
@@ -2090,17 +2098,19 @@ def create_title_page(styles, user_details):
 def create_index_page(styles):
     elements = []
     title_style = styles['Title'].clone('TitleStyle')
-    title_style.fontSize = 22
+    title_style.fontSize = 30
     title_style.textColor = colors.navy
     heading_style = styles['Heading1'].clone('HeadingStyle')
     heading_style.spaceBefore = 10
     heading_style.spaceAfter = 10
     heading_style.leftIndent = 20
+    heading_style.fontSize = 16
     # make heading style as hyperlink
     heading_style.textColor = colors.blue
 
     elements.append(Paragraph("Index", title_style))
     elements.append(Spacer(1, 24))
+    elements.append(HRFlowable(width="100%", thickness=1, lineCap='round', color=colors.lightgrey, spaceBefore=1, spaceAfter=1, hAlign='CENTER', vAlign='BOTTOM', dash=None))
     
     exec_summary = '1. <u> <a href="#exec_sum">Executive Summary</a></u>'
     elements.append(Paragraph(exec_summary, heading_style))
