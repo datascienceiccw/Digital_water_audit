@@ -112,8 +112,9 @@ from reportlab.pdfgen import canvas
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, Image
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
-from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
+from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT, TA_RIGHT
 from django.forms import modelformset_factory
+from reportlab.platypus import HRFlowable, PageBreak
 
 
 def home_view(request):
@@ -2026,9 +2027,10 @@ def show_map_view(request):
 def initialize_styles():
     return getSampleStyleSheet()
 
-from reportlab.platypus import HRFlowable, PageBreak
 
-def create_title_page(styles, user_details):
+
+def create_title_page(styles, user):
+    user_details = get_object_or_404(BasicDetails, user=user)
     elements = []
     
     # Title setup with enhanced styling
@@ -2111,11 +2113,11 @@ def create_index_page(styles):
     elements.append(Paragraph("Index", title_style))
     elements.append(Spacer(1, 24))
     elements.append(HRFlowable(width="100%", thickness=1, lineCap='round', color=colors.lightgrey, spaceBefore=1, spaceAfter=1, hAlign='CENTER', vAlign='BOTTOM', dash=None))
-    
+    elements.append(Spacer(1, 24))
     exec_summary = '1. <u> <a href="#exec_sum">Executive Summary</a></u>'
     elements.append(Paragraph(exec_summary, heading_style))
     
-    intro = '2. <u> <a href="#exec_sum">Introduction</a></u>' 
+    intro = '2. <u> <a href="#intro">Introduction</a></u>' 
     elements.append(Paragraph(intro, heading_style))
     
     source_water = '3. <u> <a href="#exec_sum">Source Water Profile</a></u>'
@@ -2145,7 +2147,8 @@ def create_index_page(styles):
     return elements
 
 
-def create_executive_summary(styles, user_details):
+def create_executive_summary(styles, user):
+    user_details = get_object_or_404(BasicDetails, user=user)
     elements = []
 
     # Title setup
@@ -2163,6 +2166,8 @@ def create_executive_summary(styles, user_details):
     summary_style.fontSize = 12
     summary_style.spaceBefore = 6
     summary_style.spaceAfter = 6
+    # add vertical space between lines
+    summary_style.leading = 14
     summary_text = f"""
     The Digital Water Audit Report for <b>{user_details.organization_name}</b> summarizes the key findings, recommendations, and insights from the comprehensive water audit conducted at {user_details.address}. Key findings highlight areas of potential improvement, cost savings, and environmental benefits. Recommendations are intended to guide strategic decisions to enhance water efficiency and sustainability.
     """
@@ -2173,8 +2178,8 @@ def create_executive_summary(styles, user_details):
     
     title_style = styles['Title'].clone('TitleStyle')
     title_style.fontSize = 18
-    title_style.textColor = colors.navy
-    title_style.alignment = TA_CENTER
+    title_style.textColor = colors.olivedrab
+    title_style.alignment = TA_LEFT
     title_paragraph = Paragraph("Organisation Details", title_style)
     elements.append(title_paragraph)
     
@@ -2211,9 +2216,192 @@ def create_executive_summary(styles, user_details):
     table.setStyle(table_style)
     elements.append(table)
 
+    elements.append(PageBreak())
+    
+    title_paragraph = Paragraph("Rationale For WATER AUDIT", title_style)
+    elements.append(title_paragraph)
+    elements.append(Spacer(1, 18))
+    
+    
+    summary_text = f"""
+    Water audit determines the amount of water lost from the water network/distribution system due to seepage, evaporation/leakage and other reasons such as theft, unauthorized or illegal withdrawals from the systems. Water audit improves the knowledge and documentation of the distribution system, and better understanding of what is happening to the water after it leaves the source point. Comprehensive water audit gives a detailed profile of the distribution system and water users, thereby facilitating easier and effective management of the resources with improved reliability. It helps in correct diagnosis of the problems faced in order to suggest optimum solutions. This leads to reduced water losses; improved financial performance; improved reliability of supply system; enhanced knowledge of the distribution; efficient use of existing supplies; better safeguard to public health and property; improved public relations; reduced legal liability and reduced disruption etc. thereby improving level of service to customers. It is thus an effective tool for realistic understanding and assessment of the present performance level and efficiency of the service and the adaptability of the system for future expansion & rectification of faults during modernization. 
+    """
+    summary_paragraph = Paragraph(summary_text, summary_style)
+    elements.append(summary_paragraph)
     elements.append(Spacer(1, 24))
     
+    title_paragraph = Paragraph("Steps Of WATER AUDIT", title_style)
+    elements.append(title_paragraph)
+    
+    
+    summary_text = f"""
+    Water Audit includes water supply and usage study, process study, system audit, discharge analysis and preparation of water audit report.
+    """
+    summary_paragraph = Paragraph(summary_text, summary_style)
+    elements.append(summary_paragraph)
+    elements.append(Spacer(1, 24))
+    
+    title_paragraph = Paragraph("Water Supply and Usage Study ", title_style)
+    elements.append(title_paragraph)
+    
+    
+    summary_text = f"""
+    Water audit comprises preparation of layout of water sources, distribution network, and service/delivery points to water users and return flow of waste or excess water. The layout should contain locations and flow measurement devices installed at key points in the water supply system.
+    """
+    summary_paragraph = Paragraph(summary_text, summary_style)
+    elements.append(summary_paragraph)
+    elements.append(Spacer(1, 24))
+    
+    title_paragraph = Paragraph("Process Study", title_style)
+    elements.append(title_paragraph)
+    
+    
+    summary_text = f"""
+    Flow measurement devices were installed at all strategic points to calculate the water consumption at The Leela Palace, Udaipur in various activities such as supply to the Guest rooms, plantation, Kitchen, canteens, toilets etc. Water quality of the distribution system needs to be monitored regularly at strategic points to find out the level and nature of contaminants present in the supplied water. Study of water test reports conducted and its analyse as per the norms
+
+    """
+    summary_paragraph = Paragraph(summary_text, summary_style)
+    elements.append(summary_paragraph)
+    elements.append(PageBreak())
+    
+    title_paragraph = Paragraph("System Audit", title_style)
+    elements.append(title_paragraph)
+    
+    
+    summary_text = f"""
+    The current water usages and systems for water use under various sectors needed to be studied to check their operational efficiency and level of maintenance. The scope for any modification or up- gradation will depend on the status of existing systems. Measurement methodology from the intake point of the system through various sub-systems to the ultimate user points needs to be verified periodically for its suitability, efficiency and accuracy. Bulk metering should be done at the source for zones, districts, etc. and revenue metering for consumers. This will help in identifying the reaches of undue water wastage. The domestic wastewater return flows from canteen, bathroom and effluents from the ETP needs to be studied for conformity to environment standards, possibility of recovery of valuable by-products and the opportunity for recycling of waste water (which is happening at present). 
+
+    """
+    summary_paragraph = Paragraph(summary_text, summary_style)
+    elements.append(summary_paragraph)
+    elements.append(Spacer(1, 24))
+    
+    title_paragraph = Paragraph("Water Audit Report ", title_style)
+    elements.append(title_paragraph)
+    
+    
+    summary_text = f"""
+    A water audit can be accomplished on the basis of water allotted for a service and water actually utilized for that service. After assessing the loss of water and the efficiency of the system, steps needed for utilization of recoverable water loss and reuse may be listed. An effective water audit report may be purposeful in detection of water losses and improve efficiency of the system. Water audit of the system should be undertaken at regular intervals, at least on an annual basis. ITIFY water audit report explains the losses of water in system and various management approaches for The Leela Palace
+
+
+    """
+    summary_paragraph = Paragraph(summary_text, summary_style)
+    elements.append(summary_paragraph)
+    elements.append(Spacer(1, 24))
+    elements.append(PageBreak())
+    
     return elements
+
+def create_introduction(styles, user):
+    user_details = get_object_or_404(BasicDetails, user=user)
+    elements = []
+
+    # Title setup
+    title_style = styles['Title'].clone('TitleStyle')
+    title_style.fontSize = 22
+    title_style.textColor = colors.navy
+    title_style.alignment = TA_CENTER
+    title_paragraph = Paragraph("<a name='intro'/> Introduction", title_style)
+    elements.append(title_paragraph)
+    elements.append(Spacer(1, 18))
+    
+    # Introduction content
+    summary_style = styles['BodyText'].clone('SummaryStyle')
+    summary_style.alignment = TA_JUSTIFY
+    summary_style.fontSize = 12
+    summary_style.spaceBefore = 6
+    summary_style.spaceAfter = 6
+    # add vertical space between lines
+    summary_style.leading = 14
+    summary_text = f"""
+    The Digital Water Audit Report for <b>{user_details.organization_name}</b> summarizes the key findings, recommendations, and insights from the comprehensive water audit conducted at {user_details.address}. Key findings highlight areas of potential improvement, cost savings, and environmental benefits. Recommendations are intended to guide strategic decisions to enhance water efficiency and sustainability.
+    """
+    summary_paragraph = Paragraph(summary_text, summary_style)
+    elements.append(summary_paragraph)
+    elements.append(Spacer(1, 24))
+    
+    title_style = styles['Title'].clone('TitleStyle')
+    title_style.fontSize = 18
+    title_style.textColor = colors.olivedrab
+    title_style.alignment = TA_LEFT
+    title_paragraph = Paragraph("Fresh Water Sources", title_style)
+    elements.append(title_paragraph)
+    
+    # sources of water
+    sources = SourceWaterProfile.objects.filter(user=user)
+    
+    # show the sources of water, daily consumption and cost in a table
+    table_data = [
+        ['Source of Water', 'Daily Consumption (KL)', 'Cost (INR)'],
+    ]
+    for source in sources:
+        table_data.append([source.source_name, source.source_daily_consumption, source.source_water_cost])
+    # calculate total daily cost by multiplying daily consumption with cost
+    total_cost = 0
+    for source in sources:
+        total_cost += source.source_daily_consumption * source.source_water_cost
+        
+    table_data.append(['Total Daily Consumption', '', total_cost])
+    
+    table = Table(table_data, colWidths=[133.33, 133.33, 133.33], spaceBefore=20, spaceAfter=20)
+    table_style = TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.darkblue),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('BACKGROUND', (0, -1), (-1, -1), colors.lightblue),
+        ('TEXTCOLOR', (0, -1), (-1, -1), colors.darkblue),
+        ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+
+    ])
+    table.setStyle(table_style)
+    elements.append(table)
+    
+    title_paragraph = Paragraph("Available Tanks", title_style)
+    elements.append(title_paragraph)
+    
+    # tanks and capacities
+    tanks = TanksCapacities.objects.filter(user=user)
+    
+    # show the tanks and capacities in a table
+    table_data = [
+        ['Tank Name', 'Capacity (KL)']
+    ]
+    for tank in tanks:
+        table_data.append([tank.name, tank.capacity])
+    # total capacity
+    total_capacity = sum([tank.capacity for tank in tanks])
+    table_data.append(['Total Capacity', f'{total_capacity} KL'])
+    
+    table = Table(table_data, colWidths=[200, 200], spaceBefore=20, spaceAfter=20)
+    table_style = TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.darkblue),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('BACKGROUND', (0, -1), (-1, -1), colors.lightblue),
+        ('TEXTCOLOR', (0, -1), (-1, -1), colors.darkblue),
+        ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+        
+    ])
+    table.setStyle(table_style)
+    elements.append(table)
+    
+    
+    
+    
+    elements.append(PageBreak())
+    
+    
+    
+    return elements
+
 
 def generate_pdf_file(user_details):
     buffer = BytesIO()
@@ -2225,6 +2413,7 @@ def generate_pdf_file(user_details):
     elements.extend(create_title_page(styles, user_details))
     elements.extend(create_index_page(styles))
     elements.extend(create_executive_summary(styles, user_details))
+    elements.extend(create_introduction(styles, user_details))
     
     doc.build(elements)
     buffer.seek(0)
@@ -2233,11 +2422,9 @@ def generate_pdf_file(user_details):
 
 @login_required
 def generate_pdf(request):
-    # Retrieve user's organization details
-    user_details = get_object_or_404(BasicDetails, user=request.user)
     
     # Generate PDF
-    pdf_content = generate_pdf_file(user_details)
+    pdf_content = generate_pdf_file(request.user)
     
     response = FileResponse(pdf_content, filename='report.pdf')
     response['Content-Disposition'] = 'inline; filename="report.pdf"'
