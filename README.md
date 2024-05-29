@@ -6,7 +6,7 @@ Digital Water Audit Tool is a web application designed to facilitate efficient w
 
 - **Real-Time Data Processing**: Leverage real-time data handling to provide up-to-date water audit results.
 - **Interactive Dashboards**: Utilize Dash and Plotly for creating interactive, real-time visualizations of water usage statistics.
-- **Responsive Design**: Ensure a responsive web interface compatible with various devices, using Django and Dash Bootstrap Components.
+- **Responsive Design**: Ensure a responsive web interface compatible with various devices, using Django, Dash Bootstrap Components and Tailwind CSS.
 - **Advanced Data Analytics**: Incorporate NumPy and Pandas for sophisticated data analysis and operations.
 - **Application**: Utilize Django for building a scalable application.
 - **Security Features**: Implement OAuth2 with Django Allauth for secure authentication processes.
